@@ -1,0 +1,19 @@
+{
+  "recommendations": [
+    // Required Python extensions
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "charliermarsh.ruff",
+    "ms-python.black-formatter",
+    "ms-python.mypy-type-checker",
+
+    // Useful development extensions
+    "eamodio.gitlens"
+  ],
+  "unwantedRecommendations": [
+    // Avoid conflicts with our chosen formatters/linters
+    "ms-python.autopep8",
+    "ms-python.flake8",
+    "ms-python.pylint"
+  ]
+}

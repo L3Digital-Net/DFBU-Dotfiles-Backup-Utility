@@ -204,13 +204,3 @@ def qapp():
 4. **Use type hints**: Modern Python 3.14+ syntax (see [CONTRIBUTING.md](CONTRIBUTING.md))
 5. **Write tests**: TDD approach preferred (see [DFBU/tests/README.md](DFBU/tests/README.md))
 6. **Run checks after changes**: `uv run pytest DFBU/tests/` and `uv run mypy DFBU/`
-
-<!-- BEGIN ContextStream -->
-### ContextStream (Codex CLI)
-
-| When | Required |
-|------|----------|
-| **Every message** | `mcp__contextstream__context(user_message="...")` FIRST |
-| **Before file reads/search** | `mcp__contextstream__search(mode="hybrid", query="...")` BEFORE any local glob/grep/read |
-| **Local tools** | Only if ContextStream search returns **0** results after retry |
-<!-- END ContextStream -->

@@ -1,0 +1,72 @@
+{
+  // ---- Python interpreter & environment ----
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv",
+
+  // ---- Pylance / analysis core ----
+  "python.languageServer": "Default",
+  "python.analysis.indexing": true,
+  "python.analysis.diagnosticMode": "workspace",
+  "python.analysis.typeCheckingMode": "strict",
+
+  // Improve import resolution
+  "python.analysis.autoSearchPaths": true,
+  "python.analysis.enableEditableInstalls": true,
+  "python.analysis.importFormat": "absolute",
+  "python.analysis.autoImportCompletions": true,
+  "python.analysis.completeFunctionParens": true,
+  "python.analysis.useLibraryCodeForTypes": true,
+
+  // ---- Testing (pytest) ----
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
+  "python.testing.autoTestDiscoverOnSaveEnabled": false,
+
+  // ---- Linting ----
+  "python.linting.enabled": true,
+
+  // ---- Formatting ----
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "ms-python.black-formatter",
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  },
+
+  // ---- Code Actions ----
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit",
+    "source.fixAll": "explicit"
+  },
+
+  // ---- Editor Quality of Life ----
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+
+  // ---- Extension Path Configuration ----
+  // Point extensions to venv executables for consistency
+  "mypy-type-checker.path": ["${workspaceFolder}/.venv/bin/mypy"],
+  "ruff.path": ["${workspaceFolder}/.venv/bin/ruff"],
+
+  // ---- Project-Specific Settings ----
+  // DFBU uses flat layout with DFBU/ as the package directory
+  "python.analysis.extraPaths": ["${workspaceFolder}"],
+
+  // Exclude auto-generated and cache directories from search
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/.pytest_cache": true,
+    "**/.mypy_cache": true,
+    "**/.ruff_cache": true,
+    "**/htmlcov": true
+  },
+
+  // Exclude from file watching to improve performance
+  "files.watcherExclude": {
+    "**/.venv/**": true,
+    "**/__pycache__/**": true,
+    "**/.pytest_cache/**": true,
+    "**/.mypy_cache/**": true,
+    "**/.ruff_cache/**": true,
+    "**/htmlcov/**": true,
+    "**/*.egg-info/**": true
+  }
+}
