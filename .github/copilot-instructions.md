@@ -4,7 +4,8 @@
 
 ## Project Overview
 
-DFBU is a Python 3.14+ Linux desktop application for configuration file backup/restoration with a PySide6 GUI. Uses UV for package management.
+DFBU is a Python 3.14+ Linux desktop application for configuration file
+backup/restoration with a PySide6 GUI. Uses UV for package management.
 
 **Version:** 1.2.0 | **License:** MIT | **Architecture:** MVVM with Facade pattern
 
@@ -30,7 +31,7 @@ Components:
 ├── VerificationManager (verification_manager.py)    # Backup integrity verification
 ├── ErrorHandler (error_handler.py)             # Structured error handling
 ├── SizeAnalyzer (size_analyzer.py)             # File size analysis, .dfbuignore
-├── BackupHistory (backup_history.py)           # Backup operation history
+├── BackupHistoryManager (backup_history.py)    # Backup operation history
 ├── ProfileManager (profile_manager.py)         # User profile management
 └── PreviewGenerator (preview_generator.py)     # Backup preview generation
 
@@ -58,8 +59,10 @@ Infrastructure:
 
 ### Key Design Constraints
 
-- **UI from `.ui` files only** — Load via `QUiLoader` from `DFBU/gui/designer/`, NEVER hardcode layouts
-- **Dependencies injected** — Components implement Protocol interfaces (`DFBU/gui/protocols.py`)
+- **UI from `.ui` files only** — Load via `QUiLoader` from `DFBU/gui/designer/`, NEVER
+  hardcode layouts
+- **Dependencies injected** — Components implement Protocol interfaces
+  (`DFBU/gui/protocols.py`)
 - **Signals for cross-layer communication** — No direct method calls between layers
 - **Long operations on QThread** — See `DFBU/gui/config_workers.py` for patterns
 
@@ -67,7 +70,8 @@ Infrastructure:
 
 ### Type Hints (Mandatory - Strict Enforcement)
 
-Modern Python 3.10+ syntax required on ALL functions, parameters, return values, and class attributes:
+Modern Python 3.10+ syntax required on ALL functions, parameters, return values, and
+class attributes:
 
 ```python
 # ✅ Correct
@@ -110,7 +114,8 @@ def test_viewmodel_emits_signal(qtbot, mocker):
     mock_service.fetch.assert_called_once()
 ```
 
-Test markers: `@pytest.mark.unit`, `@pytest.mark.integration`, `@pytest.mark.gui`, `@pytest.mark.slow`
+Test markers: `@pytest.mark.unit`, `@pytest.mark.integration`, `@pytest.mark.gui`,
+`@pytest.mark.slow`
 
 ## Essential Commands
 
@@ -129,7 +134,8 @@ mypy DFBU/
 
 ## Shared Types
 
-`DFBU/core/common_types.py` defines `TypedDict` classes: `DotFileDict`, `OptionsDict`, `VerificationResultDict`, `OperationResultDict`, `PathResultDict`, `SizeReportDict`.
+`DFBU/core/common_types.py` defines `TypedDict` classes: `DotFileDict`, `OptionsDict`,
+`VerificationResultDict`, `OperationResultDict`, `PathResultDict`, `SizeReportDict`.
 
 ## Configuration Files (DFBU/data/)
 
@@ -156,7 +162,8 @@ mypy DFBU/
 
 ## References
 
-- [DFBU/docs/ARCHITECTURE.md](../DFBU/docs/ARCHITECTURE.md) — Comprehensive architecture documentation
+- [DFBU/docs/ARCHITECTURE.md](../DFBU/docs/ARCHITECTURE.md) — Comprehensive architecture
+  documentation
 - [DFBU/tests/README.md](../DFBU/tests/README.md) — Testing documentation and fixtures
 - [CONTRIBUTING.md](../CONTRIBUTING.md) — Development setup and guidelines
 - [docs/BRANCH_PROTECTION.md](../docs/BRANCH_PROTECTION.md) — Branch protection rules

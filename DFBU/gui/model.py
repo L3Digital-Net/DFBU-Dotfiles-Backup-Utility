@@ -39,7 +39,7 @@ from socket import gethostname
 from typing import Any
 
 
-# Local imports
+# SIDE-EFFECT: Mutates sys.path — must execute before any local module imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from core.common_types import (
     BackupHistoryEntry,
@@ -62,11 +62,6 @@ from gui.restore_backup_manager import RestoreBackupManager
 from gui.size_analyzer import SizeAnalyzer
 from gui.statistics_tracker import BackupStatistics, StatisticsTracker
 from gui.verification_manager import VerificationManager
-
-
-# =============================================================================
-# DFBUModel Facade
-# =============================================================================
 
 
 class DFBUModel:
@@ -133,31 +128,25 @@ class DFBUModel:
         """
         self.hostname: str = gethostname()
 
-        # Initialize FileOperations (needed by ConfigManager)
         self._file_ops: FileOperations = FileOperations(self.hostname)
 
-        # Initialize ConfigManager
         self._config_manager: ConfigManager = ConfigManager(
             config_path, expand_path_callback=self._file_ops.expand_path
         )
 
-        # Initialize StatisticsTracker
         self._stats_tracker: StatisticsTracker = StatisticsTracker()
 
-        # Initialize pre-restore backup manager with config-based directory
         self._restore_backup_manager: RestoreBackupManager = RestoreBackupManager(
             backup_base_dir=self._config_manager.restore_backup_dir,
             max_backups=self._config_manager.options.get("max_restore_backups", 5),
         )
 
-        # Initialize VerificationManager for post-backup verification
         self._verification_manager: VerificationManager = VerificationManager(
             hash_verification_enabled=self._config_manager.options.get(
                 "hash_verification", False
             ),
         )
 
-        # Initialize BackupOrchestrator with restore backup and verification managers
         self._backup_orchestrator: BackupOrchestrator = BackupOrchestrator(
             file_ops=self._file_ops,
             stats_tracker=self._stats_tracker,
@@ -167,13 +156,11 @@ class DFBUModel:
             verification_manager=self._verification_manager,
         )
 
-        # Track backed up files for verification (used by BackupWorker)
+        # SIDE-EFFECT: Populated by BackupWorker via register_backed_up_file(); consumed by verify_last_backup() — cleared by clear_backup_tracking() before each run
         self._last_backup_files: list[tuple[Path, Path]] = []
 
-        # Initialize ErrorHandler for structured error handling (v0.9.0)
         self._error_handler: ErrorHandler = ErrorHandler()
 
-        # Initialize SizeAnalyzer for pre-backup size checking (v1.0.0)
         self._size_analyzer: SizeAnalyzer = SizeAnalyzer(
             file_operations=self._file_ops,
             warning_threshold_mb=self._config_manager.options.get(
@@ -190,18 +177,12 @@ class DFBUModel:
             ),
         )
 
-        # Initialize ProfileManager (v1.1.0)
         self._profile_manager: ProfileManager = ProfileManager(config_path)
 
-        # Initialize BackupHistoryManager (v1.1.0)
         self._history_manager: BackupHistoryManager = BackupHistoryManager(config_path)
 
-        # Lazy-initialized PreviewGenerator (v1.1.0)
+        # CONSTRAINT: None until _init_preview_generator() call — avoids importing heavyweight generator at startup
         self._preview_generator: PreviewGenerator | None = None
-
-    # =========================================================================
-    # Property Accessors for Backward Compatibility
-    # =========================================================================
 
     @property
     def config_path(self) -> Path:
@@ -283,10 +264,6 @@ class DFBUModel:
         """
         return self._size_analyzer
 
-    # =========================================================================
-    # Configuration Management (Delegate to ConfigManager)
-    # =========================================================================
-
     def load_config(self) -> tuple[bool, str]:
         """
         Load and validate YAML configuration files.
@@ -296,7 +273,6 @@ class DFBUModel:
         """
         success, error = self._config_manager.load_config()
 
-        # Update BackupOrchestrator with new base directories
         if success:
             self._backup_orchestrator.mirror_base_dir = (
                 self._config_manager.mirror_base_dir
@@ -304,14 +280,12 @@ class DFBUModel:
             self._backup_orchestrator.archive_base_dir = (
                 self._config_manager.archive_base_dir
             )
-            # Update RestoreBackupManager with config values (v0.6.0)
             self._restore_backup_manager.backup_base_dir = (
                 self._config_manager.restore_backup_dir
             )
             self._restore_backup_manager.max_backups = self._config_manager.options.get(
                 "max_restore_backups", 5
             )
-            # Update SizeAnalyzer with config values (v1.0.0)
             self._size_analyzer.size_check_enabled = self._config_manager.options.get(
                 "size_check_enabled", True
             )
@@ -325,7 +299,6 @@ class DFBUModel:
                 self._config_manager.options.get("size_critical_threshold_mb", 1024)
             )
 
-            # Load profiles (v1.1.0)
             self._profile_manager.load_profiles()
 
         return success, error
@@ -441,7 +414,6 @@ class DFBUModel:
         """
         success: bool = self._config_manager.update_path(path_type, value)
 
-        # Update components with new base directories
         if success:
             self._backup_orchestrator.mirror_base_dir = (
                 self._config_manager.mirror_base_dir
@@ -449,7 +421,6 @@ class DFBUModel:
             self._backup_orchestrator.archive_base_dir = (
                 self._config_manager.archive_base_dir
             )
-            # Sync restore_backup_dir to RestoreBackupManager (v0.6.0)
             self._restore_backup_manager.backup_base_dir = (
                 self._config_manager.restore_backup_dir
             )
@@ -476,10 +447,6 @@ class DFBUModel:
             Number of dotfiles in configuration
         """
         return self._config_manager.get_dotfile_count()
-
-    # =========================================================================
-    # File Operations (Delegate to FileOperations)
-    # =========================================================================
 
     def expand_path(self, path_str: str) -> Path:
         """
@@ -678,10 +645,6 @@ class DFBUModel:
         """
         return self._file_ops.reconstruct_restore_paths(src_files)
 
-    # =========================================================================
-    # Backup/Restore Operations (Delegate to BackupOrchestrator)
-    # =========================================================================
-
     def validate_dotfile_paths(self) -> dict[int, tuple[bool, bool, str]]:
         """
         Validate all dotfile paths exist and determine their types.
@@ -689,8 +652,8 @@ class DFBUModel:
         Returns:
             Dict mapping dotfile index to (exists, is_dir, type_str) tuple
         """
-        # Cast to list[DotFileDict] as LegacyDotFileDict is compatible for validation
-        dotfiles_for_validation: list[DotFileDict] = self.dotfiles  # type: ignore[assignment]  # Compatible structure
+        # CONSTRAINT: LegacyDotFileDict is structurally compatible with DotFileDict — cast is safe; type: ignore avoids spurious mypy error
+        dotfiles_for_validation: list[DotFileDict] = self.dotfiles  # type: ignore[assignment]
         return self._backup_orchestrator.validate_dotfile_paths(dotfiles_for_validation)
 
     def execute_restore(
@@ -723,10 +686,6 @@ class DFBUModel:
             item_processed_callback=item_processed_callback,
         )
 
-    # =========================================================================
-    # Statistics Tracking (Delegate to StatisticsTracker)
-    # =========================================================================
-
     def record_item_processed(self, processing_time: float) -> None:
         """
         Record successfully processed item.
@@ -747,10 +706,6 @@ class DFBUModel:
     def reset_statistics(self) -> None:
         """Reset operation statistics for new run."""
         self._stats_tracker.reset_statistics()
-
-    # =========================================================================
-    # Backup Verification (Delegate to VerificationManager)
-    # =========================================================================
 
     def verify_last_backup(self) -> str | None:
         """
@@ -810,10 +765,6 @@ class DFBUModel:
         """
         self._verification_manager.hash_verification_enabled = enabled
 
-    # =========================================================================
-    # Size Analysis (Delegate to SizeAnalyzer)
-    # =========================================================================
-
     def analyze_backup_size(
         self,
         progress_callback: Callable[[int], None] | None = None,
@@ -829,14 +780,12 @@ class DFBUModel:
         Returns:
             SizeReportDict with analysis results
         """
-        # Load ignore patterns from data directory
         ignore_file = self._config_manager.config_path / ".dfbuignore"
         patterns = self._size_analyzer.load_ignore_patterns(ignore_file)
 
-        # Filter to enabled dotfiles only
         enabled_dotfiles = [df for df in self.dotfiles if df.get("enabled", True)]
-        # Cast to list[DotFileDict] as LegacyDotFileDict is compatible for size analysis
-        dotfiles_for_analysis: list[DotFileDict] = enabled_dotfiles  # type: ignore[assignment]  # Compatible structure
+        # CONSTRAINT: LegacyDotFileDict is structurally compatible with DotFileDict for size analysis — cast is safe
+        dotfiles_for_analysis: list[DotFileDict] = enabled_dotfiles  # type: ignore[assignment]
 
         return self._size_analyzer.analyze_dotfiles(
             dotfiles=dotfiles_for_analysis,
@@ -873,10 +822,6 @@ class DFBUModel:
             Human-readable formatted string for log output
         """
         return self._size_analyzer.format_report_for_log(report)
-
-    # =========================================================================
-    # Profile Management (v1.1.0)
-    # =========================================================================
 
     def get_profile_count(self) -> int:
         """Get number of saved profiles."""
@@ -922,10 +867,6 @@ class DFBUModel:
     def get_profile_manager(self) -> ProfileManager:
         """Get ProfileManager instance for advanced operations."""
         return self._profile_manager
-
-    # =========================================================================
-    # Backup History / Dashboard (v1.1.0)
-    # =========================================================================
 
     def get_backup_history_count(self) -> int:
         """
@@ -985,10 +926,6 @@ class DFBUModel:
         """
         return self._history_manager.get_recent_history(count)
 
-    # =========================================================================
-    # Preview Generation (v1.1.0)
-    # =========================================================================
-
     def _init_preview_generator(self) -> None:
         """
         Lazy initialize PreviewGenerator.
@@ -1014,20 +951,16 @@ class DFBUModel:
         Returns:
             BackupPreviewDict with preview results
         """
-        # Initialize preview generator if needed
         self._init_preview_generator()
 
-        # Get enabled dotfiles from ConfigManager
         enabled_dotfiles = [df for df in self.dotfiles if df.get("enabled", True)]
 
-        # Get options for hostname/date subdirs
         hostname_subdir = self._config_manager.options.get("hostname_subdir", True)
         date_subdir = self._config_manager.options.get("date_subdir", False)
 
-        # Generate preview (mypy: _preview_generator is guaranteed non-None after _init)
-        # Cast to list[dict[str, Any]] as LegacyDotFileDict is compatible
+        # CONSTRAINT: assert satisfies mypy after _init_preview_generator(); LegacyDotFileDict is compatible with dict[str, Any]
         assert self._preview_generator is not None
-        dotfiles_for_preview: list[dict[str, Any]] = enabled_dotfiles  # type: ignore[assignment]  # Compatible structure
+        dotfiles_for_preview: list[dict[str, Any]] = enabled_dotfiles  # type: ignore[assignment]
         return self._preview_generator.generate_preview(
             dotfiles=dotfiles_for_preview,
             hostname_subdir=hostname_subdir,

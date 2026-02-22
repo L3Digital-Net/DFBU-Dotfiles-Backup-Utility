@@ -493,6 +493,12 @@ QToolTip {
     padding: 8px;
 }
 
+#logFooter {
+    background-color: #F8FAFC;
+    border-top: 1px solid #E2E8F0;
+    padding: 8px;
+}
+
 #logPaneTitle {
     font-size: 13px;
     font-weight: bold;

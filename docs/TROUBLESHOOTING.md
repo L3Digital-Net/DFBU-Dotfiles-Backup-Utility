@@ -1,6 +1,7 @@
 # DFBU Troubleshooting Guide
 
-This guide covers common issues and their solutions. For quick answers, see the [README troubleshooting section](../README.md#troubleshooting).
+This guide covers common issues and their solutions. For quick answers, see the
+[README troubleshooting section](../README.md#troubleshooting).
 
 ---
 
@@ -16,6 +17,7 @@ This guide covers common issues and their solutions. For quick answers, see the 
 2. Check if curl is installed: `which curl`
 3. Try running with verbose output: `bash -x ./scripts/setup.sh`
 4. If UV fails to install, install it manually:
+
    ```bash
    curl -LsSf https://astral.sh/uv/install.sh | sh
    ```
@@ -70,11 +72,13 @@ This guide covers common issues and their solutions. For quick answers, see the 
 
 1. Enable size warnings in Settings to identify large directories
 2. Add exclusion patterns to `.dfbuignore`:
+
    ```
    **/.cache/
    **/Cache/
    **/.mozilla/firefox/*/cache2/
    ```
+
 3. Use mirror mode for faster incremental backups (only copies changed files)
 
 ### Backup is unexpectedly large
@@ -83,13 +87,13 @@ This guide covers common issues and their solutions. For quick answers, see the 
 
 **Common large directories:**
 
-| Directory | Typical Size | Safe to Exclude? |
-|-----------|--------------|------------------|
-| `~/.cache/` | 1-10 GB | Yes |
-| `~/.config/google-chrome/` | 1-5 GB | Partially (Cache/) |
-| `~/.mozilla/firefox/` | 500 MB - 5 GB | Partially (cache2/) |
-| `~/.local/share/Steam/` | 10-100+ GB | Usually |
-| `~/.local/share/Trash/` | Varies | Yes |
+| Directory                  | Typical Size  | Safe to Exclude?    |
+| -------------------------- | ------------- | ------------------- |
+| `~/.cache/`                | 1-10 GB       | Yes                 |
+| `~/.config/google-chrome/` | 1-5 GB        | Partially (Cache/)  |
+| `~/.mozilla/firefox/`      | 500 MB - 5 GB | Partially (cache2/) |
+| `~/.local/share/Steam/`    | 10-100+ GB    | Usually             |
+| `~/.local/share/Trash/`    | Varies        | Yes                 |
 
 **Solutions:**
 
@@ -135,7 +139,8 @@ This guide covers common issues and their solutions. For quick answers, see the 
 
 **Symptom:** Warning about backup from different computer.
 
-**Explanation:** DFBU organizes backups by hostname. If you're restoring on a different computer than where the backup was created, paths may not match.
+**Explanation:** DFBU organizes backups by hostname. If you're restoring on a different
+computer than where the backup was created, paths may not match.
 
 **Solutions:**
 
@@ -156,9 +161,11 @@ This guide covers common issues and their solutions. For quick answers, see the 
 **Recovery:**
 
 1. If Pre-Restore Backup was enabled, find your safety backup in:
+
    ```
    ~/.local/share/dfbu/restore-backups/
    ```
+
 2. Files are organized by timestamp - find the most recent one before your restore
 3. Manually copy back any files you need
 
@@ -180,6 +187,7 @@ This guide covers common issues and their solutions. For quick answers, see the 
 1. Check directory permissions: `ls -la DFBU/data/`
 2. Verify settings.yaml is writable: `touch DFBU/data/settings.yaml`
 3. If corrupted, delete and let DFBU recreate:
+
    ```bash
    mv DFBU/data/settings.yaml DFBU/data/settings.yaml.bak
    ```
@@ -193,9 +201,11 @@ This guide covers common issues and their solutions. For quick answers, see the 
 **Solutions:**
 
 1. Check for backup configs in `DFBU/data/`:
+
    ```bash
    ls -la DFBU/data/*.backup
    ```
+
 2. Restore from backup: `cp DFBU/data/dotfiles.yaml.backup DFBU/data/dotfiles.yaml`
 3. If no backup exists, re-add your dotfiles
 
@@ -211,7 +221,8 @@ This guide covers common issues and their solutions. For quick answers, see the 
    - Missing colons after keys
    - Incorrect indentation (use spaces, not tabs)
    - Unquoted special characters
-2. Use a YAML validator: `python -c "import yaml; yaml.safe_load(open('DFBU/data/settings.yaml'))"`
+2. Use a YAML validator:
+   `python -c "import yaml; yaml.safe_load(open('DFBU/data/settings.yaml'))"`
 3. Restore from backup or delete the problematic file
 
 ---
@@ -231,9 +242,11 @@ This guide covers common issues and their solutions. For quick answers, see the 
 **Solutions:**
 
 1. Try resetting window position:
+
    ```bash
    rm ~/.config/dfbu/window_state.json
    ```
+
 2. Force X11 mode: `QT_QPA_PLATFORM=xcb python DFBU/dfbu_gui.py`
 3. Check for error messages in terminal
 
@@ -250,10 +263,13 @@ This guide covers common issues and their solutions. For quick answers, see the 
 **Solutions:**
 
 1. Try different Qt style:
+
    ```bash
    QT_STYLE_OVERRIDE=Fusion python DFBU/dfbu_gui.py
    ```
+
 2. For high DPI displays:
+
    ```bash
    QT_SCALE_FACTOR=1.5 python DFBU/dfbu_gui.py
    ```
@@ -262,7 +278,8 @@ This guide covers common issues and their solutions. For quick answers, see the 
 
 **Symptom:** Progress bar doesn't update during backup/restore.
 
-**Note:** This doesn't necessarily mean the operation is stuck - file operations continue in the background.
+**Note:** This doesn't necessarily mean the operation is stuck - file operations
+continue in the background.
 
 **Solutions:**
 
@@ -296,11 +313,13 @@ When reporting issues, include relevant log entries.
 
 1. Check this troubleshooting guide
 2. Review the [README](../README.md)
-3. Search [existing issues](https://github.com/L3DigitalNet/DFBU-DotFiles-Backup-Utility/issues)
+3. Search
+   [existing issues](https://github.com/L3DigitalNet/DFBU-DotFiles-Backup-Utility/issues)
 
 ### How to report a bug
 
-1. Go to [GitHub Issues](https://github.com/L3DigitalNet/DFBU-DotFiles-Backup-Utility/issues/new)
+1. Go to
+   [GitHub Issues](https://github.com/L3DigitalNet/DFBU-DotFiles-Backup-Utility/issues/new)
 2. Include:
    - DFBU version (shown in Help > About)
    - Linux distribution and version
@@ -314,28 +333,35 @@ When reporting issues, include relevant log entries.
 
 ### Can I backup to a network drive?
 
-Currently, DFBU only supports local paths. Network drives mounted as local paths (via NFS, SSHFS, etc.) may work but are not officially supported.
+Currently, DFBU only supports local paths. Network drives mounted as local paths (via
+NFS, SSHFS, etc.) may work but are not officially supported.
 
 ### Can I schedule automatic backups?
 
-Not yet - this is a planned feature for a future version. For now, you can use cron with the CLI (if available) or launch DFBU manually.
+Not yet - this is a planned feature for a future version. For now, you can use cron with
+the CLI (if available) or launch DFBU manually.
 
 ### Can I restore to a different computer?
 
 Yes, but with caveats:
+
 - File paths must exist on the target computer
 - User home directory path should match
 - Some application configs may include absolute paths that won't work
 
 ### Does DFBU backup hidden files?
 
-Yes - dotfiles are hidden files by convention (starting with `.`). DFBU handles them like any other file.
+Yes - dotfiles are hidden files by convention (starting with `.`). DFBU handles them
+like any other file.
 
 ### How do I exclude specific files or patterns?
 
 Two ways:
-1. **Session exclusions:** In the Backup tab, uncheck applications you don't want to backup this time
-2. **Permanent exclusions:** Edit `DFBU/data/.dfbuignore` to add gitignore-style patterns
+
+1. **Session exclusions:** In the Backup tab, uncheck applications you don't want to
+   backup this time
+2. **Permanent exclusions:** Edit `DFBU/data/.dfbuignore` to add gitignore-style
+   patterns
 
 ---
 

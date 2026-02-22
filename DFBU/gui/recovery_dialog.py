@@ -20,7 +20,6 @@ from PySide6.QtWidgets import (
 )
 
 
-# Path to UI file relative to this module
 UI_FILE: Final[Path] = Path(__file__).parent / "designer" / "recovery_dialog.ui"
 
 
@@ -72,12 +71,10 @@ class RecoveryDialog(QDialog):
         if loaded is None:  # QUiLoader may return None on error
             raise RuntimeError(f"Failed to load UI file: {UI_FILE}")
 
-        # Set window properties from loaded UI
         self.setWindowTitle(loaded.windowTitle())
         self.setMinimumSize(loaded.minimumSize())
         self.resize(loaded.size())
 
-        # Find widgets by object name
         self.success_count_label: QLabel = loaded.findChild(QLabel, "successCountLabel")  # type: ignore[assignment]
         self.failed_count_label: QLabel = loaded.findChild(QLabel, "failedCountLabel")  # type: ignore[assignment]
         self.failed_items_tree: QTreeWidget = loaded.findChild(
@@ -90,7 +87,6 @@ class RecoveryDialog(QDialog):
         self.continue_btn: QPushButton = loaded.findChild(QPushButton, "continueBtn")  # type: ignore[assignment]
         self.abort_btn: QPushButton = loaded.findChild(QPushButton, "abortBtn")  # type: ignore[assignment]
 
-        # Validate all required widgets were found
         if not all(
             [
                 self.success_count_label,
@@ -113,11 +109,9 @@ class RecoveryDialog(QDialog):
         """Populate dialog with operation result data."""
         result = self.operation_result
 
-        # Update summary labels
         completed_count = len(result["completed"])
         failed_count = len(result["failed"])
 
-        # Determine action text based on operation type
         operation = result["operation_type"]
         action_text = "backed up" if "backup" in operation else "restored"
         self.success_count_label.setText(
@@ -125,7 +119,6 @@ class RecoveryDialog(QDialog):
         )
         self.failed_count_label.setText(f"{failed_count} files failed")
 
-        # Populate failed items tree
         self.failed_items_tree.clear()
         for item in result["failed"]:
             tree_item = QTreeWidgetItem(
@@ -137,7 +130,6 @@ class RecoveryDialog(QDialog):
             )
             self.failed_items_tree.addTopLevelItem(tree_item)
 
-        # Enable/disable retry button based on retryable items
         retryable_count = len(result["can_retry"])
         self.retry_failed_btn.setEnabled(retryable_count > 0)
 

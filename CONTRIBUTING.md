@@ -2,7 +2,8 @@
 
 # Contributing to DFBU - DotFiles Backup Utility
 
-Thank you for your interest in contributing to DFBU! This guide will help you get started.
+Thank you for your interest in contributing to DFBU! This guide will help you get
+started.
 
 ## Development Setup
 
@@ -41,7 +42,8 @@ This project follows strict architectural principles:
 
 ### MVVM Pattern
 
-- **Models** (`DFBU/gui/model.py`, `DFBU/gui/*_*.py` components): Pure Python business logic (some Qt in facade)
+- **Models** (`DFBU/gui/model.py`, `DFBU/gui/*_*.py` components): Pure Python business
+  logic (some Qt in facade)
 - **ViewModels** (`DFBU/gui/viewmodel.py`): QObject-based, signals for state changes
 - **Views** (`DFBU/gui/view.py`): PySide6 widgets, minimal logic
 
@@ -65,7 +67,9 @@ All code must adhere to SOLID principles:
 - **I**nterface Segregation
 - **D**ependency Inversion
 
-For comprehensive architecture documentation including detailed MVVM patterns, component interactions, and design decisions, see [DFBU/docs/ARCHITECTURE.md](DFBU/docs/ARCHITECTURE.md).
+For comprehensive architecture documentation including detailed MVVM patterns, component
+interactions, and design decisions, see
+[DFBU/docs/ARCHITECTURE.md](DFBU/docs/ARCHITECTURE.md).
 
 ## Development Workflow
 
@@ -220,7 +224,8 @@ def my_function(param1: str, param2: int) -> dict:
 
 ### Testing
 
-For comprehensive testing documentation including fixtures, markers, and coverage requirements, see [DFBU/tests/README.md](DFBU/tests/README.md).
+For comprehensive testing documentation including fixtures, markers, and coverage
+requirements, see [DFBU/tests/README.md](DFBU/tests/README.md).
 
 Key testing principles:
 
@@ -250,19 +255,13 @@ def test_viewmodel_emits_signal_when_data_loaded(qtbot, mocker):
 
 ### Good Contributions
 
-✅ Bug fixes with tests
-✅ New features following MVVM/SOLID
-✅ Documentation improvements
-✅ Test coverage improvements
-✅ Performance optimizations
-✅ Example implementations
+✅ Bug fixes with tests ✅ New features following MVVM/SOLID ✅ Documentation
+improvements ✅ Test coverage improvements ✅ Performance optimizations ✅ Example
+implementations
 
 ### Changes That Need Discussion
 
-⚠️ Breaking API changes
-⚠️ New dependencies
-⚠️ Architecture changes
-⚠️ Major refactoring
+⚠️ Breaking API changes ⚠️ New dependencies ⚠️ Architecture changes ⚠️ Major refactoring
 
 Please open an issue first to discuss these.
 
@@ -400,7 +399,8 @@ See `AGENTS.md` for:
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under the same license as the project.
+By contributing, you agree that your contributions will be licensed under the same
+license as the project.
 
 ## Questions?
 

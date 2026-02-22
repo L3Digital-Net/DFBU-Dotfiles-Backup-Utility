@@ -62,13 +62,12 @@ from pathlib import Path
 from typing import Final, cast
 
 
-# Add DFBU directory to Python path for module imports BEFORE importing local modules
-# This ensures 'gui' is findable as a package whether running directly or via python -m DFBU
-# When frozen by PyInstaller, the import hook handles module resolution automatically
+# SIDE-EFFECT: Mutates sys.path — must execute before any local module imports
+# Ensures 'gui' is importable as a package when run directly or via `python -m DFBU`
+# Frozen (PyInstaller) builds skip this — the import hook handles resolution
 if not getattr(sys, "frozen", False):
     sys.path.insert(0, str(Path(__file__).parent))
 
-# Import local modules after path is set
 from gui.logging_config import get_logger, setup_default_logging
 from gui.model import DFBUModel
 from gui.theme_loader import load_theme
@@ -76,7 +75,7 @@ from gui.view import MainWindow
 from gui.viewmodel import DFBUViewModel
 
 
-# External dependency: PySide6 required for desktop GUI framework (Qt bindings for Python)
+# DANGER: PySide6 absence is unrecoverable — no fallback GUI; hard-exit is intentional
 try:
     from PySide6.QtCore import QSettings
     from PySide6.QtGui import QIcon
@@ -86,30 +85,25 @@ except ImportError:
     print("Install it with: pip install PySide6")
     sys.exit(1)
 
-# Setup logging
+# SIDE-EFFECT: Configures global log handlers before any module emits events
 setup_default_logging()
 logger = get_logger(__name__)
 
-# Application version
 __version__: Final[str] = "1.2.1"
 PROJECT_NAME: Final[str] = "DFBU GUI"
-# User config directory - writable location for user settings
+# CONSTRAINT: Writable by user; live config and history are written here at runtime
 USER_CONFIG_DIR: Final[Path] = Path.home() / ".config" / "dfbu"
 
-# Bundled config path - read-only defaults inside AppImage/PyInstaller bundle
-# When frozen by PyInstaller, data files are bundled under sys._MEIPASS
+# Bundled config path — read-only when frozen; sys._MEIPASS is the unpacked bundle root
 if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
     _data_base = Path(cast(str, sys._MEIPASS))
 else:
     _data_base = Path(__file__).parent
 BUNDLED_CONFIG_PATH: Final[Path] = (_data_base / "data").resolve()
 
-# Determine if running as frozen app (AppImage/PyInstaller)
 IS_FROZEN: Final[bool] = getattr(sys, "frozen", False)
 
-# Config path selection:
-# - When frozen (AppImage): Use writable user directory (~/.config/dfbu/)
-# - When running from source: Use local data directory (DFBU/data/)
+# Frozen → USER_CONFIG_DIR (writable); source → BUNDLED_CONFIG_PATH (local data dir)
 DEFAULT_CONFIG_PATH: Final[Path] = USER_CONFIG_DIR if IS_FROZEN else BUNDLED_CONFIG_PATH
 
 
@@ -124,20 +118,18 @@ def _initialize_user_config() -> None:
     Files copied: settings.yaml, dotfiles.yaml, session.yaml, .dfbuignore
     """
     if not IS_FROZEN:
-        # When running from source, use local data directory directly
-        return
+        return  # CONSTRAINT: Source mode uses BUNDLED_CONFIG_PATH directly — no copy needed
 
-    # Create user config directory if it doesn't exist
     USER_CONFIG_DIR.mkdir(parents=True, exist_ok=True)
 
-    # Required config files that must be present for DFBU to function
+    # CONSTRAINT: All four files required; missing any causes config load failure on startup
     config_files = ["settings.yaml", "dotfiles.yaml", "session.yaml", ".dfbuignore"]
 
     for filename in config_files:
         user_file = USER_CONFIG_DIR / filename
         bundled_file = BUNDLED_CONFIG_PATH / filename
 
-        # Copy if user file doesn't exist (preserve user customizations)
+        # CONSTRAINT: Skip if user file exists — never overwrite user customizations on upgrade
         if not user_file.exists() and bundled_file.exists():
             try:
                 shutil.copy2(bundled_file, user_file)
@@ -145,7 +137,6 @@ def _initialize_user_config() -> None:
             except (OSError, PermissionError) as e:
                 logger.warning("Failed to copy default config %s: %s", filename, e)
 
-    # Verify critical config files are present after initialization
     missing = [f for f in config_files if not (USER_CONFIG_DIR / f).exists()]
     if missing:
         logger.error(
@@ -155,7 +146,7 @@ def _initialize_user_config() -> None:
             BUNDLED_CONFIG_PATH,
             USER_CONFIG_DIR,
         )
-        # Attempt fallback: re-copy missing files even if bundled source missing
+        # DANGER: If bundled source also missing, config gap is unrecoverable — log both failure paths
         for filename in missing:
             bundled_file = BUNDLED_CONFIG_PATH / filename
             if bundled_file.exists():
@@ -218,7 +209,7 @@ class Application:
         self._initialize_config_directory()
 
         try:
-            # Create MVVM components: Model -> ViewModel -> View
+            # CONSTRAINT: Instantiation order fixed — Model owns state, ViewModel wraps Model, View wraps ViewModel
             logger.debug("Creating Model with config path: %s", DEFAULT_CONFIG_PATH)
             self.model = DFBUModel(DEFAULT_CONFIG_PATH)
 
@@ -228,7 +219,6 @@ class Application:
             logger.debug("Creating Main Window")
             self.view = MainWindow(self.viewmodel, __version__)
 
-            # Load configuration from default path if available
             self._load_config_if_available()
 
             logger.info("Application initialized successfully")
@@ -238,7 +228,7 @@ class Application:
 
     def _initialize_config_directory(self) -> None:
         """Create configuration directory and copy defaults if needed."""
-        # Initialize user config with bundled defaults (handles AppImage case)
+        # SIDE-EFFECT: May copy files from BUNDLED_CONFIG_PATH → USER_CONFIG_DIR on first frozen-app run
         _initialize_user_config()
 
     def _load_config_if_available(self) -> None:
@@ -252,7 +242,6 @@ class Application:
             logger.warning("Config directory does not exist: %s", DEFAULT_CONFIG_PATH)
             return
 
-        # Verify required config files exist before attempting load
         required = ["settings.yaml", "dotfiles.yaml"]
         missing = [f for f in required if not (DEFAULT_CONFIG_PATH / f).exists()]
         if missing:

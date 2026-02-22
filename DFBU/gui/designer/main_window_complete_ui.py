@@ -1022,16 +1022,16 @@ class Ui_MainWindow:
         self.logPaneLayout.setContentsMargins(0, 0, 0, 0)
         self.logPaneLayout.setObjectName("logPaneLayout")
         self.logPaneLayout.setContentsMargins(0, 0, 0, 0)
+        # Row 1: title + filter toggle buttons
         self.logHeader = QWidget(self.logPane)
         self.logHeader.setObjectName("logHeader")
         sizePolicy1.setHeightForWidth(self.logHeader.sizePolicy().hasHeightForWidth())
         self.logHeader.setSizePolicy(sizePolicy1)
-        self.logHeader.setMinimumSize(QSize(0, 48))
+        self.logHeader.setMinimumSize(QSize(0, 40))
         self.logHeaderLayout = QHBoxLayout(self.logHeader)
         self.logHeaderLayout.setSpacing(4)
-        self.logHeaderLayout.setContentsMargins(0, 0, 0, 0)
+        self.logHeaderLayout.setContentsMargins(12, 6, 12, 6)
         self.logHeaderLayout.setObjectName("logHeaderLayout")
-        self.logHeaderLayout.setContentsMargins(12, 8, 12, 8)
         self.logPaneTitle = QLabel(self.logHeader)
         self.logPaneTitle.setObjectName("logPaneTitle")
 
@@ -1093,35 +1093,9 @@ class Ui_MainWindow:
 
         self.logHeaderLayout.addItem(self.logHeaderSpacer2)
 
-        self.logPaneClearButton = QPushButton(self.logHeader)
-        self.logPaneClearButton.setObjectName("logPaneClearButton")
-        sizePolicy5.setHeightForWidth(
-            self.logPaneClearButton.sizePolicy().hasHeightForWidth()
-        )
-        self.logPaneClearButton.setSizePolicy(sizePolicy5)
-
-        self.logHeaderLayout.addWidget(self.logPaneClearButton)
-
-        self.logPaneSaveButton = QPushButton(self.logHeader)
-        self.logPaneSaveButton.setObjectName("logPaneSaveButton")
-        sizePolicy5.setHeightForWidth(
-            self.logPaneSaveButton.sizePolicy().hasHeightForWidth()
-        )
-        self.logPaneSaveButton.setSizePolicy(sizePolicy5)
-
-        self.logHeaderLayout.addWidget(self.logPaneSaveButton)
-
-        self.logPaneVerifyButton = QPushButton(self.logHeader)
-        self.logPaneVerifyButton.setObjectName("logPaneVerifyButton")
-        sizePolicy5.setHeightForWidth(
-            self.logPaneVerifyButton.sizePolicy().hasHeightForWidth()
-        )
-        self.logPaneVerifyButton.setSizePolicy(sizePolicy5)
-
-        self.logHeaderLayout.addWidget(self.logPaneVerifyButton)
-
         self.logPaneLayout.addWidget(self.logHeader)
 
+        # Log output text area
         self.logPaneBox = QTextEdit(self.logPane)
         self.logPaneBox.setObjectName("logPaneBox")
         sizePolicy.setHeightForWidth(self.logPaneBox.sizePolicy().hasHeightForWidth())
@@ -1129,6 +1103,52 @@ class Ui_MainWindow:
         self.logPaneBox.setReadOnly(True)
 
         self.logPaneLayout.addWidget(self.logPaneBox)
+
+        # Row 2: action buttons anchored below the log output
+        self.logFooter = QWidget(self.logPane)
+        self.logFooter.setObjectName("logFooter")
+        sizePolicy1.setHeightForWidth(self.logFooter.sizePolicy().hasHeightForWidth())
+        self.logFooter.setSizePolicy(sizePolicy1)
+        self.logFooter.setMinimumSize(QSize(0, 40))
+        self.logFooterLayout = QHBoxLayout(self.logFooter)
+        self.logFooterLayout.setSpacing(4)
+        self.logFooterLayout.setContentsMargins(12, 6, 12, 6)
+        self.logFooterLayout.setObjectName("logFooterLayout")
+
+        self.logFooterSpacer = QSpacerItem(
+            40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
+        )
+
+        self.logFooterLayout.addItem(self.logFooterSpacer)
+
+        self.logPaneClearButton = QPushButton(self.logFooter)
+        self.logPaneClearButton.setObjectName("logPaneClearButton")
+        sizePolicy5.setHeightForWidth(
+            self.logPaneClearButton.sizePolicy().hasHeightForWidth()
+        )
+        self.logPaneClearButton.setSizePolicy(sizePolicy5)
+
+        self.logFooterLayout.addWidget(self.logPaneClearButton)
+
+        self.logPaneSaveButton = QPushButton(self.logFooter)
+        self.logPaneSaveButton.setObjectName("logPaneSaveButton")
+        sizePolicy5.setHeightForWidth(
+            self.logPaneSaveButton.sizePolicy().hasHeightForWidth()
+        )
+        self.logPaneSaveButton.setSizePolicy(sizePolicy5)
+
+        self.logFooterLayout.addWidget(self.logPaneSaveButton)
+
+        self.logPaneVerifyButton = QPushButton(self.logFooter)
+        self.logPaneVerifyButton.setObjectName("logPaneVerifyButton")
+        sizePolicy5.setHeightForWidth(
+            self.logPaneVerifyButton.sizePolicy().hasHeightForWidth()
+        )
+        self.logPaneVerifyButton.setSizePolicy(sizePolicy5)
+
+        self.logFooterLayout.addWidget(self.logPaneVerifyButton)
+
+        self.logPaneLayout.addWidget(self.logFooter)
 
         self.mainSplitter.addWidget(self.logPane)
 

@@ -43,18 +43,12 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 
-# Local imports - import from parent DFBU directory
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from core.common_types import DotFileDict, LegacyDotFileDict, OptionsDict, SettingsDict
 from core.yaml_config import YAMLConfigLoader
 
 from gui.input_validation import InputValidator
 from gui.restore_backup_manager import DEFAULT_BACKUP_DIR
-
-
-# =============================================================================
-# Utility Functions (needed by ConfigManager)
-# =============================================================================
 
 
 def create_rotating_backup(
@@ -93,7 +87,7 @@ def create_rotating_backup(
     backup_name = f"{source_path.stem}.{timestamp}{source_path.suffix}"
     backup_path = backup_dir / backup_name
 
-    # Handle filename collisions
+    # CONSTRAINT: Timestamp collision (sub-second saves) — append counter to force unique filename
     counter = 1
     while backup_path.exists():
         backup_name = f"{source_path.stem}.{timestamp}_{counter}{source_path.suffix}"
@@ -101,10 +95,8 @@ def create_rotating_backup(
         counter += 1
 
     try:
-        # Use shutil for reliable file copying
         shutil.copy2(source_path, backup_path)
 
-        # Rotate old backups
         backup_files = sorted(
             backup_dir.glob(f"{source_path.stem}.*{source_path.suffix}"),
             key=lambda p: p.stat().st_mtime,
@@ -118,11 +110,6 @@ def create_rotating_backup(
 
     except OSError, PermissionError:
         return None
-
-
-# =============================================================================
-# ConfigManager Class
-# =============================================================================
 
 
 class ConfigManager:
@@ -183,18 +170,16 @@ class ConfigManager:
         self.config_path: Path = config_path
         self.expand_path: Callable[[str], Path] = expand_path_callback
         self.options: OptionsDict = self._get_default_options()
-        # Store dotfiles as dict: application name -> definition
-        self._dotfiles: dict[str, DotFileDict] = {}
-        # Session-specific exclusions
-        self._exclusions: list[str] = []
+        self._dotfiles: dict[str, DotFileDict] = {}  # key = application name
+        self._exclusions: list[
+            str
+        ] = []  # SIDE-EFFECT: persisted to session.yaml on change
 
-        # Base directories (set from settings after config load)
+        # CONSTRAINT: Overwritten by load_config() — defaults only apply when config missing
         self.mirror_base_dir: Path = Path.home() / "DFBU_Mirror"
         self.archive_base_dir: Path = Path.home() / "DFBU_Archives"
-        # Pre-restore backup directory (v0.6.0)
         self.restore_backup_dir: Path = DEFAULT_BACKUP_DIR
 
-        # YAML loader instance
         self._yaml_loader: YAMLConfigLoader | None = None
 
     def load_config(self) -> tuple[bool, str]:
@@ -209,30 +194,23 @@ class ConfigManager:
             Tuple of (success, error_message). error_message is empty on success.
         """
         try:
-            # Initialize YAML loader
             self._yaml_loader = YAMLConfigLoader(self.config_path)
 
-            # Load settings (paths and options)
             settings = self._yaml_loader.load_settings()
             self.options = settings["options"]
             paths = settings["paths"]
 
-            # Set base directories from settings
             self.mirror_base_dir = self.expand_path(paths["mirror_dir"])
             self.archive_base_dir = self.expand_path(paths["archive_dir"])
             self.restore_backup_dir = self.expand_path(paths["restore_backup_dir"])
 
-            # Load dotfiles library
             self._dotfiles = self._yaml_loader.load_dotfiles()
 
-            # Load session exclusions
             session = self._yaml_loader.load_session()
             self._exclusions = session["excluded"]
 
-            # Check for and fix any corrupted or non-portable path entries
             corruptions_fixed = self._validate_and_fix_paths()
 
-            # If corruptions were found and fixed, auto-save the corrected config
             if corruptions_fixed > 0:
                 save_success, save_error = self.save_config()
                 if save_success:
@@ -240,7 +218,7 @@ class ConfigManager:
                         True,
                         f"Config loaded (auto-corrected {corruptions_fixed} path entries)",
                     )
-                # If save fails, still return success for loading but mention the issue
+                # PURPOSE: Load succeeded even if auto-save failed — surface both facts to caller
                 return (
                     True,
                     f"Config loaded (found {corruptions_fixed} issues but auto-save failed: {save_error})",
@@ -272,10 +250,8 @@ class ConfigManager:
         """
         corrections_made = 0
 
-        # Process dotfiles in parallel for better performance
-        # Use ThreadPoolExecutor with max_workers=4 for optimal I/O-bound operations
+        # CONSTRAINT: ThreadPoolExecutor(4) — I/O-bound path expansion; more workers doesn't help
         with ThreadPoolExecutor(max_workers=4) as executor:
-            # Submit all dotfiles for processing
             future_to_app = {
                 executor.submit(
                     self._process_dotfile_paths, app_name, dotfile
@@ -283,18 +259,15 @@ class ConfigManager:
                 for app_name, dotfile in self._dotfiles.items()
             }
 
-            # Collect results as they complete
             for future in as_completed(future_to_app):
                 app_name = future_to_app[future]
                 try:
                     corrected_paths, path_corrections = future.result()
                     if path_corrections > 0:
-                        # Update dotfile with corrected paths
                         self._dotfiles[app_name]["paths"] = corrected_paths
                         corrections_made += path_corrections
                 except Exception:
-                    # Log error but continue processing other dotfiles
-                    # Errors in individual dotfiles shouldn't stop the entire process
+                    # CONSTRAINT: Fail open per-dotfile — path fix failure must not abort whole load
                     pass
 
         return corrections_made
@@ -319,18 +292,13 @@ class ConfigManager:
         corrections = 0
 
         for path_str in paths_list:
-            # Skip empty paths
             if not path_str:
                 corrected_paths.append(path_str)
                 continue
 
-            # Expand the path to check if it's under home directory
             expanded_path = self.expand_path(path_str)
-
-            # Convert to portable tilde notation if under home directory
             portable_path = self._path_to_tilde_notation(expanded_path)
 
-            # Check if conversion changed the path
             if portable_path != path_str:
                 corrected_paths.append(portable_path)
                 corrections += 1
@@ -371,7 +339,6 @@ class ConfigManager:
             if self._yaml_loader is None:
                 self._yaml_loader = YAMLConfigLoader(self.config_path)
 
-            # Create rotating backup before saving (if settings file exists)
             settings_path = self._yaml_loader.settings_path
             if settings_path.exists():
                 backup_dir = settings_path.parent / f".{settings_path.name}.backups"
@@ -381,9 +348,8 @@ class ConfigManager:
                     max_backups=10,
                     timestamp_format="%Y%m%d_%H%M%S",
                 )
-                # Continue with save even if backup fails
+                # CONSTRAINT: Fail open — save proceeds even if backup creation fails
 
-            # Build settings dictionary
             settings: SettingsDict = {
                 "paths": {
                     "mirror_dir": self._path_to_tilde_notation(self.mirror_base_dir),
@@ -395,13 +361,8 @@ class ConfigManager:
                 "options": self.options,
             }
 
-            # Save settings
             self._yaml_loader.save_settings(settings)
-
-            # Save dotfiles (already in dict format)
             self._yaml_loader.save_dotfiles(self._dotfiles)
-
-            # Save session (exclusions)
             self._yaml_loader.save_session({"excluded": self._exclusions})
 
             return True, ""
@@ -432,19 +393,15 @@ class ConfigManager:
         Returns:
             True if dotfile was added successfully
         """
-        # Create new dotfile entry in YAML format
         new_dotfile: DotFileDict = {
             "description": description,
             "paths": paths,
-            "tags": category,  # Use tags field for category
+            "tags": category,  # CONSTRAINT: category stored in 'tags' field — no separate category key
         }
 
-        # Add to dotfiles dict using application name as key
         self._dotfiles[application] = new_dotfile
 
-        # Handle enabled state via exclusions
         if not enabled:
-            # Add to exclusions if disabled
             if application not in self._exclusions:
                 self._exclusions.append(application)
 
@@ -473,31 +430,24 @@ class ConfigManager:
         Returns:
             True if dotfile was updated successfully
         """
-        # Get application name by index
         app_names = list(self._dotfiles.keys())
         if 0 <= index < len(app_names):
             old_app_name = app_names[index]
 
-            # If application name changed, update exclusions list
             if old_app_name != application:
-                # Remove old app name from exclusions if present
                 if old_app_name in self._exclusions:
                     self._exclusions.remove(old_app_name)
                 del self._dotfiles[old_app_name]
 
-            # Create updated entry
             self._dotfiles[application] = {
                 "description": description,
                 "paths": paths,
                 "tags": category,
             }
 
-            # Handle enabled state via exclusions
             if enabled:
-                # Remove from exclusions if present
                 if application in self._exclusions:
                     self._exclusions.remove(application)
-            # Add to exclusions if not present
             elif application not in self._exclusions:
                 self._exclusions.append(application)
 
@@ -556,7 +506,7 @@ class ConfigManager:
             True if option was updated successfully
         """
         if key in self.options:
-            # Type validation performed at ViewModel layer before reaching here
+            # CONSTRAINT: Type coercion performed here — ViewModel validates before calling
             if key == "mirror":
                 self.options["mirror"] = bool(value)
             elif key == "archive":
@@ -595,7 +545,6 @@ class ConfigManager:
         Returns:
             True if path was updated successfully
         """
-        # Validate path before applying
         validation_result = InputValidator.validate_path(value, must_exist=False)
         if not validation_result.success:
             return False
@@ -669,7 +618,7 @@ class ConfigManager:
         """
         paths = self._normalize_paths(dotfile)
         tags = dotfile.get("tags", "")
-        # Use tags as category, or "General" if no tags
+        # PURPOSE: tags field serves as category storage; first tag = primary category
         category = tags.split(",")[0].strip() if tags else "General"
 
         return {
@@ -681,10 +630,6 @@ class ConfigManager:
             "archive_dir": self._path_to_tilde_notation(self.archive_base_dir),
             "enabled": not self.is_excluded(app_name),
         }
-
-    # =========================================================================
-    # Exclusion Management Methods
-    # =========================================================================
 
     def get_exclusions(self) -> list[str]:
         """
@@ -704,7 +649,7 @@ class ConfigManager:
         """
         self._exclusions = exclusions.copy()
 
-        # Persist to session file
+        # SIDE-EFFECT: Writes session.yaml immediately — not deferred to save_config()
         if self._yaml_loader is None:
             self._yaml_loader = YAMLConfigLoader(self.config_path)
         self._yaml_loader.save_session({"excluded": self._exclusions})
@@ -737,7 +682,7 @@ class ConfigManager:
         else:
             self._exclusions.append(application)
 
-        # Persist to session file
+        # SIDE-EFFECT: Writes session.yaml immediately — not deferred to save_config()
         if self._yaml_loader is None:
             self._yaml_loader = YAMLConfigLoader(self.config_path)
         self._yaml_loader.save_session({"excluded": self._exclusions})
@@ -754,10 +699,6 @@ class ConfigManager:
             if not self.is_excluded(app_name):
                 result.append(self._to_legacy_format(app_name, dotfile))
         return result
-
-    # =========================================================================
-    # Private Helper Methods
-    # =========================================================================
 
     def _get_default_options(self) -> OptionsDict:
         """
@@ -799,16 +740,10 @@ class ConfigManager:
             Path string with ~ notation if under home directory
         """
         try:
-            # Check if path is relative to home directory
             rel_path = path.relative_to(Path.home())
             return f"~/{rel_path}"
         except ValueError:
-            # Path is not under home directory, return as-is
-            return str(path)
-
-    # =========================================================================
-    # Backward Compatibility Properties
-    # =========================================================================
+            return str(path)  # not under home dir — return absolute
 
     @property
     def dotfiles(self) -> list[LegacyDotFileDict]:

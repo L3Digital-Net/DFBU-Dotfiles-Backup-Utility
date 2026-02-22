@@ -39,13 +39,13 @@ class BackupHistoryManager:
         Args:
             config_path: Path to configuration directory
         """
-        self.config_path = config_path
+        self.config_path: Path = config_path
         self._history: list[BackupHistoryEntry] = []
         self._load_history()
 
     def _load_history(self) -> None:
         """Load history from YAML file."""
-        history_file = self.config_path / "backup_history.yaml"
+        history_file: Path = self.config_path / "backup_history.yaml"
 
         if not history_file.exists():
             return
@@ -70,22 +70,21 @@ class BackupHistoryManager:
                     for entry in data["entries"]
                 ]
         except Exception:
-            # Silently fail - start with empty history
-            pass
+            pass  # CONSTRAINT: Fail open — history load failure is non-fatal; start with empty list
 
     def _save_history(self) -> None:
         """Save history to YAML file."""
-        history_file = self.config_path / "backup_history.yaml"
+        history_file: Path = self.config_path / "backup_history.yaml"
 
         try:
             yaml = YAML()
             yaml.default_flow_style = False
 
-            # Trim to max entries before saving
-            trimmed_history = self._history[-self.MAX_HISTORY_ENTRIES :]
+            trimmed_history: list[BackupHistoryEntry] = self._history[
+                -self.MAX_HISTORY_ENTRIES :
+            ]
 
-            # Convert to serializable format
-            entries_data = [
+            entries_data: list[dict[str, str | int | float | bool]] = [
                 {
                     "timestamp": entry["timestamp"],
                     "profile": entry["profile"],
@@ -103,8 +102,7 @@ class BackupHistoryManager:
             with history_file.open("w", encoding="utf-8") as f:
                 yaml.dump(data, f)
         except Exception:
-            # Silently fail - history is not critical
-            pass
+            pass  # CONSTRAINT: Fail open — history save failure is non-fatal; data persists in memory
 
     def get_entry_count(self) -> int:
         """
@@ -154,17 +152,21 @@ class BackupHistoryManager:
         Returns:
             DashboardMetrics with aggregate statistics
         """
-        total = len(self._history)
-        successful = sum(1 for e in self._history if e["success"])
-        failed = total - successful
+        total: int = len(self._history)
+        successful: int = sum(1 for e in self._history if e["success"])
+        failed: int = total - successful
 
-        success_rate = successful / total if total > 0 else 0.0
-        total_size = sum(e["size_bytes"] for e in self._history if e["success"])
+        success_rate: float = successful / total if total > 0 else 0.0
+        total_size: int = sum(e["size_bytes"] for e in self._history if e["success"])
 
-        durations = [e["duration_seconds"] for e in self._history if e["success"]]
-        avg_duration = sum(durations) / len(durations) if durations else 0.0
+        durations: list[float] = [
+            e["duration_seconds"] for e in self._history if e["success"]
+        ]
+        avg_duration: float = sum(durations) / len(durations) if durations else 0.0
 
-        last_timestamp = self._history[-1]["timestamp"] if self._history else None
+        last_timestamp: str | None = (
+            self._history[-1]["timestamp"] if self._history else None
+        )
 
         return DashboardMetrics(
             total_backups=total,

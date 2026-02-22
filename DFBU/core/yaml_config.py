@@ -160,8 +160,6 @@ class YAMLConfigLoader:
             return {}
 
         result = dict(data)
-
-        # Validate and clean each dotfile entry
         return self._validate_and_clean_dotfiles(result)
 
     def load_session(self) -> SessionDict:
@@ -182,19 +180,16 @@ class YAMLConfigLoader:
         if data is None:
             return {"excluded": []}
 
-        # Get excluded list with type validation
         excluded_raw = data.get("excluded", [])
         if excluded_raw is None:
             excluded_raw = []
 
-        # Convert to list of strings with validation
         excluded: list[str] = []
         if isinstance(excluded_raw, list):
             for item in excluded_raw:  # pyright: ignore[reportUnknownVariableType]
                 if isinstance(item, str):
                     excluded.append(item)
                 else:
-                    # Convert non-string items to string
                     excluded.append(str(item))  # pyright: ignore[reportUnknownArgumentType]
 
         return {"excluded": excluded}
@@ -251,16 +246,12 @@ class YAMLConfigLoader:
             Merged dictionary of dotfile entries
         """
         content = self.dotfiles_path.read_text(encoding="utf-8")
-
-        # Parse all top-level entries including duplicates
         all_entries = self._extract_all_toplevel_entries(content)
 
-        # Group entries by key name
         grouped: dict[str, list[dict[str, Any]]] = {}
         for key, entry_data in all_entries:
             grouped.setdefault(key, []).append(entry_data)
 
-        # Merge duplicates and build result
         merged: dict[str, DotFileDict] = {}
         duplicates_found: list[str] = []
 
@@ -277,7 +268,7 @@ class YAMLConfigLoader:
                 len(duplicates_found),
                 ", ".join(duplicates_found),
             )
-            # Auto-save the de-duplicated file
+            # SIDE-EFFECT: Overwrites dotfiles.yaml with de-duplicated content in-place
             self.save_dotfiles(merged)
             logger.info("Saved de-duplicated dotfiles.yaml")
 
@@ -302,9 +293,7 @@ class YAMLConfigLoader:
         entries: list[tuple[str, dict[str, Any]]] = []
         lines = content.split("\n")
 
-        # Find boundaries of top-level entries
-        # A top-level key is a non-blank, non-comment line with no leading whitespace
-        # that contains a colon
+        # CONSTRAINT: Top-level key = non-blank, non-comment line with no leading whitespace containing a colon
         toplevel_pattern = re.compile(r"^([^\s#][^:]*):(.*)$")
         boundaries: list[tuple[int, str]] = []
 
@@ -314,22 +303,19 @@ class YAMLConfigLoader:
                 key = match.group(1).strip()
                 boundaries.append((i, key))
 
-        # Extract each entry's YAML block and parse it individually
         yaml_parser = YAML()
         yaml_parser.preserve_quotes = True
         yaml_parser.allow_duplicate_keys = True
 
         for idx, (start_line, key) in enumerate(boundaries):
-            # Determine end of this entry (start of next entry or EOF)
-            if idx + 1 < len(boundaries):
+            if idx + 1 < len(boundaries):  # end = next entry start; else EOF
                 end_line = boundaries[idx + 1][0]
             else:
                 end_line = len(lines)
 
-            # Extract the block for this single entry
             block_lines = lines[start_line:end_line]
 
-            # Strip trailing blank lines and comments between entries
+            # CONSTRAINT: Strip trailing blanks/comments — ruamel fails to parse inter-entry whitespace
             while block_lines and (
                 not block_lines[-1].strip() or block_lines[-1].strip().startswith("#")
             ):
@@ -370,13 +356,11 @@ class YAMLConfigLoader:
         Returns:
             Single merged DotFileDict
         """
-        # Collect all paths across entries
         all_paths: list[str] = []
         descriptions: list[str] = []
         all_tags: list[str] = []
 
         for entry in entries:
-            # Collect paths
             if "paths" in entry:
                 paths_val = entry["paths"]
                 if isinstance(paths_val, list):
@@ -388,12 +372,10 @@ class YAMLConfigLoader:
                 if isinstance(path_val, str) and path_val not in all_paths:
                     all_paths.append(path_val)
 
-            # Collect descriptions
             desc = entry.get("description", "")
             if isinstance(desc, str) and desc:
                 descriptions.append(desc)
 
-            # Collect tags
             tags = entry.get("tags", "")
             if isinstance(tags, str) and tags:
                 for tag in tags.split(","):
@@ -401,8 +383,7 @@ class YAMLConfigLoader:
                     if clean_tag and clean_tag not in all_tags:
                         all_tags.append(clean_tag)
 
-        # Build merged entry
-        # Pick the longest description as it's likely the most informative
+        # PURPOSE: Longest description chosen as most informative; fallback to app name if none
         best_description = max(descriptions, key=len) if descriptions else name
 
         merged: DotFileDict = {"description": best_description}
@@ -475,7 +456,6 @@ class YAMLConfigLoader:
         Returns:
             Cleaned DotFileDict, or None if entry is irrecoverably invalid
         """
-        # Fix missing or empty description
         description = data.get("description")
         if not description or not isinstance(description, str):
             logger.warning(
@@ -484,14 +464,13 @@ class YAMLConfigLoader:
             )
             data["description"] = f"{app_name} configuration"
 
-        # Normalize and clean paths
         has_path = "path" in data
         has_paths = "paths" in data
 
         if has_paths:
             paths_raw = data["paths"]
             if isinstance(paths_raw, list):
-                # Clean: remove empties, convert non-strings, deduplicate
+                # CONSTRAINT: Remove empties, coerce non-strings, deduplicate — order preserved
                 clean_paths: list[str] = []
                 seen: set[str] = set()
                 for p in paths_raw:  # pyright: ignore[reportUnknownVariableType]
@@ -539,7 +518,6 @@ class YAMLConfigLoader:
             else:
                 data["path"] = str(path_val).strip()
 
-        # Must have at least one path
         if "path" not in data and "paths" not in data:
             logger.warning(
                 "Dotfile '%s' has neither 'path' nor 'paths', skipping",

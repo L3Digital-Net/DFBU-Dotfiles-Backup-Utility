@@ -35,13 +35,11 @@ from pathlib import Path
 from typing import Final
 
 
-# Log configuration constants
 LOG_DIR: Final[Path] = Path.home() / ".config" / "dfbu_gui" / "logs"
 LOG_FILE: Final[Path] = LOG_DIR / "dfbu_gui.log"
 MAX_LOG_SIZE: Final[int] = 10 * 1024 * 1024  # 10 MB
-BACKUP_COUNT: Final[int] = 5  # Keep 5 backup files
+BACKUP_COUNT: Final[int] = 5  # Keep 5 rotated files
 
-# Log format
 LOG_FORMAT: Final[str] = (
     "%(asctime)s - %(name)s - %(levelname)s - %(funcName)s:%(lineno)d - %(message)s"
 )
@@ -68,21 +66,17 @@ def setup_logging(
         # In main application
         setup_logging(level=logging.INFO, console_output=True, file_output=True)
     """
-    # Create log directory if it doesn't exist
     if file_output:
         LOG_DIR.mkdir(parents=True, exist_ok=True)
 
-    # Get root logger
     root_logger = logging.getLogger()
     root_logger.setLevel(level)
 
-    # Remove existing handlers to avoid duplicates
+    # CONSTRAINT: Clear handlers first — prevents duplicate output if called multiple times
     root_logger.handlers.clear()
 
-    # Create formatter
     formatter = logging.Formatter(LOG_FORMAT, datefmt=DATE_FORMAT)
 
-    # Add rotating file handler
     if file_output:
         try:
             file_handler = logging.handlers.RotatingFileHandler(
@@ -95,10 +89,9 @@ def setup_logging(
             file_handler.setFormatter(formatter)
             root_logger.addHandler(file_handler)
         except (OSError, PermissionError) as e:
-            # If we can't create log file, continue without file logging
+            # CONSTRAINT: Fail open — log file unavailable is non-fatal; continue console-only
             print(f"Warning: Could not create log file: {e}")
 
-    # Add console handler
     if console_output:
         console_handler = logging.StreamHandler()
         console_handler.setLevel(level)
@@ -125,7 +118,6 @@ def get_logger(name: str) -> logging.Logger:
     return logging.getLogger(name)
 
 
-# Convenience function for quick setup
 def setup_default_logging() -> None:
     """
     Set up logging with default configuration.

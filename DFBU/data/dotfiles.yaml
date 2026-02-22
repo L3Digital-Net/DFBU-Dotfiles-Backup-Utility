@@ -1,110 +1,105 @@
-# @format
-
 Bash:
   description: Bash shell startup configuration and history
   paths:
-    - ~/.bashrc
-    - ~/.bash_profile
-    - ~/.bash_login
-    - ~/.bash_logout
-    - ~/.bash_aliases
-    - ~/.bash_history
+  - ~/.bashrc
+  - ~/.bash_profile
+  - ~/.bash_login
+  - ~/.bash_logout
+  - ~/.bash_aliases
+  - ~/.bash_history
 Zsh:
   description: Zsh shell startup configuration and history
   paths:
-    - ~/.zshrc
-    - ~/.zprofile
-    - ~/.zlogin
-    - ~/.zlogout
-    - ~/.zshenv
-    - ~/.zcompdump*
-    - ~/.zsh_history
+  - ~/.zshrc
+  - ~/.zprofile
+  - ~/.zlogin
+  - ~/.zlogout
+  - ~/.zshenv
+  - ~/.zcompdump*
+  - ~/.zsh_history
 Oh My Zsh:
-  description: Oh My Zsh framework user customizations (themes, plugins, aliases)
+  description: Oh My Zsh framework user customizations (themes, plugins,
+    aliases)
   paths:
-    - ~/.oh-my-zsh/custom
-    - ~/.zshrc
+  - ~/.oh-my-zsh/custom
+  - ~/.zshrc
 Prezto:
   description: Prezto Zsh configuration framework
   paths:
-    - ~/.zshrc
-    - ~/.zpreztorc
+  - ~/.zshrc
+  - ~/.zpreztorc
 Powerlevel10k:
   description: Powerlevel10k Zsh prompt theme configuration
   path: ~/.p10k.zsh
 Fish:
   description: Fish shell configuration and variables
   paths:
-    - ~/.config/fish/config.fish
-    - ~/.config/fish/conf.d
-    - ~/.config/fish/functions
-    - ~/.config/fish/completions
-    - ~/.config/fish/fish_variables
+  - ~/.config/fish/config.fish
+  - ~/.config/fish/conf.d
+  - ~/.config/fish/functions
+  - ~/.config/fish/completions
+  - ~/.config/fish/fish_variables
 Nushell:
   description: Nushell configuration
   paths:
-    - ~/.config/nushell/config.nu
-    - ~/.config/nushell/env.nu
+  - ~/.config/nushell/config.nu
+  - ~/.config/nushell/env.nu
 Xonsh:
   description: Xonsh shell configuration
   paths:
-    - ~/.xonshrc
-    - ~/.config/xonsh/rc.xsh
-    - ~/.config/xonsh/rc.d
+  - ~/.xonshrc
+  - ~/.config/xonsh/rc.xsh
+  - ~/.config/xonsh/rc.d
 Starship:
   description: Starship cross-shell prompt configuration
   path: ~/.config/starship.toml
-
-# --- Terminal Multiplexers ---
 tmux:
   description: tmux terminal multiplexer configuration
   paths:
-    - ~/.tmux.conf
-    - ~/.config/tmux/tmux.conf
+  - ~/.tmux.conf
+  - ~/.config/tmux/tmux.conf
 screen:
   description: GNU Screen terminal multiplexer configuration
   path: ~/.screenrc
 byobu:
   description: Byobu terminal multiplexer configuration
   paths:
-    - ~/.byobu/.tmux.conf
-    - ~/.byobu/.screenrc
-    - ~/.byobu/backend
-    - ~/.byobu/keybindings.tmux
-    - ~/.byobu/profile.tmux
-    - ~/.byobu/status
-    - ~/.byobu/statusrc
-    - ~/.byobu/color
-    - ~/.byobu/color.tmux
-    - ~/.byobu/datetime.tmux
-    - ~/.byobu/windows.tmux
+  - ~/.byobu/.tmux.conf
+  - ~/.byobu/.screenrc
+  - ~/.byobu/backend
+  - ~/.byobu/keybindings.tmux
+  - ~/.byobu/profile.tmux
+  - ~/.byobu/status
+  - ~/.byobu/statusrc
+  - ~/.byobu/color
+  - ~/.byobu/color.tmux
+  - ~/.byobu/datetime.tmux
+  - ~/.byobu/windows.tmux
 Zellij:
   description: Zellij terminal workspace configuration
   paths:
-    - ~/.config/zellij/config.kdl
-    - ~/.config/zellij/layouts
-
-# --- Terminals ---
+  - ~/.config/zellij/config.kdl
+  - ~/.config/zellij/layouts
 Alacritty:
   description: Alacritty terminal emulator configuration
   paths:
-    - ~/.config/alacritty/alacritty.yml
-    - ~/.config/alacritty/alacritty.toml
+  - ~/.config/alacritty/alacritty.yml
+  - ~/.config/alacritty/alacritty.toml
 Kitty:
   description: Kitty terminal emulator configuration
   paths:
-    - ~/.config/kitty/kitty.conf
-    - ~/.config/kitty/current-theme.conf
+  - ~/.config/kitty/kitty.conf
+  - ~/.config/kitty/current-theme.conf
 WezTerm:
   description: WezTerm terminal emulator configuration
   paths:
-    - ~/.config/wezterm/wezterm.lua
-    - ~/.wezterm.lua
+  - ~/.config/wezterm/wezterm.lua
+  - ~/.wezterm.lua
 Konsole:
   description: KDE Konsole terminal emulator configuration
   paths:
-    - ~/.config/konsolerc
-    - ~/.local/share/konsole
+  - ~/.config/konsolerc
+  - ~/.local/share/konsole
 Yakuake:
   description: Yakuake drop-down terminal configuration
   path: ~/.config/yakuakerc
@@ -126,57 +121,55 @@ foot:
 URxvt:
   description: rxvt-unicode resources configuration
   paths:
-    - ~/.Xresources
-    - ~/.Xdefaults
+  - ~/.Xresources
+  - ~/.Xdefaults
 Hyper:
   description: Hyper terminal configuration
   path: ~/.hyper.js
-
-# --- Editors & IDEs ---
 Vim:
   description: Vim editor configuration and user customizations
   paths:
-    - ~/.vimrc
-    - ~/.gvimrc
-    - ~/.vim/vimrc
-    - ~/.vim/after
-    - ~/.vim/ftplugin
-    - ~/.vim/plugin
-    - ~/.vim/colors
+  - ~/.vimrc
+  - ~/.gvimrc
+  - ~/.vim/vimrc
+  - ~/.vim/after
+  - ~/.vim/ftplugin
+  - ~/.vim/plugin
+  - ~/.vim/colors
 Neovim:
   description: Neovim editor configuration (XDG)
   paths:
-    - ~/.config/nvim/init.lua
-    - ~/.config/nvim/init.vim
-    - ~/.config/nvim/lua
-    - ~/.config/nvim/after
-    - ~/.config/nvim/plugin
-    - ~/.config/nvim/ftplugin
+  - ~/.config/nvim/init.lua
+  - ~/.config/nvim/init.vim
+  - ~/.config/nvim/lua
+  - ~/.config/nvim/after
+  - ~/.config/nvim/plugin
+  - ~/.config/nvim/ftplugin
 Emacs:
   description: Emacs editor configuration
   paths:
-    - ~/.emacs
-    - ~/.emacs.d/init.el
-    - ~/.emacs.d/early-init.el
-    - ~/.emacs.d/custom.el
-    - ~/.config/emacs/init.el
-    - ~/.config/emacs/early-init.el
-    - ~/.config/emacs/custom.el
+  - ~/.emacs
+  - ~/.emacs.d/init.el
+  - ~/.emacs.d/early-init.el
+  - ~/.emacs.d/custom.el
+  - ~/.config/emacs/init.el
+  - ~/.config/emacs/early-init.el
+  - ~/.config/emacs/custom.el
 nano:
   description: GNU nano editor configuration
   paths:
-    - ~/.nanorc
-    - ~/.config/nano/nanorc
+  - ~/.nanorc
+  - ~/.config/nano/nanorc
 Micro:
   description: Micro terminal-based text editor configuration
   paths:
-    - ~/.config/micro/settings.json
-    - ~/.config/micro/bindings.json
+  - ~/.config/micro/settings.json
+  - ~/.config/micro/bindings.json
 Helix:
   description: Helix editor configuration
   paths:
-    - ~/.config/helix/config.toml
-    - ~/.config/helix/languages.toml
+  - ~/.config/helix/config.toml
+  - ~/.config/helix/languages.toml
 Kate:
   description: Kate text editor configuration
   path: ~/.config/katerc
@@ -189,25 +182,24 @@ Gedit:
 Geany:
   description: Geany IDE/text editor configuration
   paths:
-    - ~/.config/geany/geany.conf
-    - ~/.config/geany/keybindings.conf
-    - ~/.config/geany/filetype_extensions.conf
-    - ~/.config/geany/snippets.conf
-    - ~/.config/geany/ui_toolbar.xml
+  - ~/.config/geany/geany.conf
+  - ~/.config/geany/keybindings.conf
+  - ~/.config/geany/filetype_extensions.conf
+  - ~/.config/geany/snippets.conf
+  - ~/.config/geany/ui_toolbar.xml
 Sublime Text:
   description: Sublime Text configuration and user preferences
   path: ~/.config/sublime-text
 Visual Studio Code:
   description: VS Code user settings and keybindings
   paths:
-    - ~/.config/Code/User/settings.json
-    - ~/.config/Code/User/keybindings.json
+  - ~/.config/Code/User/settings.json
+  - ~/.config/Code/User/keybindings.json
 VSCodium:
   description: VSCodium user settings and keybindings
   paths:
-    - ~/.config/VSCodium/User/settings.json
-    - ~/.config/VSCodium/User/keybindings.json
-
+  - ~/.config/VSCodium/User/settings.json
+  - ~/.config/VSCodium/User/keybindings.json
 TeXstudio:
   description: TeXstudio LaTeX editor configuration file. User settings and
     preferences are stored in texstudio.ini under the configuration directory.
@@ -215,85 +207,81 @@ TeXstudio:
 Cursor:
   description: Cursor IDE user settings and keybindings
   paths:
-    - ~/.config/Cursor/User/settings.json
-    - ~/.config/Cursor/User/keybindings.json
+  - ~/.config/Cursor/User/settings.json
+  - ~/.config/Cursor/User/keybindings.json
 JetBrains IDEs:
   description: JetBrains IDE configuration (varies by product/version)
   path: ~/.config/JetBrains
-
-# --- Version Control & Dev Tools ---
 Git:
   description: Git configuration (classic + XDG)
   paths:
-    - ~/.gitconfig
-    - ~/.config/git/config
-    - ~/.config/git/ignore
-    - ~/.gitignore_global
-    - ~/.git-credentials
+  - ~/.gitconfig
+  - ~/.config/git/config
+  - ~/.config/git/ignore
+  - ~/.gitignore_global
+  - ~/.git-credentials
 GitHub CLI (gh):
   description: GitHub CLI configuration and authentication
   paths:
-    - ~/.config/gh/config.yml
-    - ~/.config/gh/hosts.yml
+  - ~/.config/gh/config.yml
+  - ~/.config/gh/hosts.yml
 GitLab CLI (glab):
   description: GitLab CLI configuration
   paths:
-    - ~/.config/glab-cli/config.yml
-    - ~/.config/glab-cli/aliases.yml
+  - ~/.config/glab-cli/config.yml
+  - ~/.config/glab-cli/aliases.yml
 Mercurial (hg):
   description: Mercurial configuration
   paths:
-    - ~/.hgrc
-    - ~/.config/mercurial/hgrc
+  - ~/.hgrc
+  - ~/.config/mercurial/hgrc
 Subversion (svn):
   description: Subversion client configuration
   paths:
-    - ~/.subversion/config
-    - ~/.subversion/servers
+  - ~/.subversion/config
+  - ~/.subversion/servers
 SSH:
   description: SSH client configuration and known hosts
   paths:
-    - ~/.ssh/config
-    - ~/.ssh/known_hosts
+  - ~/.ssh/config
+  - ~/.ssh/known_hosts
 GnuPG:
   description: GnuPG configuration files
   paths:
-    - ~/.gnupg/gpg.conf
-    - ~/.gnupg/gpg-agent.conf
-    - ~/.gnupg/dirmngr.conf
-    - ~/.gnupg/scdaemon.conf
+  - ~/.gnupg/gpg.conf
+  - ~/.gnupg/gpg-agent.conf
+  - ~/.gnupg/dirmngr.conf
+  - ~/.gnupg/scdaemon.conf
 OpenSSH Server:
   description: OpenSSH server configuration
   paths:
-    - /etc/ssh/sshd_config
-    - /etc/ssh/sshd_config.d
+  - /etc/ssh/sshd_config
+  - /etc/ssh/sshd_config.d
 OpenSSL:
   description: OpenSSL default configuration
   path: /etc/ssl/openssl.cnf
-
-# --- Build Tools & Package Managers ---
 pip:
   description: pip user configuration
   paths:
-    - ~/.config/pip/pip.conf
-    - ~/.pip/pip.conf
+  - ~/.config/pip/pip.conf
+  - ~/.pip/pip.conf
 UV:
   description: uv Python package/project manager configuration
   path: ~/.config/uv/uv.toml
 Poetry:
   description: Poetry Python dependency manager configuration
   paths:
-    - ~/.config/pypoetry/config.toml
-    - ~/.config/pypoetry/auth.toml
+  - ~/.config/pypoetry/config.toml
+  - ~/.config/pypoetry/auth.toml
 conda:
   description: Conda configuration
   path: ~/.condarc
 Cargo:
   description: Rust Cargo configuration and credentials
   paths:
-    - ~/.cargo/config.toml
-    - ~/.cargo/credentials.toml
-    - ~/.cargo/env
+  - ~/.cargo/config.toml
+  - ~/.cargo/credentials.toml
+  - ~/.cargo/env
 rustup:
   description: Rust toolchain manager configuration
   path: ~/.rustup/settings.toml
@@ -312,16 +300,16 @@ pnpm:
 asdf:
   description: asdf version manager configuration
   paths:
-    - ~/.asdfrc
-    - ~/.tool-versions
+  - ~/.asdfrc
+  - ~/.tool-versions
 pyenv:
   description: pyenv Python version manager configuration
   path: ~/.python-version
 pacman:
   description: Arch Linux pacman configuration
   paths:
-    - /etc/pacman.conf
-    - /etc/pacman.d/mirrorlist
+  - /etc/pacman.conf
+  - /etc/pacman.d/mirrorlist
 yay:
   description: yay AUR helper configuration
   path: ~/.config/yay/config.json
@@ -331,78 +319,74 @@ paru:
 APT:
   description: Debian/Ubuntu APT configuration
   paths:
-    - /etc/apt/apt.conf
-    - /etc/apt/apt.conf.d
-    - /etc/apt/sources.list
-    - /etc/apt/sources.list.d
+  - /etc/apt/apt.conf
+  - /etc/apt/apt.conf.d
+  - /etc/apt/sources.list
+  - /etc/apt/sources.list.d
 DNF:
   description: Fedora/RHEL DNF configuration
   path: /etc/dnf/dnf.conf
 YUM Repositories:
   description: YUM/DNF repository definitions
   path: /etc/yum.repos.d/*.repo
-
-# --- Containers & Kubernetes ---
 Docker:
   description: Docker client configuration and credentials
   paths:
-    - ~/.docker/config.json
-    - /etc/docker/daemon.json
+  - ~/.docker/config.json
+  - /etc/docker/daemon.json
 Podman:
   description: Podman/containers configuration (rootless + system)
   paths:
-    - ~/.config/containers/containers.conf
-    - ~/.config/containers/registries.conf
-    - ~/.config/containers/storage.conf
-    - ~/.config/containers/policy.json
-    - /etc/containers/containers.conf
-    - /etc/containers/registries.conf
-    - /etc/containers/storage.conf
-    - /etc/containers/policy.json
-    - /etc/containers/registries.conf.d
+  - ~/.config/containers/containers.conf
+  - ~/.config/containers/registries.conf
+  - ~/.config/containers/storage.conf
+  - ~/.config/containers/policy.json
+  - /etc/containers/containers.conf
+  - /etc/containers/registries.conf
+  - /etc/containers/storage.conf
+  - /etc/containers/policy.json
+  - /etc/containers/registries.conf.d
 Buildah:
   description: Buildah containers configuration (shares containers config)
   paths:
-    - ~/.config/containers/containers.conf
-    - ~/.config/containers/registries.conf
-    - ~/.config/containers/storage.conf
-    - /etc/containers/containers.conf
-    - /etc/containers/registries.conf
-    - /etc/containers/storage.conf
+  - ~/.config/containers/containers.conf
+  - ~/.config/containers/registries.conf
+  - ~/.config/containers/storage.conf
+  - /etc/containers/containers.conf
+  - /etc/containers/registries.conf
+  - /etc/containers/storage.conf
 kubectl:
   description: Kubernetes kubectl configuration and contexts
   path: ~/.kube/config
 Helm:
   description: Helm configuration and repositories
   paths:
-    - ~/.config/helm/repositories.yaml
-    - ~/.config/helm/registry/config.json
+  - ~/.config/helm/repositories.yaml
+  - ~/.config/helm/registry/config.json
 k9s:
   description: k9s Kubernetes TUI configuration
   paths:
-    - ~/.config/k9s/config.yaml
-    - ~/.config/k9s/aliases.yaml
-    - ~/.config/k9s/hotkeys.yaml
-    - ~/.config/k9s/plugins.yaml
-    - ~/.config/k9s/views.yaml
+  - ~/.config/k9s/config.yaml
+  - ~/.config/k9s/aliases.yaml
+  - ~/.config/k9s/hotkeys.yaml
+  - ~/.config/k9s/plugins.yaml
+  - ~/.config/k9s/views.yaml
 minikube:
   description: minikube local Kubernetes cluster configuration
   path: ~/.minikube/config/config.json
-# --- Cloud CLIs ---
 AWS CLI:
   description: AWS CLI configuration and credentials
   paths:
-    - ~/.aws/config
-    - ~/.aws/credentials
+  - ~/.aws/config
+  - ~/.aws/credentials
 Google Cloud SDK:
   description: gcloud configuration
   paths:
-    - ~/.config/gcloud/properties
-    - ~/.config/gcloud/configurations
+  - ~/.config/gcloud/properties
+  - ~/.config/gcloud/configurations
 Azure CLI:
   description: Azure CLI configuration
   path: ~/.azure/config
-
 DigitalOcean CLI (doctl):
   description: doctl CLI configuration for managing DigitalOcean resources.
   path: ~/.config/doctl/config.yaml
@@ -410,32 +394,28 @@ OCI CLI:
   description: Oracle Cloud Infrastructure CLI configuration file used by the
     oci command-line tool.
   path: ~/.oci/config
-
-# --- DevOps ---
 Ansible:
   description: Ansible configuration (user + system)
   paths:
-    - ~/.ansible.cfg
-    - ~/.config/ansible/ansible.cfg
-    - /etc/ansible/ansible.cfg
+  - ~/.ansible.cfg
+  - ~/.config/ansible/ansible.cfg
+  - /etc/ansible/ansible.cfg
 Terraform:
   description: Terraform CLI configuration
   path: ~/.terraformrc
 Vagrant:
   description: Vagrant global configuration
   path: ~/.vagrant.d/Vagrantfile
-
-# --- File Sync, Backup, Archiving ---
 Syncthing:
   description: Syncthing configuration and certificates
   paths:
-    - ~/.config/syncthing/config.xml
-    - ~/.local/state/syncthing/config.xml
+  - ~/.config/syncthing/config.xml
+  - ~/.local/state/syncthing/config.xml
 rsync:
   description: rsync daemon configuration (system)
   paths:
-    - /etc/rsyncd.conf
-    - /etc/default/rsync
+  - /etc/rsyncd.conf
+  - /etc/default/rsync
 Borg Backup:
   description: Borg backup configuration and encryption keys
   path: ~/.config/borg
@@ -445,15 +425,14 @@ Restic:
 Timeshift:
   description: Timeshift system snapshot configuration
   paths:
-    - /etc/timeshift/timeshift.json
+  - /etc/timeshift/timeshift.json
 rclone:
   description: rclone configuration
   path: ~/.config/rclone/rclone.conf
 tar:
   description: tar exclude patterns
   paths:
-    - ~/.tarignore
-
+  - ~/.tarignore
 Nextcloud Client:
   description: Nextcloud desktop client configuration file.
   path: ~/.config/Nextcloud/nextcloud.cfg
@@ -469,114 +448,110 @@ aria2:
 yt-dlp:
   description: yt-dlp configuration
   paths:
-    - ~/.config/yt-dlp/config
-    - ~/.config/yt-dlp/config.txt
+  - ~/.config/yt-dlp/config
+  - ~/.config/yt-dlp/config.txt
 Transmission:
   description: Transmission BitTorrent client configuration
   paths:
-    - ~/.config/transmission/settings.json
+  - ~/.config/transmission/settings.json
 Deluge:
   description: Deluge BitTorrent client configuration
   paths:
-    - ~/.config/deluge/core.conf
-    - ~/.config/deluge/gtkui.conf
-    - ~/.config/deluge/web.conf
-    - ~/.config/deluge/hostlist.conf
-    - ~/.config/deluge/auth
+  - ~/.config/deluge/core.conf
+  - ~/.config/deluge/gtkui.conf
+  - ~/.config/deluge/web.conf
+  - ~/.config/deluge/hostlist.conf
+  - ~/.config/deluge/auth
 qBittorrent:
   description: qBittorrent torrent client configuration and settings
   path: ~/.config/qBittorrent/qBittorrent.conf
 rtorrent:
   description: rTorrent configuration
   path: ~/.rtorrent.rc
-
-# --- Browsers ---
 Firefox:
   description: Firefox profiles and core preference/auth databases
   paths:
-    - ~/.mozilla/firefox/profiles.ini
-    - ~/.mozilla/firefox/*/prefs.js
-    - ~/.mozilla/firefox/*/user.js
-    - ~/.mozilla/firefox/*/containers.json
-    - ~/.mozilla/firefox/*/places.sqlite
-    - ~/.mozilla/firefox/*/logins.json
-    - ~/.mozilla/firefox/*/key4.db
-    - ~/.mozilla/firefox/*/cert9.db
+  - ~/.mozilla/firefox/profiles.ini
+  - ~/.mozilla/firefox/*/prefs.js
+  - ~/.mozilla/firefox/*/user.js
+  - ~/.mozilla/firefox/*/containers.json
+  - ~/.mozilla/firefox/*/places.sqlite
+  - ~/.mozilla/firefox/*/logins.json
+  - ~/.mozilla/firefox/*/key4.db
+  - ~/.mozilla/firefox/*/cert9.db
 Firefox (Flatpak):
   description: Firefox Flatpak profiles and preferences
   paths:
-    - ~/.var/app/org.mozilla.firefox/.mozilla/firefox/profiles.ini
-    - ~/.var/app/org.mozilla.firefox/.mozilla/firefox/*/prefs.js
-    - ~/.var/app/org.mozilla.firefox/.mozilla/firefox/*/user.js
+  - ~/.var/app/org.mozilla.firefox/.mozilla/firefox/profiles.ini
+  - ~/.var/app/org.mozilla.firefox/.mozilla/firefox/*/prefs.js
+  - ~/.var/app/org.mozilla.firefox/.mozilla/firefox/*/user.js
 Librewolf:
   description: LibreWolf profiles and preferences
   paths:
-    - ~/.librewolf/profiles.ini
-    - ~/.librewolf/*/prefs.js
-    - ~/.librewolf/*/user.js
-    - ~/.librewolf/*/places.sqlite
-    - ~/.librewolf/*/logins.json
-    - ~/.librewolf/*/key4.db
-    - ~/.librewolf/*/cert9.db
+  - ~/.librewolf/profiles.ini
+  - ~/.librewolf/*/prefs.js
+  - ~/.librewolf/*/user.js
+  - ~/.librewolf/*/places.sqlite
+  - ~/.librewolf/*/logins.json
+  - ~/.librewolf/*/key4.db
+  - ~/.librewolf/*/cert9.db
 Google Chrome:
   description: Google Chrome profile preferences and bookmarks
   paths:
-    - ~/.config/google-chrome/Default/Preferences
-    - ~/.config/google-chrome/Default/Secure Preferences
-    - ~/.config/google-chrome/Default/Bookmarks
+  - ~/.config/google-chrome/Default/Preferences
+  - ~/.config/google-chrome/Default/Secure Preferences
+  - ~/.config/google-chrome/Default/Bookmarks
 Chromium:
   description: Chromium profile preferences and bookmarks
   paths:
-    - ~/.config/chromium/Default/Preferences
-    - ~/.config/chromium/Default/Secure Preferences
-    - ~/.config/chromium/Default/Bookmarks
+  - ~/.config/chromium/Default/Preferences
+  - ~/.config/chromium/Default/Secure Preferences
+  - ~/.config/chromium/Default/Bookmarks
 Brave:
   description: Brave browser profile preferences and bookmarks
   paths:
-    - ~/.config/BraveSoftware/Brave-Browser/Default/Preferences
-    - ~/.config/BraveSoftware/Brave-Browser/Default/Secure Preferences
-    - ~/.config/BraveSoftware/Brave-Browser/Default/Bookmarks
+  - ~/.config/BraveSoftware/Brave-Browser/Default/Preferences
+  - ~/.config/BraveSoftware/Brave-Browser/Default/Secure Preferences
+  - ~/.config/BraveSoftware/Brave-Browser/Default/Bookmarks
 Vivaldi:
   description: Vivaldi profile preferences and bookmarks
   paths:
-    - ~/.config/vivaldi/Default/Preferences
-    - ~/.config/vivaldi/Default/Secure Preferences
-    - ~/.config/vivaldi/Default/Bookmarks
+  - ~/.config/vivaldi/Default/Preferences
+  - ~/.config/vivaldi/Default/Secure Preferences
+  - ~/.config/vivaldi/Default/Bookmarks
 Microsoft Edge:
   description: Microsoft Edge profile preferences and bookmarks
   paths:
-    - ~/.config/microsoft-edge/Default/Preferences
-    - ~/.config/microsoft-edge/Default/Secure Preferences
-    - ~/.config/microsoft-edge/Default/Bookmarks
+  - ~/.config/microsoft-edge/Default/Preferences
+  - ~/.config/microsoft-edge/Default/Secure Preferences
+  - ~/.config/microsoft-edge/Default/Bookmarks
 Opera:
   description: Opera profile preferences and bookmarks
   paths:
-    - ~/.config/opera/Preferences
-    - ~/.config/opera/Bookmarks
+  - ~/.config/opera/Preferences
+  - ~/.config/opera/Bookmarks
 qutebrowser:
   description: qutebrowser configuration and bookmarks
   paths:
-    - ~/.config/qutebrowser/config.py
-    - ~/.config/qutebrowser/autoconfig.yml
-    - ~/.config/qutebrowser/quickmarks
-    - ~/.config/qutebrowser/bookmarks/urls
-    - ~/.config/qutebrowser/greasemonkey
+  - ~/.config/qutebrowser/config.py
+  - ~/.config/qutebrowser/autoconfig.yml
+  - ~/.config/qutebrowser/quickmarks
+  - ~/.config/qutebrowser/bookmarks/urls
+  - ~/.config/qutebrowser/greasemonkey
 Falkon:
   description: Falkon browser configuration
   path: ~/.config/falkon
 Epiphany (GNOME Web):
   description: Epiphany browser configuration (stored in dconf binary DB)
   path: ~/.config/dconf/user
-
-# --- Email & Calendaring ---
 Thunderbird:
   description: Thunderbird profiles and preferences
   paths:
-    - ~/.thunderbird/profiles.ini
-    - ~/.thunderbird/*/prefs.js
-    - ~/.thunderbird/*/logins.json
-    - ~/.thunderbird/*/key4.db
-    - ~/.thunderbird/*/cert9.db
+  - ~/.thunderbird/profiles.ini
+  - ~/.thunderbird/*/prefs.js
+  - ~/.thunderbird/*/logins.json
+  - ~/.thunderbird/*/key4.db
+  - ~/.thunderbird/*/cert9.db
 Evolution:
   description: Evolution email/calendar configuration (account sources use
     dynamic UUID-based filenames)
@@ -584,26 +559,26 @@ Evolution:
 mutt:
   description: mutt email client configuration
   paths:
-    - ~/.muttrc
-    - ~/.config/mutt/muttrc
-    - ~/.config/mutt/mailcap
+  - ~/.muttrc
+  - ~/.config/mutt/muttrc
+  - ~/.config/mutt/mailcap
 neomutt:
   description: neomutt email client configuration
   paths:
-    - ~/.neomuttrc
-    - ~/.config/neomutt/neomuttrc
-    - ~/.config/neomutt/mailcap
+  - ~/.neomuttrc
+  - ~/.config/neomutt/neomuttrc
+  - ~/.config/neomutt/mailcap
 aerc:
   description: aerc email client configuration
   paths:
-    - ~/.config/aerc/aerc.conf
-    - ~/.config/aerc/binds.conf
-    - ~/.config/aerc/accounts.conf
+  - ~/.config/aerc/aerc.conf
+  - ~/.config/aerc/binds.conf
+  - ~/.config/aerc/accounts.conf
 msmtp:
   description: msmtp SMTP client configuration
   paths:
-    - ~/.msmtprc
-    - ~/.config/msmtp/config
+  - ~/.msmtprc
+  - ~/.config/msmtp/config
 isync (mbsync):
   description: isync/mbsync IMAP sync configuration
   path: ~/.mbsyncrc
@@ -616,8 +591,6 @@ KMail:
 Kontact:
   description: Kontact configuration
   path: ~/.config/kontactrc
-
-# --- Messaging & Collaboration ---
 Discord:
   description: Discord configuration
   path: ~/.config/discord/settings.json
@@ -642,52 +615,50 @@ Element:
 HexChat:
   description: HexChat IRC client configuration
   paths:
-    - ~/.config/hexchat/hexchat.conf
-    - ~/.config/hexchat/servlist.conf
-    - ~/.config/hexchat/chanopt.conf
-    - ~/.config/hexchat/notify.conf
-    - ~/.config/hexchat/ignore.conf
-    - ~/.config/hexchat/buttons.conf
-    - ~/.config/hexchat/performlist.conf
-    - ~/.config/hexchat/usermenu.conf
-    - ~/.config/hexchat/keybindings.conf
+  - ~/.config/hexchat/hexchat.conf
+  - ~/.config/hexchat/servlist.conf
+  - ~/.config/hexchat/chanopt.conf
+  - ~/.config/hexchat/notify.conf
+  - ~/.config/hexchat/ignore.conf
+  - ~/.config/hexchat/buttons.conf
+  - ~/.config/hexchat/performlist.conf
+  - ~/.config/hexchat/usermenu.conf
+  - ~/.config/hexchat/keybindings.conf
 WeeChat:
   description: WeeChat IRC client configuration
   paths:
-    - ~/.config/weechat/weechat.conf
-    - ~/.config/weechat/irc.conf
-    - ~/.config/weechat/plugins.conf
-    - ~/.config/weechat/alias.conf
-    - ~/.config/weechat/buflist.conf
-    - ~/.config/weechat/charset.conf
-    - ~/.config/weechat/relay.conf
-    - ~/.config/weechat/trigger.conf
-    - ~/.config/weechat/sec.conf
-    - ~/.weechat/weechat.conf
-    - ~/.weechat/irc.conf
+  - ~/.config/weechat/weechat.conf
+  - ~/.config/weechat/irc.conf
+  - ~/.config/weechat/plugins.conf
+  - ~/.config/weechat/alias.conf
+  - ~/.config/weechat/buflist.conf
+  - ~/.config/weechat/charset.conf
+  - ~/.config/weechat/relay.conf
+  - ~/.config/weechat/trigger.conf
+  - ~/.config/weechat/sec.conf
+  - ~/.weechat/weechat.conf
+  - ~/.weechat/irc.conf
 irssi:
   description: irssi IRC client configuration
   paths:
-    - ~/.irssi/config
-    - ~/.irssi/startup
-    - ~/.irssi/default.theme
+  - ~/.irssi/config
+  - ~/.irssi/startup
+  - ~/.irssi/default.theme
 Pidgin:
   description: Pidgin IM client configuration
   paths:
-    - ~/.purple/accounts.xml
-    - ~/.purple/blist.xml
-    - ~/.purple/prefs.xml
-    - ~/.purple/status.xml
-    - ~/.purple/pounces.xml
-
-# --- Note Taking & Knowledge ---
+  - ~/.purple/accounts.xml
+  - ~/.purple/blist.xml
+  - ~/.purple/prefs.xml
+  - ~/.purple/status.xml
+  - ~/.purple/pounces.xml
 Joplin:
   description: Joplin desktop configuration
   paths:
-    - ~/.config/joplin-desktop/settings.json
-    - ~/.config/joplin-desktop/keymap-desktop.json
-    - ~/.config/joplin-desktop/userchrome.css
-    - ~/.config/joplin-desktop/userstyle.css
+  - ~/.config/joplin-desktop/settings.json
+  - ~/.config/joplin-desktop/keymap-desktop.json
+  - ~/.config/joplin-desktop/userchrome.css
+  - ~/.config/joplin-desktop/userstyle.css
 Obsidian:
   description: Obsidian vault configuration (stored inside each vault)
   path: <vault>/.obsidian
@@ -695,30 +666,27 @@ Logseq:
   description: Logseq graph configuration (stored inside each graph) plus
     optional global config
   paths:
-    - <graph>/.logseq
-    - ~/.logseq
+  - <graph>/.logseq
+  - ~/.logseq
 Zotero:
   description: Zotero profiles/preferences (native)
   paths:
-    - ~/.zotero/profiles.ini
-    - ~/.zotero/zotero/prefs.js
+  - ~/.zotero/profiles.ini
+  - ~/.zotero/zotero/prefs.js
 RedNotebook:
   description: RedNotebook configuration and data
   path: ~/.rednotebook
 QOwnNotes:
   description: QOwnNotes note-taking application configuration
   path: ~/.config/PBE/QOwnNotes.conf
-
 Anki:
   description: Anki spaced repetition flashcard app configuration and user data.
   paths:
-    - ~/.local/share/Anki2
-    - ~/.var/app/net.ankiweb.Anki/data/Anki2
+  - ~/.local/share/Anki2
+  - ~/.var/app/net.ankiweb.Anki/data/Anki2
 Trilium Notes:
   description: Trilium Notes data directory containing notes and configuration.
   path: ~/.local/share/trilium-data
-
-# --- Office, Documents, PDF ---
 LibreOffice:
   description: LibreOffice user settings (registrymodifications.xcu stores all
     user preferences)
@@ -726,14 +694,14 @@ LibreOffice:
 ONLYOFFICE Desktop Editors:
   description: ONLYOFFICE Desktop Editors configuration
   paths:
-    - ~/.config/onlyoffice/DesktopEditors.conf
-    - ~/.var/app/org.onlyoffice.desktopeditors/config/onlyoffice/DesktopEditors.conf
+  - ~/.config/onlyoffice/DesktopEditors.conf
+  - ~/.var/app/org.onlyoffice.desktopeditors/config/onlyoffice/DesktopEditors.conf
 Okular:
   description: Okular document viewer configuration and UI state
   paths:
-    - ~/.config/okularrc
-    - ~/.config/okularpartrc
-    - ~/.local/share/okular/docdata
+  - ~/.config/okularrc
+  - ~/.config/okularpartrc
+  - ~/.local/share/okular/docdata
 Evince:
   description: Evince document viewer preferences (stored in dconf binary DB)
   path: ~/.config/dconf/user
@@ -743,39 +711,33 @@ Zathura:
 Calibre:
   description: Calibre ebook manager configuration
   paths:
-    - ~/.config/calibre/global.py.json
-    - ~/.config/calibre/gui.py.json
-    - ~/.config/calibre/tweaks.json
-    - ~/.config/calibre/shortcuts.json
+  - ~/.config/calibre/global.py.json
+  - ~/.config/calibre/gui.py.json
+  - ~/.config/calibre/tweaks.json
+  - ~/.config/calibre/shortcuts.json
 FBReader:
   description: FBReader ebook reader configuration
   path: ~/.FBReader/config.xml
-
-# --- Search & Indexing ---
 Recoll:
   description: Recoll desktop search configuration
   paths:
-    - ~/.recoll/recoll.conf
-    - /usr/share/recoll/recoll.conf
-
-# --- RSS Readers ---
+  - ~/.recoll/recoll.conf
+  - /usr/share/recoll/recoll.conf
 Newsboat:
   description: Newsboat RSS reader configuration
   paths:
-    - ~/.newsboat/config
-    - ~/.newsboat/urls
-    - ~/.config/newsboat/config
-    - ~/.config/newsboat/urls
+  - ~/.newsboat/config
+  - ~/.newsboat/urls
+  - ~/.config/newsboat/config
+  - ~/.config/newsboat/urls
 Liferea:
   description: Liferea RSS reader configuration
   path: ~/.config/liferea
-
-# --- Clipboard & Screenshots ---
 CopyQ:
   description: CopyQ clipboard manager configuration
   paths:
-    - ~/.config/copyq/copyq.conf
-    - ~/.config/copyq/copyq-filter.ini
+  - ~/.config/copyq/copyq.conf
+  - ~/.config/copyq/copyq-filter.ini
 Klipper:
   description: KDE clipboard manager configuration
   path: ~/.config/klipperrc
@@ -785,8 +747,6 @@ Flameshot:
 Spectacle:
   description: KDE Spectacle screenshot tool configuration
   path: ~/.config/spectaclerc
-
-# --- Image Viewers ---
 qView:
   description: qView image viewer configuration
   path: ~/.config/qView/qView.conf
@@ -802,34 +762,32 @@ Geeqie:
 feh:
   description: feh image viewer wallpaper restore script
   path: ~/.fehbg
-
-# --- Media Players & Tools ---
 mpv:
   description: mpv media player configuration
   paths:
-    - ~/.config/mpv/mpv.conf
-    - ~/.config/mpv/input.conf
+  - ~/.config/mpv/mpv.conf
+  - ~/.config/mpv/input.conf
 VLC:
   description: VLC media player configuration
   path: ~/.config/vlc/vlcrc
 Kodi:
   description: Kodi media center configuration
   paths:
-    - ~/.kodi/userdata/guisettings.xml
-    - ~/.kodi/userdata/advancedsettings.xml
-    - ~/.kodi/userdata/sources.xml
-    - ~/.kodi/userdata/favourites.xml
-    - ~/.kodi/userdata/mediasources.xml
-    - ~/.kodi/userdata/profiles.xml
-    - ~/.kodi/userdata/passwords.xml
-    - ~/.kodi/userdata/RssFeeds.xml
-    - ~/.kodi/userdata/Lircmap.xml
-    - ~/.kodi/userdata/keymaps
+  - ~/.kodi/userdata/guisettings.xml
+  - ~/.kodi/userdata/advancedsettings.xml
+  - ~/.kodi/userdata/sources.xml
+  - ~/.kodi/userdata/favourites.xml
+  - ~/.kodi/userdata/mediasources.xml
+  - ~/.kodi/userdata/profiles.xml
+  - ~/.kodi/userdata/passwords.xml
+  - ~/.kodi/userdata/RssFeeds.xml
+  - ~/.kodi/userdata/Lircmap.xml
+  - ~/.kodi/userdata/keymaps
 Rhythmbox:
   description: Rhythmbox configuration and playlists
   paths:
-    - ~/.local/share/rhythmbox/rhythmdb.xml
-    - ~/.local/share/rhythmbox/playlists.xml
+  - ~/.local/share/rhythmbox/rhythmdb.xml
+  - ~/.local/share/rhythmbox/playlists.xml
 Strawberry:
   description: Strawberry music player configuration
   path: ~/.config/strawberry/strawberry.conf
@@ -839,24 +797,24 @@ Clementine:
 Audacious:
   description: Audacious audio player configuration
   paths:
-    - ~/.config/audacious/config
-    - ~/.config/audacious/eq.preset
-    - ~/.config/audacious/plugin-registry
+  - ~/.config/audacious/config
+  - ~/.config/audacious/eq.preset
+  - ~/.config/audacious/plugin-registry
 cmus:
   description: cmus console music player configuration
   paths:
-    - ~/.config/cmus/autosave
-    - ~/.config/cmus/rc
+  - ~/.config/cmus/autosave
+  - ~/.config/cmus/rc
 MPD:
   description: Music Player Daemon configuration
   paths:
-    - ~/.config/mpd/mpd.conf
-    - ~/.config/mpd/playlists
+  - ~/.config/mpd/mpd.conf
+  - ~/.config/mpd/playlists
 ncmpcpp:
   description: ncmpcpp MPD client configuration
   paths:
-    - ~/.config/ncmpcpp/config
-    - ~/.config/ncmpcpp/bindings
+  - ~/.config/ncmpcpp/config
+  - ~/.config/ncmpcpp/bindings
 Spotify:
   description: Spotify preferences (native)
   path: ~/.config/spotify/prefs
@@ -866,46 +824,44 @@ Spotify (Flatpak):
 PipeWire:
   description: PipeWire configuration (user overrides)
   paths:
-    - ~/.config/pipewire/pipewire.conf
-    - ~/.config/pipewire/pipewire-pulse.conf
-    - ~/.config/pipewire/client.conf
-    - ~/.config/pipewire/client-rt.conf
-    - ~/.config/pipewire/jack.conf
-    - ~/.config/pipewire/pipewire.conf.d
-    - /etc/pipewire/pipewire.conf
-    - /etc/pipewire/pipewire-pulse.conf
-    - /etc/pipewire/pipewire.conf.d
+  - ~/.config/pipewire/pipewire.conf
+  - ~/.config/pipewire/pipewire-pulse.conf
+  - ~/.config/pipewire/client.conf
+  - ~/.config/pipewire/client-rt.conf
+  - ~/.config/pipewire/jack.conf
+  - ~/.config/pipewire/pipewire.conf.d
+  - /etc/pipewire/pipewire.conf
+  - /etc/pipewire/pipewire-pulse.conf
+  - /etc/pipewire/pipewire.conf.d
 PulseAudio:
   description: PulseAudio configuration (legacy)
   paths:
-    - ~/.config/pulse/default.pa
-    - ~/.config/pulse/daemon.conf
-    - ~/.config/pulse/client.conf
-    - /etc/pulse/default.pa
-    - /etc/pulse/daemon.conf
-    - /etc/pulse/client.conf
-    - /etc/pulse/system.pa
+  - ~/.config/pulse/default.pa
+  - ~/.config/pulse/daemon.conf
+  - ~/.config/pulse/client.conf
+  - /etc/pulse/default.pa
+  - /etc/pulse/daemon.conf
+  - /etc/pulse/client.conf
+  - /etc/pulse/system.pa
 ALSA:
   description: ALSA per-user configuration
   path: ~/.asoundrc
-
-# --- Graphics & Content Creation ---
 GIMP:
-  description: GIMP configuration (version-numbered subdirectory contains
-    many config files and user-created assets)
+  description: GIMP configuration (version-numbered subdirectory contains many
+    config files and user-created assets)
   paths:
-    - ~/.config/GIMP
-    - ~/.gimp-2.8
+  - ~/.config/GIMP
+  - ~/.gimp-2.8
 Inkscape:
   description: Inkscape configuration
   paths:
-    - ~/.config/inkscape/preferences.xml
-    - ~/.config/inkscape/keys/default.xml
+  - ~/.config/inkscape/preferences.xml
+  - ~/.config/inkscape/keys/default.xml
 Krita:
   description: Krita configuration
   paths:
-    - ~/.config/kritadisplayrc
-    - ~/.config/kritarc
+  - ~/.config/kritadisplayrc
+  - ~/.config/kritarc
   tags: General
 Blender:
   description: Blender configuration and user preferences (version-numbered
@@ -914,9 +870,9 @@ Blender:
 Darktable:
   description: Darktable configuration
   paths:
-    - ~/.config/darktable/darktablerc
-    - ~/.config/darktable/shortcutsrc
-    - ~/.config/darktable/luarc
+  - ~/.config/darktable/darktablerc
+  - ~/.config/darktable/shortcutsrc
+  - ~/.config/darktable/luarc
 RawTherapee:
   description: RawTherapee configuration
   path: ~/.config/RawTherapee
@@ -926,8 +882,8 @@ digiKam:
 Kdenlive:
   description: Kdenlive configuration
   paths:
-    - ~/.config/kdenliverc
-    - ~/.local/share/kdenlive
+  - ~/.config/kdenliverc
+  - ~/.local/share/kdenlive
 OBS Studio:
   description: OBS Studio configuration (profiles and scene collections use
     dynamic user-created names)
@@ -935,27 +891,25 @@ OBS Studio:
 Audacity:
   description: Audacity configuration
   paths:
-    - ~/.audacity-data/audacity.cfg
-    - ~/.config/audacity/audacity.cfg
+  - ~/.audacity-data/audacity.cfg
+  - ~/.config/audacity/audacity.cfg
 Ardour:
   description: Ardour configuration (versioned directory)
   paths:
-    - ~/.config/ardour*
-
-# --- Window Managers, Bars, Notifications ---
+  - ~/.config/ardour*
 i3:
   description: i3 window manager configuration
   paths:
-    - ~/.config/i3/config
-    - ~/.config/i3status/config
+  - ~/.config/i3/config
+  - ~/.config/i3status/config
 Sway:
   description: Sway Wayland compositor configuration
   path: ~/.config/sway/config
 Hyprland:
   description: Hyprland Wayland compositor configuration
   paths:
-    - ~/.config/hypr/hyprland.conf
-    - ~/.config/hypr/hyprpaper.conf
+  - ~/.config/hypr/hyprland.conf
+  - ~/.config/hypr/hyprpaper.conf
 bspwm:
   description: bspwm window manager configuration
   path: ~/.config/bspwm/bspwmrc
@@ -965,73 +919,69 @@ sxhkd:
 Openbox:
   description: Openbox window manager configuration
   paths:
-    - ~/.config/openbox/rc.xml
-    - ~/.config/openbox/menu.xml
-    - ~/.config/openbox/autostart
-    - ~/.config/openbox/environment
+  - ~/.config/openbox/rc.xml
+  - ~/.config/openbox/menu.xml
+  - ~/.config/openbox/autostart
+  - ~/.config/openbox/environment
 AwesomeWM:
   description: Awesome window manager configuration
   paths:
-    - ~/.config/awesome/rc.lua
-    - ~/.config/awesome/theme.lua
+  - ~/.config/awesome/rc.lua
+  - ~/.config/awesome/theme.lua
 Qtile:
   description: Qtile window manager configuration
   path: ~/.config/qtile/config.py
 Xmonad:
   description: Xmonad window manager configuration
   paths:
-    - ~/.xmonad/xmonad.hs
-    - ~/.config/xmonad/xmonad.hs
+  - ~/.xmonad/xmonad.hs
+  - ~/.config/xmonad/xmonad.hs
 herbstluftwm:
   description: herbstluftwm window manager configuration
   paths:
-    - ~/.config/herbstluftwm/autostart
-    - ~/.config/herbstluftwm/panel.sh
+  - ~/.config/herbstluftwm/autostart
+  - ~/.config/herbstluftwm/panel.sh
 Picom:
   description: Picom X11 compositor configuration
   paths:
-    - ~/.config/picom/picom.conf
-    - ~/.config/picom.conf
+  - ~/.config/picom/picom.conf
+  - ~/.config/picom.conf
 Polybar:
   description: Polybar status bar configuration
   paths:
-    - ~/.config/polybar/config.ini
-    - ~/.config/polybar/config
-    - ~/.config/polybar/launch.sh
+  - ~/.config/polybar/config.ini
+  - ~/.config/polybar/config
+  - ~/.config/polybar/launch.sh
 Waybar:
   description: Waybar status bar configuration
   paths:
-    - ~/.config/waybar/config
-    - ~/.config/waybar/config.jsonc
-    - ~/.config/waybar/style.css
+  - ~/.config/waybar/config
+  - ~/.config/waybar/config.jsonc
+  - ~/.config/waybar/style.css
 dunst:
   description: dunst notification daemon configuration
   path: ~/.config/dunst/dunstrc
 mako:
   description: mako notification daemon configuration
   path: ~/.config/mako/config
-
-# --- Launchers ---
 Rofi:
-  description: Rofi launcher configuration (may include user-created .rasi
-    theme files)
+  description: Rofi launcher configuration (may include user-created .rasi theme
+    files)
   path: ~/.config/rofi
 wofi:
   description: wofi Wayland launcher configuration
   paths:
-    - ~/.config/wofi/config
-    - ~/.config/wofi/style.css
+  - ~/.config/wofi/config
+  - ~/.config/wofi/style.css
 Ulauncher:
   description: Ulauncher configuration
   paths:
-    - ~/.config/ulauncher/settings.json
-    - ~/.config/ulauncher/extensions.json
-    - ~/.config/ulauncher/shortcuts.json
+  - ~/.config/ulauncher/settings.json
+  - ~/.config/ulauncher/extensions.json
+  - ~/.config/ulauncher/shortcuts.json
 Albert:
   description: Albert launcher configuration
   path: ~/.config/albert/albert.conf
-
-# --- File Managers ---
 Dolphin:
   description: KDE Dolphin file manager configuration
   path: ~/.config/dolphinrc
@@ -1041,34 +991,32 @@ Nautilus:
 Thunar:
   description: Thunar file manager configuration
   paths:
-    - ~/.config/Thunar/accels.scm
-    - ~/.config/Thunar/uca.xml
+  - ~/.config/Thunar/accels.scm
+  - ~/.config/Thunar/uca.xml
 Nemo:
   description: Nemo file manager preferences (stored in dconf)
   path: ~/.config/dconf/user
 ranger:
   description: ranger file manager configuration
   paths:
-    - ~/.config/ranger/rc.conf
-    - ~/.config/ranger/rifle.conf
-    - ~/.config/ranger/commands.py
-    - ~/.config/ranger/scope.sh
+  - ~/.config/ranger/rc.conf
+  - ~/.config/ranger/rifle.conf
+  - ~/.config/ranger/commands.py
+  - ~/.config/ranger/scope.sh
 lf:
   description: lf terminal file manager configuration
   paths:
-    - ~/.config/lf/lfrc
-    - ~/.config/lf/colors
-    - ~/.config/lf/icons
+  - ~/.config/lf/lfrc
+  - ~/.config/lf/colors
+  - ~/.config/lf/icons
 Midnight Commander:
   description: Midnight Commander configuration
   paths:
-    - ~/.config/mc/ini
-    - ~/.config/mc/panels.ini
-    - ~/.config/mc/menu
-    - ~/.config/mc/hotlist
-    - ~/.config/mc/mc.ext
-
-# --- System & Desktop Environment ---
+  - ~/.config/mc/ini
+  - ~/.config/mc/panels.ini
+  - ~/.config/mc/menu
+  - ~/.config/mc/hotlist
+  - ~/.config/mc/mc.ext
 GNOME Settings:
   description: GNOME settings (stored in dconf binary DB)
   path: ~/.config/dconf/user
@@ -1085,31 +1033,29 @@ MATE:
 LXQt:
   description: LXQt desktop configuration
   paths:
-    - ~/.config/lxqt/lxqt.conf
-    - ~/.config/lxqt/panel.conf
-    - ~/.config/lxqt/session.conf
-    - ~/.config/lxqt/globalkeyshortcuts.conf
-    - ~/.config/lxqt/lxqt-notificationd.conf
-    - ~/.config/lxqt/lxqt-powermanagement.conf
-    - ~/.config/lxqt/lxqt-runner.conf
-
-# --- Appearance & UI Tooling ---
+  - ~/.config/lxqt/lxqt.conf
+  - ~/.config/lxqt/panel.conf
+  - ~/.config/lxqt/session.conf
+  - ~/.config/lxqt/globalkeyshortcuts.conf
+  - ~/.config/lxqt/lxqt-notificationd.conf
+  - ~/.config/lxqt/lxqt-powermanagement.conf
+  - ~/.config/lxqt/lxqt-runner.conf
 GTK 2:
   description: GTK 2 configuration
   path: ~/.gtkrc-2.0
 GTK 3:
   description: GTK 3 configuration
   paths:
-    - ~/.config/gtk-3.0/settings.ini
-    - ~/.config/gtk-3.0/bookmarks
+  - ~/.config/gtk-3.0/settings.ini
+  - ~/.config/gtk-3.0/bookmarks
 GTK 4:
   description: GTK 4 configuration
   path: ~/.config/gtk-4.0/settings.ini
 Qt (User):
   description: Qt user-wide settings
   paths:
-    - ~/.config/Trolltech.conf
-    - ~/.config/QtProject
+  - ~/.config/Trolltech.conf
+  - ~/.config/QtProject
 qt5ct:
   description: qt5ct Qt5 configuration tool settings
   path: ~/.config/qt5ct/qt5ct.conf
@@ -1123,8 +1069,8 @@ Kvantum:
 Fontconfig:
   description: Fontconfig user configuration
   paths:
-    - ~/.config/fontconfig/fonts.conf
-    - ~/.config/fontconfig/conf.d
+  - ~/.config/fontconfig/fonts.conf
+  - ~/.config/fontconfig/conf.d
 User Fonts:
   description: User-installed fonts
   path: ~/.local/share/fonts
@@ -1137,8 +1083,6 @@ User Icons:
 XDG User Dirs:
   description: XDG user directories configuration
   path: ~/.config/user-dirs.dirs
-
-# --- CLI Utilities ---
 ripgrep:
   description: ripgrep configuration
   path: ~/.config/rg
@@ -1148,8 +1092,8 @@ bat:
 fzf:
   description: fzf configuration and shell integration
   paths:
-    - ~/.fzf.bash
-    - ~/.fzf.zsh
+  - ~/.fzf.bash
+  - ~/.fzf.zsh
 Eza:
   description: eza modern ls replacement configuration
   path: ~/.config/eza
@@ -1162,9 +1106,9 @@ fd:
 direnv:
   description: direnv configuration
   paths:
-    - ~/.config/direnv/direnv.toml
-    - ~/.config/direnv/direnvrc
-    - ~/.direnvrc
+  - ~/.config/direnv/direnv.toml
+  - ~/.config/direnv/direnvrc
+  - ~/.direnvrc
 htop:
   description: htop process viewer configuration
   path: ~/.config/htop/htoprc
@@ -1183,103 +1127,92 @@ glances:
 Conky:
   description: Conky system monitor configuration
   paths:
-    - ~/.conkyrc
-    - ~/.config/conky
-
+  - ~/.conkyrc
+  - ~/.config/conky
 tlrc:
   description: tlrc (Rust-based tldr client) configuration file.
   path: ~/.config/tlrc/config.toml
 tldr:
   description: Node.js tldr client configuration.
   path: ~/.tldrrc
-
-# --- Databases ---
 PostgreSQL (psql):
   description: psql client configuration and credentials
   paths:
-    - ~/.psqlrc
-    - ~/.pgpass
+  - ~/.psqlrc
+  - ~/.pgpass
 MySQL:
   description: MySQL client configuration
   paths:
-    - ~/.my.cnf
+  - ~/.my.cnf
 SQLite:
   description: SQLite configuration (optional)
   paths:
-    - ~/.sqliterc
-
-# --- Networking & VPN ---
+  - ~/.sqliterc
 NetworkManager:
   description: NetworkManager configuration and connections
   paths:
-    - /etc/NetworkManager/NetworkManager.conf
-    - /etc/NetworkManager/system-connections/*.nmconnection
+  - /etc/NetworkManager/NetworkManager.conf
+  - /etc/NetworkManager/system-connections/*.nmconnection
 OpenVPN:
   description: OpenVPN client configuration
   paths:
-    - /etc/openvpn
-    - ~/.config/openvpn
+  - /etc/openvpn
+  - ~/.config/openvpn
 WireGuard:
   description: WireGuard configuration
   paths:
-    - /etc/wireguard/*.conf
+  - /etc/wireguard/*.conf
 wpa_supplicant:
   description: WPA supplicant configuration
   path: /etc/wpa_supplicant/wpa_supplicant.conf
 iwd:
   description: iwd wireless daemon configuration
   path: /etc/iwd/main.conf
-
-# --- Remote Access ---
 Remmina:
   description: Remmina remote desktop client settings and connection profiles
   paths:
-    - ~/.config/remmina/remmina.pref
-    - ~/.local/share/remmina
+  - ~/.config/remmina/remmina.pref
+  - ~/.local/share/remmina
 FileZilla:
   description: FileZilla FTP/SFTP client configuration and site manager
   paths:
-    - ~/.config/filezilla/filezilla.xml
-    - ~/.config/filezilla/sitemanager.xml
-    - ~/.config/filezilla/layout.xml
-    - ~/.config/filezilla/queue.xml
-    - ~/.config/filezilla/recentservers.xml
-    - ~/.config/filezilla/trustedcerts.xml
-    - ~/.config/filezilla/bookmarks.xml
+  - ~/.config/filezilla/filezilla.xml
+  - ~/.config/filezilla/sitemanager.xml
+  - ~/.config/filezilla/layout.xml
+  - ~/.config/filezilla/queue.xml
+  - ~/.config/filezilla/recentservers.xml
+  - ~/.config/filezilla/trustedcerts.xml
+  - ~/.config/filezilla/bookmarks.xml
 KRDC:
   description: KDE Remote Desktop Client configuration
   path: ~/.config/krdcrc
-
-# --- Security & Policy ---
 sudo:
   description: sudo policy configuration
   paths:
-    - /etc/sudoers
-    - /etc/sudoers.d
+  - /etc/sudoers
+  - /etc/sudoers.d
 SELinux:
   description: SELinux configuration
   path: /etc/selinux/config
 AppArmor:
   description: AppArmor configuration
   paths:
-    - /etc/apparmor
-    - /etc/apparmor.d
+  - /etc/apparmor
+  - /etc/apparmor.d
 fail2ban:
   description: fail2ban configuration
   paths:
-    - /etc/fail2ban/jail.conf
-    - /etc/fail2ban/jail.d
-
-# --- Boot, Time, Logging ---
+  - /etc/fail2ban/jail.conf
+  - /etc/fail2ban/jail.d
 GRUB:
   description: GRUB bootloader defaults
   path: /etc/default/grub
 systemd:
   description: systemd system and user configuration
   paths:
-    - /etc/systemd/system
-    - /etc/systemd/user
-    - ~/.config/systemd/user
+  - /etc/systemd/system
+  - /etc/systemd/user
+  - ~/.config/systemd/user
 journald:
   description: systemd-journald configuration
   path: /etc/systemd/journald.conf
@@ -1289,59 +1222,53 @@ timesyncd:
 chrony:
   description: chrony NTP configuration
   paths:
-    - /etc/chrony.conf
-    - /etc/chrony
+  - /etc/chrony.conf
+  - /etc/chrony
 rsyslog:
   description: rsyslog configuration
   paths:
-    - /etc/rsyslog.conf
-    - /etc/rsyslog.d
-
-# --- Common Server Daemons ---
+  - /etc/rsyslog.conf
+  - /etc/rsyslog.d
 nginx:
   description: nginx web server configuration
   paths:
-    - /etc/nginx/nginx.conf
-    - /etc/nginx/conf.d
-    - /etc/nginx/sites-available
-    - /etc/nginx/sites-enabled
+  - /etc/nginx/nginx.conf
+  - /etc/nginx/conf.d
+  - /etc/nginx/sites-available
+  - /etc/nginx/sites-enabled
 Apache HTTP Server:
   description: Apache httpd configuration (Debian/Ubuntu + RHEL/Fedora)
   paths:
-    - /etc/apache2/apache2.conf
-    - /etc/apache2/sites-available
-    - /etc/apache2/sites-enabled
-    - /etc/httpd/conf/httpd.conf
-    - /etc/httpd/conf.d
+  - /etc/apache2/apache2.conf
+  - /etc/apache2/sites-available
+  - /etc/apache2/sites-enabled
+  - /etc/httpd/conf/httpd.conf
+  - /etc/httpd/conf.d
 Caddy:
   description: Caddy web server configuration
   paths:
-    - /etc/caddy/Caddyfile
-    - /etc/caddy/caddy.env
+  - /etc/caddy/Caddyfile
+  - /etc/caddy/caddy.env
 Samba:
   description: Samba (SMB/CIFS) configuration
   paths:
-    - /etc/samba/smb.conf
+  - /etc/samba/smb.conf
 OpenSSH:
   description: OpenSSH client and server system configuration
   paths:
-    - /etc/ssh/ssh_config
-    - /etc/ssh/ssh_config.d
-    - /etc/ssh/sshd_config
-    - /etc/ssh/sshd_config.d
-
-# --- Printers & Scanners ---
+  - /etc/ssh/ssh_config
+  - /etc/ssh/ssh_config.d
+  - /etc/ssh/sshd_config
+  - /etc/ssh/sshd_config.d
 CUPS:
   description: CUPS printing system configuration
   paths:
-    - /etc/cups/cupsd.conf
-    - /etc/cups/printers.conf
+  - /etc/cups/cupsd.conf
+  - /etc/cups/printers.conf
 SANE:
   description: SANE scanner configuration
   paths:
-    - /etc/sane.d
-
-# --- Password Managers ---
+  - /etc/sane.d
 KeePassXC:
   description: KeePassXC configuration
   path: ~/.config/keepassxc/keepassxc.ini
@@ -1351,471 +1278,380 @@ Bitwarden:
 pass:
   description: pass (password-store) configuration and store
   paths:
-    - ~/.password-store
-    - ~/.config/password-store
+  - ~/.password-store
+  - ~/.config/password-store
 gopass:
   description: gopass configuration and store
   paths:
-    - ~/.config/gopass
-    - ~/.local/share/gopass
-
-# --- Virtualization ---
+  - ~/.config/gopass
+  - ~/.local/share/gopass
 VirtualBox:
   description: VirtualBox configuration
   path: ~/.config/VirtualBox/VirtualBox.xml
 libvirt:
   description: libvirt client and daemon configuration
   paths:
-    - ~/.config/libvirt/libvirt.conf
-    - /etc/libvirt/libvirtd.conf
-    - /etc/libvirt/qemu.conf
-    - /etc/libvirt/virtlogd.conf
-    - /etc/libvirt/virtlockd.conf
-    - /etc/libvirt/nwfilter
-    - /etc/libvirt/qemu
+  - ~/.config/libvirt/libvirt.conf
+  - /etc/libvirt/libvirtd.conf
+  - /etc/libvirt/qemu.conf
+  - /etc/libvirt/virtlogd.conf
+  - /etc/libvirt/virtlockd.conf
+  - /etc/libvirt/nwfilter
+  - /etc/libvirt/qemu
 virt-manager:
   description: virt-manager configuration
   path: ~/.config/virt-manager
-
-# --- Gaming ---
 Steam:
   description: Steam configuration (native)
   paths:
-    - ~/.steam/steam/config/config.vdf
-    - ~/.steam/steam/config/loginusers.vdf
-    - ~/.steam/steam/userdata/*/config/localconfig.vdf
+  - ~/.steam/steam/config/config.vdf
+  - ~/.steam/steam/config/loginusers.vdf
+  - ~/.steam/steam/userdata/*/config/localconfig.vdf
 Lutris:
   description: Lutris configuration
   paths:
-    - ~/.config/lutris/lutris.conf
-    - ~/.config/lutris/system.yml
-    - ~/.config/lutris/games
+  - ~/.config/lutris/lutris.conf
+  - ~/.config/lutris/system.yml
+  - ~/.config/lutris/games
 Heroic Games Launcher:
   description: Heroic Games Launcher configuration
   path: ~/.config/heroic
 RetroArch:
   description: RetroArch configuration
   paths:
-    - ~/.config/retroarch/retroarch.cfg
-    - ~/.config/retroarch/retroarch-core-options.cfg
-    - ~/.config/retroarch/config
+  - ~/.config/retroarch/retroarch.cfg
+  - ~/.config/retroarch/retroarch-core-options.cfg
+  - ~/.config/retroarch/config
 PCSX2:
   description: PCSX2 configuration
   paths:
-    - ~/.config/PCSX2/inis/PCSX2.ini
-    - ~/.config/PCSX2/PCSX2.ini
+  - ~/.config/PCSX2/inis/PCSX2.ini
+  - ~/.config/PCSX2/PCSX2.ini
 Dolphin Emulator:
   description: Dolphin emulator configuration
   paths:
-    - ~/.config/dolphin-emu/Dolphin.ini
-    - ~/.config/dolphin-emu/GFX.ini
-    - ~/.config/dolphin-emu/Logger.ini
-    - ~/.config/dolphin-emu/DSP.ini
-    - ~/.config/dolphin-emu/GCKeyNew.ini
-    - ~/.config/dolphin-emu/WiimoteNew.ini
-    - ~/.config/dolphin-emu/Hotkeys.ini
-    - ~/.config/dolphin-emu/FreeLook.ini
-    - ~/.config/dolphin-emu/GameSettings
-    - ~/.config/dolphin-emu/Profiles
+  - ~/.config/dolphin-emu/Dolphin.ini
+  - ~/.config/dolphin-emu/GFX.ini
+  - ~/.config/dolphin-emu/Logger.ini
+  - ~/.config/dolphin-emu/DSP.ini
+  - ~/.config/dolphin-emu/GCKeyNew.ini
+  - ~/.config/dolphin-emu/WiimoteNew.ini
+  - ~/.config/dolphin-emu/Hotkeys.ini
+  - ~/.config/dolphin-emu/FreeLook.ini
+  - ~/.config/dolphin-emu/GameSettings
+  - ~/.config/dolphin-emu/Profiles
 MAME:
   description: MAME configuration
   paths:
-    - ~/.mame/mame.ini
-    - ~/.mame/ui.ini
-    - ~/.mame/plugin.ini
-# --- Additional Applications from Original Config ---
-
+  - ~/.mame/mame.ini
+  - ~/.mame/ui.ini
+  - ~/.mame/plugin.ini
 AppImageLauncher:
   description: AppImageLauncher configuration for managing AppImage applications
   path: ~/.config/appimagelauncher.cfg
-
 Ark:
   description: Ark archive manager settings and preferences
   path: ~/.config/arkrc
-
 Octopi:
   description: Octopi package manager GUI configuration
   path: ~/.config/octopi/octopi.conf
-
 Krusader:
   description: Krusader file manager configuration
   paths:
-    - ~/.config/krusaderrc
-    - ~/.local/share/kxmlgui5/krusader/krusaderui.rc
-    - /usr/share/krusader/foo.keymap
-    - /usr/share/kxmlgui5/krusader/krusaderui.rc
-    - ~/.local/share/krusader/krbookmarks.xml
-    - ~/.local/share/krusader/useractions.xml
-    - /usr/share/krusader/foo.color
-
+  - ~/.config/krusaderrc
+  - ~/.local/share/kxmlgui5/krusader/krusaderui.rc
+  - /usr/share/krusader/foo.keymap
+  - /usr/share/kxmlgui5/krusader/krusaderui.rc
+  - ~/.local/share/krusader/krbookmarks.xml
+  - ~/.local/share/krusader/useractions.xml
+  - /usr/share/krusader/foo.color
 Systemd User:
   description: User systemd default target
   paths:
-    - ~/.config/systemd/user/default.target
-    - ~/.config/systemd/user.conf
-
+  - ~/.config/systemd/user/default.target
+  - ~/.config/systemd/user.conf
 Cron User:
   description: User crontab file
   path: ~/.crontab
-
 RPM Fusion:
   description: RPM Fusion repository configuration
   path: /etc/yum.repos.d/rpmfusion*.repo
-
 Fedora Repositories:
   description: Fedora system repositories configuration
   path: /etc/yum.repos.d/fedora*.repo
-
 Third Party Repositories:
   description: YUM/DNF repository list file
   path: /etc/yum.repos.d/*.repo
-
 Hosts File:
   description: System hosts file for name resolution
   path: /etc/hosts
-
 GRUB Custom:
   description: GRUB custom menu entries
   paths:
-    - /etc/grub.d/40_custom
-    - /etc/grub.d/30_os-prober
-
+  - /etc/grub.d/40_custom
+  - /etc/grub.d/30_os-prober
 System Locale:
   description: System locale configuration
   path: /etc/locale.conf
-
 Timezone:
   description: System timezone configuration
   path: /etc/localtime
-
 Firewall (UFW):
   description: UFW main configuration
   paths:
-    - /etc/ufw/ufw.conf
-    - /etc/default/ufw
-    - /etc/ufw/user.rules
-    - /etc/ufw/user6.rules
-
+  - /etc/ufw/ufw.conf
+  - /etc/default/ufw
+  - /etc/ufw/user.rules
+  - /etc/ufw/user6.rules
 Firewall (firewalld):
   description: Firewalld main configuration
   paths:
-    - /etc/firewalld/firewalld.conf
-    - /etc/firewalld/direct.xml
-
+  - /etc/firewalld/firewalld.conf
+  - /etc/firewalld/direct.xml
 XnViewMP:
   description: XnViewMP image viewer main configuration
   paths:
-    - ~/.config/xnviewmp/xnview.ini
-    - ~/.config/xnviewmp/default.bar
-    - ~/.config/xnviewmp/EfficientBrowserBar.bar
-    - ~/.config/xnviewmp/EfficientViewerBar.bar
-    - ~/.config/xnviewmp/default.cmenu
-    - ~/.config/xnviewmp/default.keys
-
+  - ~/.config/xnviewmp/xnview.ini
+  - ~/.config/xnviewmp/default.bar
+  - ~/.config/xnviewmp/EfficientBrowserBar.bar
+  - ~/.config/xnviewmp/EfficientViewerBar.bar
+  - ~/.config/xnviewmp/default.cmenu
+  - ~/.config/xnviewmp/default.keys
 Eye of GNOME (eog):
   description: Eye of GNOME image viewer preferences (stored in dconf binary DB)
   path: ~/.config/dconf/user
-
 Amarok:
   description: Amarok music player configuration
   path: ~/.config/amarokrc
-
 Xmind:
   description: Xmind mind mapping software configuration
   path: ~/.config/XMind
-
 uGet:
   description: uGet download manager configuration
   path: ~/.config/uget
-
 PlayOnLinux:
   description: PlayOnLinux Wine frontend configuration
   path: ~/.PlayOnLinux
-
 Bottles:
   description: Bottles Wine prefix manager configuration
   path: ~/.var/app/com.usebottles.bottles
-
 itch.io:
   description: itch.io game client configuration
   path: ~/.config/itch
-
 Baobab:
   description: GNOME Disk Usage Analyzer preferences
   path: ~/.config/dconf/user
-
 Filelight:
   description: Filelight disk usage analyzer configuration
   path: ~/.config/filelightrc
-
 KSysGuard:
   description: KDE System Guard configuration
   path: ~/.config/ksysguardrc
-
 Octave:
   description: Octave mathematical software configuration
   path: ~/.octaverc
-
 GeoGebra:
   description: GeoGebra mathematics software configuration
   path: ~/.geogebra
-
 Stellarium:
   description: Stellarium planetarium software configuration
   path: ~/.stellarium
-
 Avogadro:
   description: Avogadro molecular editor configuration
   path: ~/.avogadro
-
 Skype:
   description: Skype communication application configuration
   path: ~/.config/skypeforlinux
-
 Steam (Local Share):
   description: Steam local application registry
   paths:
-    - ~/.local/share/Steam/registry.vdf
-    - ~/.local/share/Steam/config/config.vdf
-
+  - ~/.local/share/Steam/registry.vdf
+  - ~/.local/share/Steam/config/config.vdf
 KDE Connect:
   description: Connect pairing, plugins, and device configuration
   path: ~/.config/kdeconnect
-
 KCalc:
   description: KDE Calculator configuration
   path: ~/.config/kcalcrc
-
 Qalculate!:
   description: Qalculate! calculator configuration
   path: ~/.config/qalculate
-
 VMware Workstation:
   description: VMware Workstation Pro configuration
   path: ~/.vmware
-
 Plasma:
   description: Plasma desktop environment core configuration
   paths:
-    - ~/.config/plasmarc
-    - ~/.config/plasmashellrc
-    - ~/.config/plasma-org.kde.plasma.desktop-appletsrc
-
+  - ~/.config/plasmarc
+  - ~/.config/plasmashellrc
+  - ~/.config/plasma-org.kde.plasma.desktop-appletsrc
 Plasma Shell:
   description: Plasma locale and format settings (per-user locale independent of
     system)
   path: ~/.config/plasma-localerc
-
 Plasma Notifications:
   description: Per-app and system notification preferences
   path: ~/.config/plasmanotifyrc
-
 KWin:
   description: KWin window manager configuration and effects
   path: ~/.config/kwinrc
-
 KWin Rules:
   description: KWin window rules for per-window behavior and placement
   path: ~/.config/kwinrulesrc
-
 KWin Output:
   description: KWin display output configuration for Wayland (monitor layout)
   path: ~/.config/kwinoutputconfig
-
 KScreen:
   description: KScreen display configuration for current hardware
   path: ~/.local/share/kscreen/*/outputs/*
-
 KGamma:
   description: Gamma and color correction settings
   path: ~/.config/kgammarc
-
 Input Devices:
   description: Mouse and touchpad settings for Wayland and cursor themes
   path: ~/.config/kcminputrc
-
 Touchpad X11:
   description: Touchpad settings for X11 using libinput driver
   path: ~/.config/touchpadxlibinputrc
-
 Keyboard Layout:
   description: Keyboard layouts, variants, and input method options
   path: ~/.config/kxkbrc
-
 KGlobalShortcuts:
   description: KDE global keyboard shortcuts and key bindings
   path: ~/.config/kglobalshortcutsrc
-
 KRunner:
   description: KRunner application launcher configuration
   path: ~/.config/krunnerrc
-
 Application Menu:
   description: Custom Application Menu structure saved by KMenuEdit
   path: ~/.config/menus/applications-kmenuedit.menu
-
 Baloo:
   description: Baloo file indexing and search service configuration
   path: ~/.config/baloofilerc
-
 Activity Manager:
   description: Activities metadata and current activity configuration
   paths:
-    - ~/.config/kactivitymanagerdrc
-    - ~/.config/kactivitymanagerd-switcher
-    - ~/.config/kactivitymanagerd-statsrc
-    - ~/.config/kactivitymanagerd-pluginsrc
-
+  - ~/.config/kactivitymanagerdrc
+  - ~/.config/kactivitymanagerd-switcher
+  - ~/.config/kactivitymanagerd-statsrc
+  - ~/.config/kactivitymanagerd-pluginsrc
 Session Manager:
   description: Session restore behavior and saved client applications
   path: ~/.config/ksmserverrc
-
 KScreenLocker:
   description: KDE screen locker settings and lock screen configuration
   path: ~/.config/kscreenlockerrc
-
 PowerDevil:
   description: PowerDevil power management settings
   paths:
-    - ~/.config/powerdevilrc
-    - ~/.config/powermanagementprofilesrc
-
+  - ~/.config/powerdevilrc
+  - ~/.config/powermanagementprofilesrc
 BlueDevil:
   description: Bluetooth daemon state and auto-enable preferences
   path: ~/.config/bluedevilglobalrc
-
 GTK:
   description: GTK theme and appearance settings configuration
   paths:
-    - ~/.config/gtkrc
-    - ~/.gtkrc-2.0
-    - ~/.config/gtkrc-2.0
-    - ~/.config/gtk-3.0/settings.ini
-    - ~/.config/gtk-4.0/settings.ini
-
+  - ~/.config/gtkrc
+  - ~/.gtkrc-2.0
+  - ~/.config/gtkrc-2.0
+  - ~/.config/gtk-3.0/settings.ini
+  - ~/.config/gtk-4.0/settings.ini
 xsettingsd:
   description: X11 settings daemon configuration for desktop theme settings
   path: ~/.config/xsettingsd/xsettingsd.conf
-
 User Directories:
   description: User-visible folder paths used by Plasma (Documents, Downloads,
     etc.)
   path: ~/.config/user-dirs.dirs
-
 Places:
   description: Dolphin sidebar Places bookmarks and custom locations
   path: ~/.local/share/user-places.xbel
-
 KTorrent:
   description: KTorrent BitTorrent client configuration
   path: ~/.config/ktorrentrc
-
 Ktorrent Data:
   description: KDE KTorrent application data and torrents
   path: ~/.local/share/ktorrent
-
 Akregator:
   description: Akregator RSS feed reader configuration
   path: ~/.config/akregatorrc
-
 KOrganizer:
   description: KOrganizer calendar application configuration
   path: ~/.config/korganizerrc
-
 KAddressBook:
   description: KAddressBook contact manager configuration
   path: ~/.config/kaddressbookrc
-
 KNotes:
   description: KNotes sticky notes application configuration
   path: ~/.config/knotesrc
-
 KWallet:
   description: KDE Wallet password storage system configuration
   path: ~/.config/kwalletrc
-
 KWallet Data:
   description: KDE Wallet password storage data
   path: ~/.local/share/kwalletd
-
 GNOME Shell Extensions:
   description: Shell extensions configuration
   path: ~/.local/share/gnome-shell/extensions
-
 System Monitor:
   description: Plasma System Monitor custom page configurations
   path: ~/.local/share/plasma-systemmonitor
-
 DFBU - Dotfiles Backup Utility:
   description: Backup and restore dotfiles and other critical configs/data.
   paths:
-    - ~/.config/bin/pythonScripts/requirements.txt
-    - ~/.config/bin/pythonScripts/DFBU
-
+  - ~/.config/bin/pythonScripts/requirements.txt
+  - ~/.config/bin/pythonScripts/DFBU
 ExportScripts:
   description: Moves scripts from local GitHub repos to ~/.config/bin
   path: ~/.config/bin/pythonScripts/ExportScripts
-
 Python REPL:
   description: Python interactive shell history
   path: ~/.python_history
-
 NVM:
   description: Node Version Manager configuration
   path: ~/.config/nvm
-
 Proton:
   description: Proton services (VPN, Drive) configuration
   path: ~/.config/Proton
-
 K3b:
   description: K3b disc burning application configuration
   paths:
-    - ~/.config/k3brc
-    - ~/.config/k3b.notifyrc
-
+  - ~/.config/k3brc
+  - ~/.config/k3b.notifyrc
 Gnote:
   description: Gnote desktop note-taking application configuration
   path: ~/.config/gnote
-
 MyNotex:
   description: MyNotex free-form database note manager configuration
   path: ~/.config/mynotex
-
 Plasma Workspace:
   description: Plasma workspace configuration and settings
   path: ~/.config/plasma-workspace
-
 Akonadi:
   description: Akonadi PIM storage service configuration
   paths:
-    - ~/.config/akonadi
-    - ~/.config/akonadi-firstrunrc
-    - ~/.config/akonadi_contacts_resource_0rc
-    - ~/.config/akonadi_ical_resource_0rc
-    - ~/.config/akonadi_indexing_agentrc
-    - ~/.config/akonadi_maildir_resource_0rc
-
+  - ~/.config/akonadi
+  - ~/.config/akonadi-firstrunrc
+  - ~/.config/akonadi_contacts_resource_0rc
+  - ~/.config/akonadi_ical_resource_0rc
+  - ~/.config/akonadi_indexing_agentrc
+  - ~/.config/akonadi_maildir_resource_0rc
 Kalendar:
   description: Kalendar calendar application configuration
   path: ~/.config/kalendaracrc
-
 Solaar:
   description: Solaar Logitech device manager configuration
   path: ~/.config/solaar
-
 Wavemon:
   description: Wavemon wireless network monitor configuration
   path: ~/.config/wavemon
-
 GColor3:
   description: GColor3 color picker configuration
   path: ~/.config/gcolor3
-
 FreeFileSync:
   description: FreeFileSync file synchronization tool configuration
   path: ~/.config/FreeFileSync
-
 Vuescan:
   description: Vuescan scanner software settings
   path: ~/.vuescan

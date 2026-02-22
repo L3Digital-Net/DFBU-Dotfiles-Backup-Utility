@@ -42,10 +42,8 @@ class HelpDialog(QDialog):
         layout = QVBoxLayout(self)
         help_dir = Path(__file__).parent.parent / "resources" / "help"
 
-        # Create tab widget
         tab_widget = QTabWidget()
 
-        # Quick Start tab
         quick_start_browser = QTextBrowser()
         try:
             quick_start_browser.setHtml(
@@ -56,7 +54,6 @@ class HelpDialog(QDialog):
         quick_start_browser.setOpenExternalLinks(True)
         tab_widget.addTab(quick_start_browser, "Quick Start")
 
-        # Configuration Reference tab
         config_browser = QTextBrowser()
         try:
             config_browser.setHtml(
@@ -69,7 +66,6 @@ class HelpDialog(QDialog):
 
         layout.addWidget(tab_widget)
 
-        # Close button
         button_box = QDialogButtonBox(QDialogButtonBox.StandardButton.Close)
         button_box.rejected.connect(self.reject)
         layout.addWidget(button_box)

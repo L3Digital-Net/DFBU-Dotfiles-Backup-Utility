@@ -47,7 +47,6 @@ class ProfileManager:
         self._profiles: dict[str, ProfileDict] = {}
         self._active_profile: str | None = None
 
-        # Initialize YAML handler
         self._yaml: YAML = YAML()
         self._yaml.preserve_quotes = True
         self._yaml.default_flow_style = False
@@ -80,8 +79,10 @@ class ProfileManager:
         profiles_file = self.config_path / "profiles.yaml"
 
         if not profiles_file.exists():
-            # No profiles file is valid - just means no saved profiles
-            return True, ""
+            return (
+                True,
+                "",
+            )  # CONSTRAINT: Missing profiles.yaml means no profiles configured — not an error
 
         try:
             with profiles_file.open("r", encoding="utf-8") as f:
@@ -90,10 +91,9 @@ class ProfileManager:
             if data is None:
                 return True, ""
 
-            # Extract active profile setting
             self._active_profile = data.pop("active_profile", None)
 
-            # Remaining keys are profile names
+            # CONSTRAINT: active_profile popped before iteration — remaining keys are profile names
             for name, profile_data in data.items():
                 if isinstance(profile_data, dict):
                     self._profiles[name] = ProfileDict(
@@ -120,7 +120,6 @@ class ProfileManager:
         profiles_file = self.config_path / "profiles.yaml"
 
         try:
-            # Build data structure
             data: dict[str, Any] = {}
 
             for name, profile in self._profiles.items():
@@ -203,7 +202,6 @@ class ProfileManager:
 
         del self._profiles[name]
 
-        # Clear active if deleted
         if self._active_profile == name:
             self._active_profile = None
 

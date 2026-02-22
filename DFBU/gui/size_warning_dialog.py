@@ -23,17 +23,14 @@ from PySide6.QtWidgets import (
 from gui.theme import DFBUColors
 
 
-# Path to UI file relative to this module
 UI_FILE: Final[Path] = Path(__file__).parent / "designer" / "size_warning_dialog.ui"
 
-# Level colors for visual indication
 LEVEL_COLORS: Final[dict[str, QColor]] = {
     "warning": QColor(DFBUColors.WARNING),
     "alert": QColor(DFBUColors.ALERT),
     "critical": QColor(DFBUColors.CRITICAL),
 }
 
-# Level icons for visual indication
 LEVEL_ICONS: Final[dict[str, str]] = {
     "warning": "\u26a0\ufe0f",  # Warning sign
     "alert": "\U0001f536",  # Orange diamond
@@ -87,12 +84,10 @@ class SizeWarningDialog(QDialog):
         if loaded is None:  # QUiLoader may return None on error
             raise RuntimeError(f"Failed to load UI file: {UI_FILE}")
 
-        # Set window properties from loaded UI
         self.setWindowTitle(loaded.windowTitle())
         self.setMinimumSize(loaded.minimumSize())
         self.resize(loaded.size())
 
-        # Find widgets by object name
         title_label = loaded.findChild(QLabel, "titleLabel")
         total_size_label = loaded.findChild(QLabel, "totalSizeLabel")
         file_count_label = loaded.findChild(QLabel, "fileCountLabel")
@@ -102,7 +97,6 @@ class SizeWarningDialog(QDialog):
         continue_btn = loaded.findChild(QPushButton, "continueBtn")
         cancel_btn = loaded.findChild(QPushButton, "cancelBtn")
 
-        # Validate all required widgets were found
         if not all(
             [
                 title_label,
@@ -145,7 +139,6 @@ class SizeWarningDialog(QDialog):
         """Populate dialog with size report data."""
         report = self.size_report
 
-        # Update summary labels
         total_size_mb = report["total_size_mb"]
         if total_size_mb >= 1024:
             size_text = f"{total_size_mb / 1024:.2f} GB"
@@ -155,7 +148,6 @@ class SizeWarningDialog(QDialog):
         self.total_size_label.setText(f"Total backup size: {size_text}")
         self.file_count_label.setText(f"{report['total_files']} files analyzed")
 
-        # Update title based on severity
         if report["has_critical"]:
             self.title_label.setText("Critical: Very large files detected")
             self.title_label.setStyleSheet(f"color: {DFBUColors.CRITICAL};")
@@ -166,20 +158,17 @@ class SizeWarningDialog(QDialog):
             self.title_label.setText("Warning: Some large files detected")
             self.title_label.setStyleSheet(f"color: {DFBUColors.WARNING};")
 
-        # Populate large items tree
         self.large_items_tree.clear()
         for item in report["large_items"]:
             level = item["level"]
             icon = LEVEL_ICONS.get(level, "")
 
-            # Format size
             size_mb = item["size_mb"]
             if size_mb >= 1024:
                 size_text = f"{size_mb / 1024:.2f} GB"
             else:
                 size_text = f"{size_mb:.1f} MB"
 
-            # Create tree item
             tree_item = QTreeWidgetItem(
                 [
                     f"{icon} {level.upper()}",
@@ -189,18 +178,15 @@ class SizeWarningDialog(QDialog):
                 ]
             )
 
-            # Set background color for level column
             if level in LEVEL_COLORS:
                 tree_item.setBackground(0, LEVEL_COLORS[level])
                 tree_item.setForeground(0, QColor(DFBUColors.NEUTRAL_900))
 
             self.large_items_tree.addTopLevelItem(tree_item)
 
-        # Resize columns to content
         for i in range(self.large_items_tree.columnCount()):
             self.large_items_tree.resizeColumnToContents(i)
 
-        # Update critical warning if needed
         if report["has_critical"]:
             self.critical_warning_label.setText(
                 "⚠️ CRITICAL: Files over 1 GB detected. These files may cause issues "

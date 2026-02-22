@@ -26,31 +26,10 @@ Requirements:
 from typing import Final
 
 
-# =============================================================================
-# Status Bar Configuration
-# =============================================================================
+STATUS_MESSAGE_TIMEOUT_MS: Final[int] = 3000  # ms before status bar auto-clears
 
-# Duration (in milliseconds) to display status bar messages before auto-clear
-STATUS_MESSAGE_TIMEOUT_MS: Final[int] = 3000  # 3 seconds
+MIN_DIALOG_WIDTH: Final[int] = 600  # px — add/update dotfile dialog minimum width
+MIN_DIALOG_HEIGHT: Final[int] = 400  # px — add/update dotfile dialog minimum height
 
-
-# =============================================================================
-# Dialog Dimensions
-# =============================================================================
-
-# Minimum width for add/update dotfile dialog (pixels)
-MIN_DIALOG_WIDTH: Final[int] = 600
-
-# Minimum height for add/update dotfile dialog (pixels)
-MIN_DIALOG_HEIGHT: Final[int] = 400
-
-
-# =============================================================================
-# Window Configuration
-# =============================================================================
-
-# Default minimum main window width (pixels)
-MIN_MAIN_WINDOW_WIDTH: Final[int] = 1024
-
-# Default minimum main window height (pixels)
-MIN_MAIN_WINDOW_HEIGHT: Final[int] = 768
+MIN_MAIN_WINDOW_WIDTH: Final[int] = 1024  # px — main window minimum width
+MIN_MAIN_WINDOW_HEIGHT: Final[int] = 768  # px — main window minimum height

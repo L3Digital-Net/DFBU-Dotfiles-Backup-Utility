@@ -1,13 +1,15 @@
 ---
 agent: agent
-description: "Walk through the full DFBU release process: validate, version bump, merge, tag, and publish."
+description:
+  "Walk through the full DFBU release process: validate, version bump, merge, tag, and
+  publish."
 ---
 
 # DFBU Release Process
 
-You are guiding the developer through publishing a new DFBU release.
-Work through each phase sequentially. **Stop and confirm with the user before
-executing any destructive or irreversible step** (merge, tag push).
+You are guiding the developer through publishing a new DFBU release. Work through each
+phase sequentially. **Stop and confirm with the user before executing any destructive or
+irreversible step** (merge, tag push).
 
 ## Context
 
@@ -50,15 +52,15 @@ executing any destructive or irreversible step** (merge, tag push).
 
 Ask the user:
 
-> What version are you releasing? (current is in `pyproject.toml`)
-> Is this a MAJOR, MINOR, or PATCH bump?
+> What version are you releasing? (current is in `pyproject.toml`) Is this a MAJOR,
+> MINOR, or PATCH bump?
 
 Once confirmed, note the new version string (e.g. `1.3.0`).
 
 ## Phase 3 — Version bump
 
-Update the version string in **all four locations**. Use search to verify
-each one before editing:
+Update the version string in **all four locations**. Use search to verify each one
+before editing:
 
 | File                                       | Field                               |
 | ------------------------------------------ | ----------------------------------- |
@@ -75,8 +77,8 @@ For the appdata XML, add a new `<release>` entry **above** the existing ones:
 </release>
 ```
 
-Then ask the user for the CHANGELOG entry content and prepend a new section
-to `DFBU/docs/CHANGELOG.md` under the appropriate heading:
+Then ask the user for the CHANGELOG entry content and prepend a new section to
+`DFBU/docs/CHANGELOG.md` under the appropriate heading:
 
 ```markdown
 ## [X.Y.Z] - YYYY-MM-DD
@@ -152,8 +154,8 @@ git push origin vX.Y.Z
 
 Tell the user:
 
-> The `vX.Y.Z` tag has been pushed. The **Release AppImage** workflow is now
-> running at: https://github.com/L3DigitalNet/dfbu-dotfiles-backup-utility/actions
+> The `vX.Y.Z` tag has been pushed. The **Release AppImage** workflow is now running at:
+> https://github.com/L3DigitalNet/dfbu-dotfiles-backup-utility/actions
 >
 > It will:
 >
@@ -166,7 +168,8 @@ Tell the user:
 Ask the user to verify:
 
 - [ ] GitHub Actions workflow completed successfully
-- [ ] Release page shows at https://github.com/L3DigitalNet/dfbu-dotfiles-backup-utility/releases
+- [ ] Release page shows at
+      https://github.com/L3DigitalNet/dfbu-dotfiles-backup-utility/releases
 - [ ] `DFBU-x86_64.AppImage` and `.zsync` files are attached
 - [ ] Release notes look correct
 
