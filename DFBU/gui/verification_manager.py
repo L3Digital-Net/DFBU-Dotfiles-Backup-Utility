@@ -41,21 +41,12 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from core.common_types import VerificationReportDict, VerificationResultDict
 
 
-# Setup logger for this module
 logger = logging.getLogger(__name__)
 
-
-# =============================================================================
-# Constants
-# =============================================================================
-
-HASH_CHUNK_SIZE: Final[int] = 65536  # 64KB chunks for hash calculation
+HASH_CHUNK_SIZE: Final[int] = (
+    65536  # 64KB chunks — balances memory use vs read overhead
+)
 TIMESTAMP_FORMAT: Final[str] = "%Y-%m-%dT%H:%M:%S"
-
-
-# =============================================================================
-# VerificationManager Class
-# =============================================================================
 
 
 class VerificationManager:
@@ -158,15 +149,12 @@ class VerificationManager:
             Tuple of (size_match, hash_match, error_message)
             hash_match is None if hash verification is disabled
         """
-        # Check backup file exists
         if not backup_path.exists():
             return False, None, "Backup file missing"
 
-        # Check source file exists (needed for comparison)
         if not source_path.exists():
             return False, None, "Source file no longer exists"
 
-        # Size verification
         try:
             source_size = source_path.stat().st_size
             backup_size = backup_path.stat().st_size
@@ -177,7 +165,6 @@ class VerificationManager:
         if not size_match:
             return False, None, ""
 
-        # Hash verification (if enabled)
         hash_match: bool | None = None
         if self._hash_verification_enabled:
             try:
@@ -201,13 +188,11 @@ class VerificationManager:
         """
         lines: list[str] = []
 
-        # Header
         lines.append("=" * 60)
         lines.append("BACKUP VERIFICATION REPORT")
         lines.append("=" * 60)
         lines.append("")
 
-        # Summary
         lines.append(f"Timestamp:    {report['timestamp']}")
         lines.append(f"Backup Type:  {report['backup_type']}")
         lines.append(f"Backup Path:  {report['backup_path']}")
@@ -216,7 +201,6 @@ class VerificationManager:
         )
         lines.append("")
 
-        # Results summary
         total = report["total_files"]
         ok = report["verified_ok"]
         failed = report["verified_failed"]
@@ -229,7 +213,6 @@ class VerificationManager:
 
         lines.append("")
 
-        # Failed files details
         failed_results = [r for r in report["results"] if r["status"] != "ok"]
         if failed_results:
             lines.append("-" * 60)
@@ -282,21 +265,18 @@ class VerificationManager:
             "error": "",
         }
 
-        # Check backup file exists
         if not backup_path.exists():
             result["status"] = "missing"
             result["error"] = "Backup file does not exist"
             logger.warning(f"Verification failed: {backup_path} missing")
             return result
 
-        # Check source file exists
         if not source_path.exists():
             result["status"] = "error"
             result["error"] = "Source file no longer exists for comparison"
             logger.warning(f"Verification skipped: {source_path} no longer exists")
             return result
 
-        # Get file sizes
         try:
             source_size = source_path.stat().st_size
             backup_size = backup_path.stat().st_size
@@ -308,7 +288,6 @@ class VerificationManager:
             logger.error(f"Verification error for {source_path}: {e}")
             return result
 
-        # Size verification
         result["size_match"] = source_size == backup_size
         if not result["size_match"]:
             result["status"] = "size_mismatch"
@@ -318,7 +297,6 @@ class VerificationManager:
             )
             return result
 
-        # Hash verification (if enabled)
         if self._hash_verification_enabled:
             try:
                 source_hash = self._calculate_hash(source_path)

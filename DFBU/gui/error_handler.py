@@ -42,11 +42,6 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from core.common_types import OperationResultDict, PathResultDict
 
 
-# =============================================================================
-# Constants
-# =============================================================================
-
-# Error types that are potentially recoverable with retry
 RETRYABLE_ERROR_TYPES: Final[frozenset[str]] = frozenset(
     {
         "permission",
@@ -57,7 +52,6 @@ RETRYABLE_ERROR_TYPES: Final[frozenset[str]] = frozenset(
     }
 )
 
-# Error types that are definitely not recoverable
 NON_RETRYABLE_ERROR_TYPES: Final[frozenset[str]] = frozenset(
     {
         "not_found",
@@ -68,7 +62,6 @@ NON_RETRYABLE_ERROR_TYPES: Final[frozenset[str]] = frozenset(
     }
 )
 
-# Mapping of errno codes to error categories
 ERRNO_TO_ERROR_TYPE: Final[dict[int, str]] = {
     errno.EACCES: "permission",
     errno.EPERM: "permission",
@@ -89,7 +82,6 @@ ERRNO_TO_ERROR_TYPE: Final[dict[int, str]] = {
     errno.ENFILE: "too_many_files",
 }
 
-# User-friendly message templates for each error type
 USER_MESSAGE_TEMPLATES: Final[dict[str, str]] = {
     "permission": (
         "Cannot access '{path}' - permission denied. "
@@ -140,11 +132,6 @@ USER_MESSAGE_TEMPLATES: Final[dict[str, str]] = {
     ),
     "unknown": ("Error processing '{path}': {error}. Check the log for more details."),
 }
-
-
-# =============================================================================
-# ErrorHandler Class
-# =============================================================================
 
 
 class ErrorHandler:
@@ -218,7 +205,7 @@ class ErrorHandler:
             OperationResultDict initialized for tracking
         """
         return OperationResultDict(
-            status="pending",  # Will be set to success/partial/failed by finalize_result
+            status="pending",  # CONSTRAINT: finalize_result() must be called to set final status
             operation_type=operation_type,
             total_items=0,
             completed=[],
@@ -299,17 +286,14 @@ class ErrorHandler:
         Returns:
             Finalized OperationResultDict with status determined
         """
-        # Update total items count
         result["total_items"] = (
             len(result["completed"]) + len(result["failed"]) + len(result["skipped"])
         )
 
-        # Collect retryable paths
         result["can_retry"] = [
             item["path"] for item in result["failed"] if item["can_retry"]
         ]
 
-        # Determine overall status
         if len(result["failed"]) == 0:
             result["status"] = "success"
         elif len(result["completed"]) == 0:
@@ -334,7 +318,6 @@ class ErrorHandler:
         """
         lines: list[str] = []
 
-        # Header
         operation_name = result["operation_type"].replace("_", " ").title()
         status_emoji = {
             "success": "✓",
@@ -345,13 +328,11 @@ class ErrorHandler:
         lines.append(f"{status_emoji} {operation_name} - {result['status'].upper()}")
         lines.append("=" * 50)
 
-        # Summary counts
         lines.append(f"\nTotal items: {result['total_items']}")
         lines.append(f"  Completed: {len(result['completed'])}")
         lines.append(f"  Failed: {len(result['failed'])}")
         lines.append(f"  Skipped: {len(result['skipped'])}")
 
-        # Failed items with details
         if result["failed"]:
             lines.append("\nFailed Items:")
             for item in result["failed"]:
@@ -359,20 +340,17 @@ class ErrorHandler:
                 lines.append(f"  ✗ {item['path']}{retry_note}")
                 lines.append(f"    {item['error_message']}")
 
-        # Skipped items
         if result["skipped"]:
             lines.append("\nSkipped Items:")
             for item in result["skipped"]:
                 reason = item["error_message"] or "No changes needed"
                 lines.append(f"  ⊘ {item['path']}: {reason}")
 
-        # Warnings
         if result["warnings"]:
             lines.append("\nWarnings:")
             for warning in result["warnings"]:
                 lines.append(f"  ⚠ {warning}")
 
-        # Retry suggestion
         if result["can_retry"]:
             lines.append(f"\n{len(result['can_retry'])} items may succeed if retried.")
 
@@ -403,7 +381,6 @@ class ErrorHandler:
         Returns:
             Error type string
         """
-        # Handle specific exception types
         if isinstance(exception, PermissionError):
             return "permission"
 
@@ -419,11 +396,10 @@ class ErrorHandler:
         if isinstance(exception, NotADirectoryError):
             return "invalid_path"
 
-        # Handle OSError with errno
+        # CONSTRAINT: OSError checked last — subclasses (PermissionError, etc.) matched above first
         if isinstance(exception, OSError) and exception.errno:
             return ERRNO_TO_ERROR_TYPE.get(exception.errno, "unknown")
 
-        # Generic fallback
         return "unknown"
 
     def _is_retryable(self, error_type: str) -> bool:

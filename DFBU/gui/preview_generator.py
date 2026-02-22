@@ -68,7 +68,6 @@ class PreviewGenerator:
         unchanged_count = 0
         error_count = 0
 
-        # Count total paths for progress tracking
         total_paths = sum(
             len(df.get("paths", [])) for df in dotfiles if df.get("enabled", True)
         )
@@ -81,20 +80,17 @@ class PreviewGenerator:
             app_name = dotfile.get("application", "Unknown")
 
             for path_str in dotfile.get("paths", []):
-                # Skip empty path entries (can occur with malformed config)
-                if not path_str:
+                if not path_str:  # skip empty entries — can occur with malformed config
                     continue
 
                 src_path = self._file_ops.expand_path(path_str)
 
-                # Check if source exists
                 if not src_path.exists():
                     processed += 1
                     if progress_callback and total_paths > 0:
                         progress_callback(int((processed / total_paths) * 100))
                     continue
 
-                # Generate destination path
                 dest_path = self._file_ops.assemble_dest_path(
                     self._mirror_base_dir,
                     src_path,
@@ -102,7 +98,6 @@ class PreviewGenerator:
                     date_subdir,
                 )
 
-                # Process single file
                 if src_path.is_file():
                     item = self._preview_file(src_path, dest_path, app_name)
                     items.append(item)
@@ -113,7 +108,6 @@ class PreviewGenerator:
                         )
                     )
 
-                # Process directory recursively
                 elif src_path.is_dir():
                     for file_path in src_path.rglob("*"):
                         if file_path.is_file():
@@ -208,8 +202,7 @@ class PreviewGenerator:
             )
 
         except OSError, PermissionError:
-            # Expected for permission/access issues on protected files
-            return PreviewItemDict(
+            return PreviewItemDict(  # CONSTRAINT: OSError expected for protected files — return error status, not raise
                 path=str(src_path),
                 dest_path=str(dest_path),
                 size_bytes=0,

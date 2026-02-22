@@ -5,7 +5,7 @@ from pathlib import Path
 from PySide6.QtWidgets import QApplication
 
 
-# State holder to avoid using global keyword
+# PURPOSE: Dict avoids `global` statement — mutated in place to track current theme across calls
 _theme_state = {"current": "dfbu_light"}
 
 

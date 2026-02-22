@@ -45,26 +45,20 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 
-# Setup logger for this module
 logger = logging.getLogger(__name__)
 
 
-# Local imports
+# SIDE-EFFECT: Mutates sys.path — must execute before any local module imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from core.common_types import DotFileDict, OptionsDict, VerificationReportDict
 
 
-# Type checking imports to avoid circular dependencies
+# TYPE_CHECKING guard prevents circular import cycle — these modules all import from core.common_types
 if TYPE_CHECKING:
     from gui.file_operations import FileOperations
     from gui.restore_backup_manager import RestoreBackupManager
     from gui.statistics_tracker import StatisticsTracker
     from gui.verification_manager import VerificationManager
-
-
-# =============================================================================
-# BackupOrchestrator Class
-# =============================================================================
 
 
 class BackupOrchestrator:
@@ -132,16 +126,12 @@ class BackupOrchestrator:
         Returns:
             Dict mapping dotfile index to (exists, is_dir, type_str) tuple
         """
-        # Initialize validation results dictionary
         validation_results: dict[int, tuple[bool, bool, str]] = {}
 
-        # Iterate through all dotfile entries
         for i, dotfile in enumerate(dotfiles):
-            # Initialize flags for path existence and type checking
             any_exists = False
             any_is_dir = False
 
-            # Check all paths in this dotfile entry
             for path_str in dotfile.get("paths", []):
                 if not path_str:
                     continue
@@ -152,7 +142,6 @@ class BackupOrchestrator:
                     if path.is_dir():
                         any_is_dir = True
 
-            # Determine type string for display
             if any_exists:
                 type_str = "Directory" if any_is_dir else "File"
             else:
@@ -183,46 +172,33 @@ class BackupOrchestrator:
         Returns:
             Tuple of (successful_items, total_items)
         """
-        # Clear tracked files for fresh verification tracking
         self._last_backup_files.clear()
 
-        # Validate which dotfiles exist in filesystem
         validation_results = self.validate_dotfile_paths(dotfiles)
 
-        # Count total items that exist (for accurate progress calculation)
         total_items = len([v for v in validation_results.values() if v[0]])
 
-        # Return early if no valid dotfiles found
         if total_items == 0:
             return 0, 0
 
-        # Initialize counters for tracking backup progress
-        processed_count = 0  # Tracks individual files processed
-        completed_items = 0  # Tracks dotfile entries completed
+        processed_count = 0  # individual files processed
+        completed_items = 0  # dotfile entries completed (drives progress %)
 
-        # Process each dotfile entry in configuration
         for dotfile in dotfiles:
-            # Skip disabled dotfiles
             if not dotfile.get("enabled", True):
                 continue
 
-            # Process each path in dotfile entry
             for path_str in dotfile.get("paths", []):
-                # Skip empty path strings
                 if not path_str:
                     continue
 
-                # Expand path with environment variables and user home directory
                 src_path = self.file_ops.expand_path(path_str)
 
-                # Skip non-existent paths
                 if not src_path.exists():
                     continue
 
-                # Determine if path is directory or file
                 is_dir = src_path.is_dir()
 
-                # Build destination path with hostname and date subdirectories
                 dest_path = self.file_ops.assemble_dest_path(
                     self.mirror_base_dir,
                     src_path,
@@ -230,7 +206,6 @@ class BackupOrchestrator:
                     options["date_subdir"],
                 )
 
-                # Process based on file type (directory vs file)
                 if is_dir:
                     file_count = self._process_directory_backup(
                         src_path,
@@ -250,10 +225,8 @@ class BackupOrchestrator:
                 ):
                     processed_count += 1
 
-                # Increment completed items counter for progress tracking
                 completed_items += 1
 
-                # Update progress based on completed items (not files processed)
                 if progress_callback and total_items > 0:
                     progress = int((completed_items / total_items) * 100)
                     progress_callback(progress)
@@ -273,39 +246,29 @@ class BackupOrchestrator:
         Returns:
             Path to created archive, or None if failed
         """
-        # Build list of items to include in archive (tuples of path, enabled, is_dir)
         items_to_archive: list[tuple[Path, bool, bool]] = []
 
-        # Collect all enabled dotfile paths that exist
         for dotfile in dotfiles:
-            # Skip disabled dotfiles
             if not dotfile.get("enabled", True):
                 continue
 
-            # Process each path in dotfile entry
             for path_str in dotfile.get("paths", []):
-                # Skip empty path strings
                 if not path_str:
                     continue
 
-                # Expand path with environment variables and user home directory
                 src_path = self.file_ops.expand_path(path_str)
 
-                # Add existing paths to archive list
                 if src_path.exists():
                     is_dir = src_path.is_dir()
                     items_to_archive.append((src_path, True, is_dir))
 
-        # Return None if no items found to archive
         if not items_to_archive:
             return None
 
-        # Create compressed archive with timestamp
         archive_path: Path | None = self.file_ops.create_archive(
             items_to_archive, self.archive_base_dir, options["hostname_subdir"]
         )
 
-        # Rotate old archives if enabled and archive created successfully
         if archive_path and options["rotate_archives"]:
             self.file_ops.rotate_archives(
                 self.archive_base_dir,
@@ -334,18 +297,15 @@ class BackupOrchestrator:
         Returns:
             Tuple of (successful_items, total_items)
         """
-        # Discover all files in backup directory recursively
         src_files = self.file_ops.discover_restore_files(src_dir)
         total_items = len(src_files)
 
-        # Return early if no files found in backup
         if total_items == 0:
             return 0, 0
 
-        # Reconstruct original filesystem paths from backup structure
         restore_paths = self.file_ops.reconstruct_restore_paths(src_files)
 
-        # Pre-restore backup: backup files that will be overwritten
+        # SIDE-EFFECT: backup_before_restore() creates a snapshot of files about to be overwritten
         if pre_restore_enabled and self._restore_backup_manager is not None:
             dest_paths = [dest for _, dest in restore_paths if dest is not None]
             success, error, _ = self._restore_backup_manager.backup_before_restore(
@@ -356,24 +316,20 @@ class BackupOrchestrator:
                 logger.error(f"Pre-restore backup failed: {error}")
                 return 0, total_items
 
-            # Cleanup old backups to enforce retention policy
             self._restore_backup_manager.cleanup_old_backups()
 
-        # Initialize counter for successful restore operations
         processed_count = 0
 
-        # Copy each file from backup to original location
         for src_path, dest_path in restore_paths:
-            # Skip if path reconstruction failed
-            if dest_path is None:
+            if (
+                dest_path is None
+            ):  # path reconstruction failed — hostname not found in backup structure
                 continue
 
-            # Copy file with metadata preservation
             success = self.file_ops.copy_file(
                 src_path, dest_path, create_parent=True, skip_identical=False
             )
 
-            # Track restore statistics and notify callbacks
             if success:
                 processed_count += 1
                 self.stats_tracker.record_item_processed(0.0)
@@ -382,7 +338,6 @@ class BackupOrchestrator:
             else:
                 self.stats_tracker.record_item_failed()
 
-            # Update progress callback with percentage completed
             if progress_callback and total_items > 0:
                 progress = int((processed_count / total_items) * 100)
                 progress_callback(progress)
@@ -452,35 +407,30 @@ class BackupOrchestrator:
         Returns:
             True if successful or skipped, False otherwise
         """
-        # Record operation start time for statistics
         start_time = time.perf_counter()
 
-        # Verify source file is readable
         if not self.file_ops.check_readable(src_path):
             if item_skipped_callback:
                 item_skipped_callback(str(src_path), "Permission denied")
             self.stats_tracker.record_item_skipped()
             return False
 
-        # Skip copying if files are identical (optimization)
         if skip_identical and self.file_ops.files_are_identical(src_path, dest_path):
             if item_skipped_callback:
                 item_skipped_callback(str(src_path), "File unchanged")
             self.stats_tracker.record_item_skipped()
-            # Track skipped files too - they should still verify
-            self._last_backup_files.append((src_path, dest_path))
+            self._last_backup_files.append(
+                (src_path, dest_path)
+            )  # SIDE-EFFECT: skipped files still tracked — verify_last_backup() needs the pair
             return True
 
-        # Perform file copy operation with metadata preservation
         success: bool = self.file_ops.copy_file(
             src_path, dest_path, create_parent=True, skip_identical=skip_identical
         )
 
-        # Record statistics and notify callbacks based on operation result
         if success:
             elapsed = time.perf_counter() - start_time
             self.stats_tracker.record_item_processed(elapsed)
-            # Track successfully backed up files for verification
             self._last_backup_files.append((src_path, dest_path))
             if item_processed_callback:
                 item_processed_callback(str(src_path), str(dest_path))
@@ -510,19 +460,16 @@ class BackupOrchestrator:
         Returns:
             Number of successfully copied files
         """
-        # Verify source directory is readable
         if not self.file_ops.check_readable(src_path):
             if item_skipped_callback:
                 item_skipped_callback(str(src_path), "Permission denied")
             self.stats_tracker.record_item_skipped()
             return 0
 
-        # Recursively copy directory contents with metadata preservation
         results = self.file_ops.copy_directory(
             src_path, dest_path, skip_identical=skip_identical
         )
 
-        # Process results and track statistics for each file
         success_count = 0
         for src_file, dest_file, success, skipped in results:
             if success:
@@ -530,12 +477,12 @@ class BackupOrchestrator:
                     if item_skipped_callback:
                         item_skipped_callback(str(src_file), "File unchanged")
                     self.stats_tracker.record_item_skipped()
-                    # Track skipped files for verification
                     if dest_file is not None:
-                        self._last_backup_files.append((src_file, dest_file))
+                        self._last_backup_files.append(
+                            (src_file, dest_file)
+                        )  # SIDE-EFFECT: skipped files tracked for verify_last_backup()
                 else:
                     success_count += 1
-                    # Track successfully backed up files for verification
                     if dest_file is not None:
                         self._last_backup_files.append((src_file, dest_file))
                     if item_processed_callback:

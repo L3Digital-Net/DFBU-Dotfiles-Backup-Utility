@@ -53,7 +53,6 @@ class ConfigLoadWorker(QThread):
         config_manager: Reference to ConfigManager instance
     """
 
-    # Signal definitions
     progress_updated = Signal(int)  # progress percentage
     load_finished = Signal(bool, str, int)  # success, error_message, dotfile_count
     error_occurred = Signal(str, str)  # context, error_message
@@ -83,19 +82,16 @@ class ConfigLoadWorker(QThread):
             return
 
         try:
-            # Phase 1: Read YAML files (30% of progress)
             self.progress_updated.emit(10)
 
             success, error_message = self.config_manager.load_config()
 
             self.progress_updated.emit(100)
 
-            # Emit completion signal with results
             dotfile_count = self.config_manager.get_dotfile_count()
             self.load_finished.emit(success, error_message, dotfile_count)
 
         except Exception as e:
-            # Unexpected error - emit error signal
             self.error_occurred.emit(
                 "Configuration Load", f"Unexpected error: {type(e).__name__}: {e}"
             )
@@ -115,7 +111,6 @@ class ConfigSaveWorker(QThread):
         config_manager: Reference to ConfigManager instance
     """
 
-    # Signal definitions
     progress_updated = Signal(int)  # progress percentage
     save_finished = Signal(bool, str)  # success, error_message
     error_occurred = Signal(str, str)  # context, error_message
@@ -145,21 +140,17 @@ class ConfigSaveWorker(QThread):
             return
 
         try:
-            # Phase 1: Create rotating backup (30% of progress)
             self.progress_updated.emit(10)
 
-            # Phase 2: Build and save YAML (70% of progress)
             self.progress_updated.emit(40)
 
             success, error_message = self.config_manager.save_config()
 
             self.progress_updated.emit(100)
 
-            # Emit completion signal with results
             self.save_finished.emit(success, error_message)
 
         except Exception as e:
-            # Unexpected error - emit error signal
             self.error_occurred.emit(
                 "Configuration Save", f"Unexpected error: {type(e).__name__}: {e}"
             )

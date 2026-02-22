@@ -41,6 +41,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Final
 
 
+# SIDE-EFFECT: Mutates sys.path — must execute before any local module imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from core.common_types import DotFileDict, SizeItemDict, SizeReportDict
 
@@ -49,26 +50,15 @@ if TYPE_CHECKING:
     from gui.protocols import FileOperationsProtocol
 
 
-# Setup logger for this module
 logger = logging.getLogger(__name__)
 
-
-# =============================================================================
-# Constants
-# =============================================================================
 
 TIMESTAMP_FORMAT: Final[str] = "%Y-%m-%dT%H:%M:%S"
 BYTES_PER_MB: Final[int] = 1024 * 1024
 
-# Default threshold values in megabytes
 DEFAULT_WARNING_THRESHOLD_MB: Final[int] = 10
 DEFAULT_ALERT_THRESHOLD_MB: Final[int] = 100
 DEFAULT_CRITICAL_THRESHOLD_MB: Final[int] = 1024
-
-
-# =============================================================================
-# SizeAnalyzer Class
-# =============================================================================
 
 
 class SizeAnalyzer:
@@ -117,10 +107,6 @@ class SizeAnalyzer:
         self._critical_threshold_mb = critical_threshold_mb
         self._size_check_enabled = size_check_enabled
 
-    # -------------------------------------------------------------------------
-    # Properties
-    # -------------------------------------------------------------------------
-
     @property
     def warning_threshold_mb(self) -> int:
         """Get warning threshold in megabytes."""
@@ -161,10 +147,6 @@ class SizeAnalyzer:
         """Set whether size checking is enabled."""
         self._size_check_enabled = value
 
-    # -------------------------------------------------------------------------
-    # Public Methods
-    # -------------------------------------------------------------------------
-
     def analyze_dotfiles(
         self,
         dotfiles: list[DotFileDict],
@@ -193,7 +175,6 @@ class SizeAnalyzer:
             "critical": 0,
         }
 
-        # Calculate total paths for progress
         total_paths = sum(len(self._get_dotfile_paths(df)) for df in dotfiles)
         processed_paths = 0
 
@@ -202,21 +183,17 @@ class SizeAnalyzer:
             paths = self._get_dotfile_paths(dotfile)
 
             for path_str in paths:
-                # Update progress
                 processed_paths += 1
                 if progress_callback and total_paths > 0:
                     progress = int((processed_paths / total_paths) * 100)
                     progress_callback(progress)
 
-                # Expand and validate path
                 path = self._file_operations.expand_path(path_str)
 
-                # Skip if matches ignore pattern
                 if self.matches_ignore_pattern(path, patterns):
                     logger.debug(f"Skipping ignored path: {path}")
                     continue
 
-                # Calculate size
                 if not path.exists():
                     continue
 
@@ -224,11 +201,9 @@ class SizeAnalyzer:
                 total_size_bytes += size_bytes
                 total_files += 1
 
-                # Categorize by threshold
                 level = self.categorize_size(size_bytes)
                 items_by_level[level] += 1
 
-                # Track items above warning threshold
                 if level != "info":
                     size_item: SizeItemDict = {
                         "path": str(path),
@@ -240,10 +215,8 @@ class SizeAnalyzer:
                     }
                     large_items.append(size_item)
 
-        # Sort large items by size (largest first)
         large_items.sort(key=lambda x: x["size_bytes"], reverse=True)
 
-        # Build report
         report: SizeReportDict = {
             "timestamp": datetime.now(UTC).strftime(TIMESTAMP_FORMAT),
             "total_files": total_files,
@@ -287,8 +260,9 @@ class SizeAnalyzer:
             with Path(ignore_file).open(encoding="utf-8") as f:
                 for raw_line in f:
                     stripped = raw_line.strip()
-                    # Skip empty lines and comments
-                    if not stripped or stripped.startswith("#"):
+                    if not stripped or stripped.startswith(
+                        "#"
+                    ):  # skip blank and comment lines
                         continue
                     patterns.append(stripped)
 
@@ -329,19 +303,17 @@ class SizeAnalyzer:
         path_str = str(path)
 
         for pattern in patterns:
-            # Handle ** patterns (match any directory depth)
+            # CONSTRAINT: ** not natively supported by fnmatch — converted to * (approximate match)
             if "**" in pattern:
-                # Convert ** to fnmatch-compatible pattern
                 fnmatch_pattern = pattern.replace("**", "*")
                 if fnmatch.fnmatch(path_str, fnmatch_pattern):
                     return True
-                # Also check path parts for directory patterns like **/cache/
+                # directory patterns like **/cache/ — check each path component
                 if pattern.endswith("/"):
                     dir_name = pattern.rstrip("/").split("/")[-1]
                     if any(part == dir_name for part in path.parts):
                         return True
             else:
-                # Simple pattern matching
                 if fnmatch.fnmatch(path_str, pattern):
                     return True
                 if fnmatch.fnmatch(path.name, pattern):
@@ -381,19 +353,16 @@ class SizeAnalyzer:
         """
         lines: list[str] = []
 
-        # Header
         lines.append("=" * 60)
         lines.append("BACKUP SIZE ANALYSIS REPORT")
         lines.append("=" * 60)
         lines.append("")
 
-        # Summary
         lines.append(f"Timestamp:    {report['timestamp']}")
         lines.append(f"Total Files:  {report['total_files']}")
         lines.append(f"Total Size:   {report['total_size_mb']:.1f} MB")
         lines.append("")
 
-        # Threshold summary
         by_level = report["items_by_level"]
         lines.append("Items by threshold:")
         lines.append(
@@ -410,7 +379,6 @@ class SizeAnalyzer:
         )
         lines.append("")
 
-        # Large items details
         if report["large_items"]:
             lines.append("-" * 60)
             lines.append("LARGE ITEMS (above warning threshold):")
@@ -432,7 +400,6 @@ class SizeAnalyzer:
 
             lines.append("")
 
-        # Excluded patterns
         if report["excluded_patterns"]:
             lines.append("-" * 60)
             lines.append("EXCLUDED PATTERNS:")
@@ -444,10 +411,6 @@ class SizeAnalyzer:
         lines.append("=" * 60)
 
         return "\n".join(lines)
-
-    # -------------------------------------------------------------------------
-    # Private Methods
-    # -------------------------------------------------------------------------
 
     def _get_dotfile_paths(self, dotfile: DotFileDict) -> list[str]:
         """
@@ -461,13 +424,11 @@ class SizeAnalyzer:
         Returns:
             List of path strings
         """
-        # Handle 'paths' field (list of paths)
-        paths = dotfile.get("paths")
+        paths = dotfile.get("paths")  # 'paths': list of strings (current schema)
         if paths:
             return list(paths)
 
-        # Handle 'path' field (single path)
-        path = dotfile.get("path")
+        path = dotfile.get("path")  # 'path': single string (legacy schema)
         if path:
             return [path]
 

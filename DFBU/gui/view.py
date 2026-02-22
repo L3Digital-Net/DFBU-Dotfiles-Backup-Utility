@@ -41,7 +41,6 @@ Functions:
 from pathlib import Path
 from typing import Any, Final
 
-# Local imports
 from core.common_types import LegacyDotFileDict, OperationResultDict, SizeReportDict
 from PySide6.QtCore import QFile, Qt
 from PySide6.QtGui import (
@@ -111,7 +110,7 @@ class NumericTableWidgetItem(QTableWidgetItem):
         self_value = self.data(Qt.ItemDataRole.UserRole)
         other_value = other.data(Qt.ItemDataRole.UserRole)
 
-        # Handle None values by treating them as 0
+        # None values sort as 0 (unset size items sort before sized items)
         self_numeric: int | float = (
             self_value if isinstance(self_value, (int, float)) else 0
         )
@@ -160,17 +159,14 @@ class AddDotfileDialog(QDialog):
         super().__init__(parent)
         self.is_update_mode = dotfile_data is not None
 
-        # Load UI from Qt Designer .ui file
         self._load_ui()
 
-        # Set window title based on mode
         self.setWindowTitle(
             "Update Dotfile Entry" if self.is_update_mode else "Add Dotfile Entry"
         )
         self.setMinimumWidth(MIN_DIALOG_WIDTH)
         self.setMinimumHeight(MIN_DIALOG_HEIGHT)
 
-        # Update info label text based on mode
         info_text = (
             "Update the dotfile entry:"
             if self.is_update_mode
@@ -178,19 +174,17 @@ class AddDotfileDialog(QDialog):
         )
         self.info_label.setText(info_text)
 
-        # Connect signals
         self._connect_signals()
 
-        # Pre-populate fields if in update mode
         if self.is_update_mode and dotfile_data:
-            # Tags field - check both 'tags' (new) and 'category' (legacy) keys
+            # 'tags' (new format) falls back to 'category' (legacy format)
             tags = dotfile_data.get("tags", dotfile_data.get("category", ""))
             self.tags_edit.setText(tags)
             self.application_edit.setText(dotfile_data.get("application", ""))
             self.description_edit.setText(dotfile_data.get("description", ""))
             self.enabled_checkbox.setChecked(dotfile_data.get("enabled", True))
 
-            # Handle both legacy "path" and new "paths" format
+            # 'paths' (new format) falls back to 'path' (legacy format)
             if "paths" in dotfile_data:
                 for path_str in dotfile_data["paths"]:
                     self.paths_list.addItem(path_str)
@@ -212,13 +206,11 @@ class AddDotfileDialog(QDialog):
         if not isinstance(ui_widget, QDialog):
             raise RuntimeError("Loaded UI is not a QDialog")
 
-        # Extract layout from loaded dialog and apply to self
+        # Transfer layout from loaded widget to this dialog
         loaded_layout = ui_widget.layout()
         if loaded_layout:
-            # Transfer all widgets from loaded layout to self
             self.setLayout(loaded_layout)
 
-        # Get references to UI widgets by objectName from Qt Designer
         self.info_label: QLabel = self.findChild(QLabel, "infoLabel")  # type: ignore[assignment]
         self.tags_edit: QLineEdit = self.findChild(QLineEdit, "tagsEdit")  # type: ignore[assignment]
         self.application_edit: QLineEdit = self.findChild(QLineEdit, "applicationEdit")  # type: ignore[assignment]
@@ -233,7 +225,6 @@ class AddDotfileDialog(QDialog):
             QDialogButtonBox, "buttonBox"
         )  # type: ignore[assignment]
 
-        # Validate critical widgets were found
         if not all(
             [
                 self.info_label,
@@ -271,7 +262,6 @@ class AddDotfileDialog(QDialog):
         dialog.setLabelText(QFileDialog.DialogLabel.Accept, "Select")
         dialog.setNameFilter("All Files (*)")
 
-        # Helper to get path candidate from the dialog's filename line edit
         def get_path_from_line_edit() -> Path | None:
             """Get path candidate from the dialog's filename line edit."""
             line_edit = dialog.findChild(QLineEdit, "fileNameEdit")
@@ -297,7 +287,7 @@ class AddDotfileDialog(QDialog):
             selected = dialog.selectedFiles()
             if selected:
                 chosen = selected[0]
-                # Verify selection — construct from line edit if needed
+                # Fallback: selectedFiles() may return the entered directory name, not the full path
                 if not Path(chosen).exists():
                     candidate = get_path_from_line_edit()
                     if candidate and candidate.exists():
@@ -311,13 +301,11 @@ class AddDotfileDialog(QDialog):
         if not path_text:
             return
 
-        # Validate path before adding
         validation_result = InputValidator.validate_path(path_text, must_exist=False)
         if not validation_result.success:
             QMessageBox.warning(self, "Invalid Path", validation_result.error_message)
             return
 
-        # Check for duplicates
         for i in range(self.paths_list.count()):
             if self.paths_list.item(i).text() == path_text:
                 QMessageBox.warning(
@@ -325,7 +313,6 @@ class AddDotfileDialog(QDialog):
                 )
                 return
 
-        # Add to list and clear input
         self.paths_list.addItem(path_text)
         self.path_input_edit.clear()
 
@@ -342,7 +329,6 @@ class AddDotfileDialog(QDialog):
 
         Validates all fields and shows error message if validation fails.
         """
-        # Validate tags (optional, comma-separated)
         tags = self.tags_edit.text().strip()
         validation_result = InputValidator.validate_string(
             tags, field_name="Tags", allow_empty=True, max_length=200
@@ -354,7 +340,6 @@ class AddDotfileDialog(QDialog):
             self.tags_edit.setFocus()
             return
 
-        # Validate application
         application = self.application_edit.text().strip()
         validation_result = InputValidator.validate_string(
             application, field_name="Application", min_length=1, max_length=100
@@ -366,7 +351,6 @@ class AddDotfileDialog(QDialog):
             self.application_edit.setFocus()
             return
 
-        # Validate description
         description = self.description_edit.text().strip()
         validation_result = InputValidator.validate_string(
             description,
@@ -381,7 +365,6 @@ class AddDotfileDialog(QDialog):
             self.description_edit.setFocus()
             return
 
-        # Validate paths
         paths = self.get_paths()
         if not paths:
             QMessageBox.warning(
@@ -392,7 +375,6 @@ class AddDotfileDialog(QDialog):
             self.path_input_edit.setFocus()
             return
 
-        # Validate each path
         for path_str in paths:
             validation_result = InputValidator.validate_path(path_str, must_exist=False)
             if not validation_result.success:
@@ -403,7 +385,6 @@ class AddDotfileDialog(QDialog):
                 )
                 return
 
-        # All validation passed, call parent accept
         super().accept()
 
     def get_paths(self) -> list[str]:
@@ -488,10 +469,7 @@ class MainWindow(QMainWindow):
         self.viewmodel: DFBUViewModel = viewmodel
         self.version: str = version
 
-        # Track skipped items for operation summary
         self._skipped_count: int = 0
-
-        # Track log entries for filtering
         self._log_entries: list[tuple[str, str]] = []
 
         # Filter input reference (set up in _setup_filter_ui)
@@ -503,17 +481,14 @@ class MainWindow(QMainWindow):
 
     def setup_ui(self) -> None:
         """Initialize the user interface by loading from .ui file."""
-        # Load UI file (contains QMainWindow definition)
         ui_file_path = Path(__file__).parent / "designer" / "main_window_complete.ui"
         loader = QUiLoader()
         loaded_window = loader.load(str(ui_file_path), None)
 
-        # Type safety: QUiLoader returns QWidget, but we know it's QMainWindow from .ui file
-        # We check dynamically and cast appropriately to satisfy type checker
+        # QUiLoader.load() returns QWidget, but we know from the .ui file it's QMainWindow.
+        # Qt doesn't allow QMainWindow-within-QMainWindow, so we extract and reparent components.
         ui_widget: QWidget | None = None
 
-        # Extract components from loaded QMainWindow to avoid nesting
-        # Qt doesn't allow QMainWindow within QMainWindow, so we extract and reparent
         if isinstance(loaded_window, QMainWindow):
             central = loaded_window.centralWidget()
             if isinstance(central, QWidget):
@@ -521,51 +496,36 @@ class MainWindow(QMainWindow):
                 ui_widget.setParent(self)
                 self.setCentralWidget(ui_widget)
 
-            # Extract and set menubar if present
             menu = loaded_window.menuBar()
             if menu is not None:
-                # Set menubar without reparenting to avoid object lifecycle issues
+                # setMenuBar without reparenting avoids object lifecycle issues
                 self.setMenuBar(menu)
 
-            # Extract and set statusbar if present
             status = loaded_window.statusBar()
             if status is not None:
                 status.setParent(self)
                 self.setStatusBar(status)
-        # Fallback for non-QMainWindow UI files
         elif isinstance(loaded_window, QWidget):
             ui_widget = loaded_window
             ui_widget.setParent(self)
             self.setCentralWidget(ui_widget)
 
-        # Ensure we have a valid ui_widget
         if ui_widget is None:
             raise RuntimeError("Failed to load UI from .ui file")
 
-        # Set window title with version
         self.setWindowTitle(f"{self.PROJECT_NAME} v{self.version}")
 
-        # Get references to all UI widgets
         self._setup_widget_references(ui_widget)
-
-        # Connect signals to handler methods
         self._connect_ui_signals()
-
-        # Set up keyboard shortcuts (replacing menu accelerators)
         self._setup_shortcuts()
-
-        # Configure table widget properties
         self._configure_table_widget()
 
-        # Show empty state initially (before config is loaded)
         if self._backup_stacked_widget:
             self._backup_stacked_widget.setCurrentIndex(0)
 
-        # Apply tooltips to all widgets
         self._tooltip_manager = TooltipManager()
         self._tooltip_manager.apply_tooltips(self)
 
-        # Set initial status message
         self.status_bar.showMessage("Ready - Load configuration to begin")
 
     def _setup_widget_references(self, ui_widget: QWidget) -> None:
@@ -575,18 +535,16 @@ class MainWindow(QMainWindow):
         Args:
             ui_widget: Central widget containing all UI elements
         """
-        # Store reference to central widget
         self.central_widget: QWidget = ui_widget
         found_tab = ui_widget.findChild(QTabWidget, "tab_widget")
         if not isinstance(found_tab, QTabWidget):
             raise RuntimeError("Required widget 'tab_widget' not found in UI file")
         self.tab_widget: QTabWidget = found_tab
 
-        # Find widgets for each tab and pane
         self._find_backup_tab_widgets(ui_widget)
         self._find_logs_tab_widgets(
             ui_widget
-        )  # Must be before restore to set operation_log
+        )  # CONSTRAINT: must run before restore to set operation_log
         self._find_restore_tab_widgets(ui_widget)
         self._find_config_tab_widgets(ui_widget)
         self._find_status_widgets()
@@ -597,7 +555,6 @@ class MainWindow(QMainWindow):
         self.dotfile_table: QTableWidget = ui_widget.findChild(
             QTableWidget, "fileGroupFileTable"
         )  # type: ignore[assignment]
-        # Filter input for searching dotfiles
         self._filter_input = ui_widget.findChild(QLineEdit, "filterLineEdit")
         self.total_size_label: QLabel = ui_widget.findChild(
             QLabel, "fileGroupTotalSizeLabel"
@@ -629,11 +586,9 @@ class MainWindow(QMainWindow):
         self.backup_btn: QPushButton = ui_widget.findChild(
             QPushButton, "startBackupButton"
         )  # type: ignore[assignment]
-        # Hide missing checkbox for filtering non-existent dotfiles
         self._hide_missing_checkbox: QCheckBox | None = ui_widget.findChild(
             QCheckBox, "hideMissingCheckbox"
         )
-        # Config editor buttons
         self.edit_config_btn: QPushButton = ui_widget.findChild(
             QPushButton, "editConfigButton"
         )  # type: ignore[assignment]
@@ -646,7 +601,6 @@ class MainWindow(QMainWindow):
         self.import_config_btn: QPushButton = ui_widget.findChild(
             QPushButton, "importConfigButton"
         )  # type: ignore[assignment]
-        # Empty state widgets
         self._backup_stacked_widget: QStackedWidget | None = ui_widget.findChild(
             QStackedWidget, "backupStackedWidget"
         )
@@ -665,10 +619,9 @@ class MainWindow(QMainWindow):
         self.restore_btn: QPushButton = ui_widget.findChild(
             QPushButton, "restoreSourceButton"
         )  # type: ignore[assignment]
-        # Note: Restore operation log uses the same logPaneBox widget in the log pane
+        # SIDE-EFFECT: restore_operation_log aliases operation_log (same widget, shared between tabs)
         self.restore_operation_log: QTextEdit = self.operation_log
 
-        # Backup preview widgets
         self.restore_preview_group: QGroupBox = ui_widget.findChild(
             QGroupBox, "restorePreviewGroup"
         )  # type: ignore[assignment]
@@ -714,7 +667,6 @@ class MainWindow(QMainWindow):
         self.config_max_archives_spinbox: QSpinBox = ui_widget.findChild(
             QSpinBox, "config_max_archives_spinbox"
         )  # type: ignore[assignment]
-        # Pre-restore safety widgets (v0.6.0)
         self.config_pre_restore_checkbox: QCheckBox = ui_widget.findChild(
             QCheckBox, "config_pre_restore_checkbox"
         )  # type: ignore[assignment]
@@ -730,14 +682,12 @@ class MainWindow(QMainWindow):
         self.save_config_btn: QPushButton = ui_widget.findChild(
             QPushButton, "saveConfigButton"
         )  # type: ignore[assignment]
-        # Verification options widgets (v1.1.0)
         self.config_verify_checkbox: QCheckBox = ui_widget.findChild(
             QCheckBox, "config_verify_checkbox"
         )  # type: ignore[assignment]
         self.config_hash_checkbox: QCheckBox = ui_widget.findChild(
             QCheckBox, "config_hash_checkbox"
         )  # type: ignore[assignment]
-        # Size management widgets (v1.1.0)
         self.config_size_check_checkbox: QCheckBox = ui_widget.findChild(
             QCheckBox, "config_size_check_checkbox"
         )  # type: ignore[assignment]
@@ -753,14 +703,11 @@ class MainWindow(QMainWindow):
 
     def _find_logs_tab_widgets(self, ui_widget: QWidget) -> None:
         """Find and store references to log pane widgets (split view)."""
-        # Log pane text area (replaces old logBox in logTab)
         self.operation_log: QTextEdit = ui_widget.findChild(QTextEdit, "logPaneBox")  # type: ignore[assignment]
 
-        # Validate critical widget was found
         if not self.operation_log:
             raise RuntimeError("logPaneBox widget not found in UI file!")
 
-        # Log pane buttons
         self.verify_backup_btn: QPushButton = ui_widget.findChild(
             QPushButton, "logPaneVerifyButton"
         )  # type: ignore[assignment]
@@ -803,7 +750,6 @@ class MainWindow(QMainWindow):
 
     def _connect_ui_signals(self) -> None:
         """Connect UI element signals to handler methods."""
-        # Backup tab connections
         self.add_dotfile_btn.clicked.connect(self._on_add_dotfile)
         self.update_dotfile_btn.clicked.connect(self._on_update_dotfile)
         self.remove_dotfile_btn.clicked.connect(self._on_remove_dotfile)
@@ -820,25 +766,20 @@ class MainWindow(QMainWindow):
         self.export_config_btn.clicked.connect(self._on_export_config)
         self.import_config_btn.clicked.connect(self._on_import_config)
 
-        # Filter input connection
         if self._filter_input:
             self._filter_input.textChanged.connect(self._apply_combined_filters)
 
-        # Hide missing checkbox connection
         if self._hide_missing_checkbox:
             self._hide_missing_checkbox.stateChanged.connect(
                 self._apply_combined_filters
             )
 
-        # Empty state add button
         if self._empty_state_add_btn:
             self._empty_state_add_btn.clicked.connect(self._on_add_dotfile)
 
-        # Restore tab connections
         self.browse_restore_btn.clicked.connect(self._on_browse_restore_source)
         self.restore_btn.clicked.connect(self._on_start_restore)
 
-        # Configuration tab connections
         browse_mirror_btn: QPushButton = self.central_widget.findChild(
             QPushButton, "browse_mirror_btn"
         )  # type: ignore[assignment]
@@ -859,7 +800,6 @@ class MainWindow(QMainWindow):
         )
         self.config_rotate_checkbox.stateChanged.connect(self._on_config_changed)
         self.config_max_archives_spinbox.valueChanged.connect(self._on_config_changed)
-        # Pre-restore safety signal connections (v0.6.0)
         self.config_pre_restore_checkbox.stateChanged.connect(
             self._on_pre_restore_checkbox_changed
         )
@@ -870,10 +810,8 @@ class MainWindow(QMainWindow):
             self._on_browse_restore_backup_dir
         )
         self.save_config_btn.clicked.connect(self._on_save_config)
-        # Verification options signal connections (v1.1.0)
         self.config_verify_checkbox.stateChanged.connect(self._on_config_changed)
         self.config_hash_checkbox.stateChanged.connect(self._on_config_changed)
-        # Size management signal connections (v1.1.0)
         self.config_size_check_checkbox.stateChanged.connect(
             self._on_size_check_checkbox_changed
         )
@@ -882,18 +820,15 @@ class MainWindow(QMainWindow):
         self.config_size_alert_spinbox.valueChanged.connect(self._on_config_changed)
         self.config_size_critical_spinbox.valueChanged.connect(self._on_config_changed)
 
-        # Logs tab connections
         self.verify_backup_btn.clicked.connect(self._on_verify_backup)
         self.save_log_btn.clicked.connect(self._on_save_log)
 
-        # Log filter connections
         self._log_filter_all_btn.clicked.connect(self._on_log_filter_all)
         self._log_filter_info_btn.clicked.connect(self._on_log_filter_changed)
         self._log_filter_warning_btn.clicked.connect(self._on_log_filter_changed)
         self._log_filter_error_btn.clicked.connect(self._on_log_filter_changed)
         self._log_clear_btn.clicked.connect(self._on_clear_log)
 
-        # Header bar connections
         if self._help_btn:
             self._help_btn.clicked.connect(self._show_user_guide)
         if self._about_btn:
@@ -921,7 +856,6 @@ class MainWindow(QMainWindow):
             4: Size
             5: Path (stretch)
         """
-        # Set column resize modes
         header = self.dotfile_table.horizontalHeader()
         header.setSectionResizeMode(
             0, QHeaderView.ResizeMode.ResizeToContents
@@ -954,18 +888,15 @@ class MainWindow(QMainWindow):
         """Load persisted settings."""
         settings = self.viewmodel.load_settings()
 
-        # Restore window geometry
         if settings.get("geometry"):
             self.restoreGeometry(settings["geometry"])
         if settings.get("window_state"):
             self.restoreState(settings["window_state"])
 
-        # Display restore source if loaded
         if settings.get("restore_source"):
             self.restore_source_edit.setText(settings["restore_source"])
             self.restore_btn.setEnabled(True)
 
-        # Initialize theme toggle button label
         self._update_theme_toggle_button()
 
     def _on_start_backup(self) -> None:
@@ -976,7 +907,6 @@ class MainWindow(QMainWindow):
             )
             return
 
-        # Confirm backup operation
         reply = QMessageBox.question(
             self,
             "Confirm Backup",
@@ -985,10 +915,8 @@ class MainWindow(QMainWindow):
         )
 
         if reply == QMessageBox.StandardButton.Yes:
-            # Reset skip tracking for new operation
             self._skipped_count = 0
 
-            # Clear operation log
             self.operation_log.clear()
             self._log_entries.clear()
             self._append_log("=== Backup Operation Started ===", "header")
@@ -1000,10 +928,8 @@ class MainWindow(QMainWindow):
             self.progress_bar.setVisible(True)
             self.progress_bar.setValue(0)
 
-            # Get force full backup setting from checkbox
             force_full = self.force_full_backup_checkbox.isChecked()
 
-            # Add info to log about backup mode
             if force_full:
                 self._append_log(
                     "INFO: Force Full Backup - All files will be copied", "info"
@@ -1013,11 +939,9 @@ class MainWindow(QMainWindow):
                     "INFO: Smart Backup - Only changed files will be copied", "info"
                 )
 
-            # Start backup with force full setting
             success = self.viewmodel.command_start_backup(force_full_backup=force_full)
 
             if not success:
-                # Re-enable buttons if backup failed to start
                 self.backup_btn.setEnabled(True)
                 self.progress_bar.setVisible(False)
                 self._append_log("✗ Failed to start backup operation", "error")
@@ -1031,11 +955,9 @@ class MainWindow(QMainWindow):
         if directory:
             self.restore_source_edit.setText(directory)
 
-            # Validate and set source
             if self.viewmodel.command_set_restore_source(Path(directory)):
                 self.restore_btn.setEnabled(True)
 
-                # Scan and show backup preview
                 metadata = self.viewmodel.command_scan_restore_source(Path(directory))
                 if metadata:
                     self._populate_restore_preview(metadata)
@@ -1047,7 +969,6 @@ class MainWindow(QMainWindow):
 
     def _populate_restore_preview(self, metadata: dict[str, Any]) -> None:
         """Populate the restore preview section with scan results."""
-        # Update summary labels
         self.restore_preview_host_label.setText(
             f"Hostname: {metadata['hostname'] or 'Unknown'}"
         )
@@ -1056,7 +977,6 @@ class MainWindow(QMainWindow):
             f"Size: {self._format_size(metadata['total_size'])}"
         )
 
-        # Populate tree widget
         self.restore_preview_tree.clear()
         for entry in metadata["entries"]:
             file_count: int = entry["file_count"]
@@ -1080,7 +1000,6 @@ class MainWindow(QMainWindow):
 
             self.restore_preview_tree.addTopLevelItem(app_item)
 
-        # Expand all items and show the preview group
         self.restore_preview_tree.expandAll()
         self.restore_preview_group.setVisible(True)
 
@@ -1100,7 +1019,6 @@ class MainWindow(QMainWindow):
             )
             return
 
-        # Confirm restore operation
         reply = QMessageBox.warning(
             self,
             "Confirm Restore",
@@ -1112,18 +1030,14 @@ class MainWindow(QMainWindow):
         )
 
         if reply == QMessageBox.StandardButton.Yes:
-            # Clear operation log
             self.restore_operation_log.clear()
 
-            # Disable buttons during operation
             self.restore_btn.setEnabled(False)
             self.browse_restore_btn.setEnabled(False)
 
-            # Show progress bar
             self.progress_bar.setVisible(True)
             self.progress_bar.setValue(0)
 
-            # Start restore
             self.viewmodel.command_start_restore()
 
     def _on_progress_updated(self, value: int) -> None:
@@ -1151,21 +1065,16 @@ class MainWindow(QMainWindow):
 
     def _on_operation_finished(self, summary: str) -> None:
         """Handle operation finished signal."""
-        # Hide progress bar
         self.progress_bar.setVisible(False)
 
-        # Re-enable buttons
         self.backup_btn.setEnabled(True)
         self.restore_btn.setEnabled(True)
         self.browse_restore_btn.setEnabled(True)
 
-        # Determine which operation completed and update the appropriate log
         if (
             self.viewmodel.backup_worker
             and not self.viewmodel.backup_worker.isRunning()
         ):
-            # Backup just completed
-            # Log skip summary
             if self._skipped_count > 0:
                 self._append_log(
                     f"⊘ Total unchanged files: {self._skipped_count}",
@@ -1173,7 +1082,6 @@ class MainWindow(QMainWindow):
                 )
             self._append_log("=== Backup Operation Completed ===", "header")
             self._append_log(summary, "info")
-            # Ensure log is scrolled to bottom
             self.operation_log.verticalScrollBar().setValue(
                 self.operation_log.verticalScrollBar().maximum()
             )
@@ -1181,7 +1089,6 @@ class MainWindow(QMainWindow):
             self.viewmodel.restore_worker
             and not self.viewmodel.restore_worker.isRunning()
         ):
-            # Restore just completed
             self._append_log("=== Restore Operation Completed ===", "header")
             self._append_log(summary, "info")
             self.operation_log.verticalScrollBar().setValue(
@@ -1193,11 +1100,9 @@ class MainWindow(QMainWindow):
         log_message = f"✗ Error in {context}: {error_message}"
         self._append_log(log_message, "error")
 
-        # Hide and reset progress bar on error
         self.progress_bar.setVisible(False)
         self.progress_bar.setValue(0)
 
-        # Re-enable buttons after error
         self.backup_btn.setEnabled(True)
         self.restore_btn.setEnabled(True)
         self.browse_restore_btn.setEnabled(True)
@@ -1208,10 +1113,7 @@ class MainWindow(QMainWindow):
         self.backup_btn.setEnabled(True)
         self.save_dotfiles_btn.setEnabled(True)
 
-        # Update dotfile table
         self._update_dotfile_table()
-
-        # Update options display
         self._update_options_display()
 
     def _update_dotfile_table(self) -> None:
@@ -1233,42 +1135,33 @@ class MainWindow(QMainWindow):
         """
         dotfiles = self.viewmodel.get_dotfile_list()
 
-        # Reuse existing validation and size data from current table instead of re-validating
-        # Build validation and size dicts from current table items
+        # Reuses cached validation/size from current table to avoid filesystem re-validation
         validation: dict[int, tuple[bool, bool, str]] = {}
         sizes: dict[int, int] = {}
 
-        # Build a mapping from original index to table row for lookup
         idx_to_row: dict[int, int] = {}
         for row in range(self.dotfile_table.rowCount()):
             original_idx = self._get_original_dotfile_index(row)
             idx_to_row[original_idx] = row
 
-        # Extract cached data for each dotfile
         for i in range(len(dotfiles)):
             if i in idx_to_row:
                 row = idx_to_row[i]
-                # Get existing status from current table (column 1 = Status)
-                status_item = self.dotfile_table.item(row, 1)
+                status_item = self.dotfile_table.item(row, 1)  # column 1 = Status
                 size_item = self.dotfile_table.item(row, 4)  # column 4 = Size
 
                 if status_item and size_item:
                     exists = status_item.text() == "✓"
-                    # We don't track is_dir separately anymore, default to False
+                    # is_dir not tracked per-row; defaults to False
                     validation[i] = (exists, False, "File")
 
-                    # Get size from UserRole data stored in size item
                     size_data = size_item.data(Qt.ItemDataRole.UserRole)
-                    if isinstance(size_data, int):
-                        sizes[i] = size_data
-                    else:
-                        sizes[i] = 0
+                    sizes[i] = size_data if isinstance(size_data, int) else 0
                 else:
-                    # Fallback for missing data
                     validation[i] = (False, False, "File")
                     sizes[i] = 0
             else:
-                # New item not in table yet
+                # New item not yet in table
                 validation[i] = (False, False, "File")
                 sizes[i] = 0
 
@@ -1288,17 +1181,15 @@ class MainWindow(QMainWindow):
             validation: Validation results mapping index to (exists, is_dir, type_str)
             sizes: Size results mapping index to size in bytes
         """
-        # Disable sorting while populating table to prevent performance issues
+        # CONSTRAINT: sorting must be disabled during population to prevent row thrashing
         self.dotfile_table.setSortingEnabled(False)
 
-        # Create list of (index, dotfile, validation, size) tuples
         dotfile_data = [
             (i, dotfile, validation[i], sizes[i]) for i, dotfile in enumerate(dotfiles)
         ]
 
         self.dotfile_table.setRowCount(len(dotfiles))
 
-        # Track total size for enabled items
         total_enabled_size = 0
 
         for row_idx, (
@@ -1307,20 +1198,16 @@ class MainWindow(QMainWindow):
             (exists, _is_dir, _type_str),
             size,
         ) in enumerate(dotfile_data):
-            # Create table row items
             self._create_table_row_items(row_idx, original_idx, dotfile, exists, size)
 
-            # Accumulate total size for enabled items
             enabled = dotfile.get("enabled", True)
             if enabled and exists:
                 total_enabled_size += size
 
-        # Update total size label
         self.total_size_label.setText(
             f"Total Size (enabled): {self.viewmodel.format_size(total_enabled_size)}"
         )
 
-        # Re-enable sorting after everything is populated
         self.dotfile_table.setSortingEnabled(True)
 
     def _create_table_row_items(
@@ -1349,11 +1236,9 @@ class MainWindow(QMainWindow):
             exists: Whether the dotfile exists on filesystem
             size: Total size in bytes
         """
-        # Get application name for exclusion check
         application = dotfile["application"]
 
-        # Included indicator (checked = included, unchecked = excluded)
-        # In the legacy format, "enabled" reflects "not excluded"
+        # "enabled" in legacy format reflects "not excluded" — checked = included
         included = dotfile.get("enabled", True)
         indicator = "✓" if included else "✗"
         included_item = QTableWidgetItem(indicator)
@@ -1366,7 +1251,6 @@ class MainWindow(QMainWindow):
             included_item.setForeground(QColor(DFBUColors.TEXT_DISABLED))
         self.dotfile_table.setItem(row_idx, 0, included_item)
 
-        # Status indicator (file exists)
         status_item = QTableWidgetItem("✓" if exists else "✗")
         if exists:
             status_item.setForeground(QColor(DFBUColors.SUCCESS))
@@ -1374,26 +1258,21 @@ class MainWindow(QMainWindow):
             status_item.setForeground(QColor(DFBUColors.CRITICAL))
         self.dotfile_table.setItem(row_idx, 1, status_item)
 
-        # Application name (column 2)
         self.dotfile_table.setItem(row_idx, 2, QTableWidgetItem(application))
 
-        # Tags (column 3) - use category as tags for legacy format
-        # In legacy format, category serves as tags
+        # 'category' serves as tags in legacy format
         tags = dotfile["category"]
         self.dotfile_table.setItem(row_idx, 3, QTableWidgetItem(tags))
 
-        # Size - format to human readable with custom numeric sorting (column 4)
         size_str = self.viewmodel.format_size(size)
         size_item = NumericTableWidgetItem(size_str)
-        # Store raw size value for proper numeric sorting
+        # UserRole stores raw int for numeric sort (NumericTableWidgetItem.__lt__ reads it)
         size_item.setData(Qt.ItemDataRole.UserRole, size)
-        # Right-align the size for better readability
         size_item.setTextAlignment(
             Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter
         )
         self.dotfile_table.setItem(row_idx, 4, size_item)
 
-        # Path - show first path with count indicator if multiple (column 5)
         paths = dotfile.get("paths", [])
         if len(paths) == 1:
             path_display = paths[0]
@@ -1401,7 +1280,6 @@ class MainWindow(QMainWindow):
             path_display = f"{paths[0]} (+{len(paths) - 1} more)"
 
         path_item = QTableWidgetItem(path_display)
-        # Tooltip shows description and all paths
         tooltip_text = f"{dotfile.get('description', '')}\n\nPaths:\n{'\n'.join(paths)}"
         path_item.setToolTip(tooltip_text)
         self.dotfile_table.setItem(row_idx, 5, path_item)
@@ -1410,7 +1288,6 @@ class MainWindow(QMainWindow):
         """Update the options display with current configuration."""
         options = self.viewmodel.get_options()
 
-        # Update configuration tab widgets
         self.config_mirror_checkbox.setChecked(options["mirror"])
         self.config_archive_checkbox.setChecked(options["archive"])
         self.config_hostname_checkbox.setChecked(options["hostname_subdir"])
@@ -1419,7 +1296,6 @@ class MainWindow(QMainWindow):
         self.config_rotate_checkbox.setChecked(options["rotate_archives"])
         self.config_max_archives_spinbox.setValue(options["max_archives"])
 
-        # Update path displays
         mirror_path = str(self.viewmodel.model.mirror_base_dir)
         archive_path = str(self.viewmodel.model.archive_base_dir)
         restore_backup_path = str(self.viewmodel.model.restore_backup_dir)
@@ -1427,22 +1303,17 @@ class MainWindow(QMainWindow):
         self.config_archive_path_edit.setText(archive_path)
         self.config_restore_path_edit.setText(restore_backup_path)
 
-        # Enable max archives spinbox only if rotation is enabled
         self.config_max_archives_spinbox.setEnabled(options["rotate_archives"])
 
-        # Pre-restore safety options (v0.6.0)
         self.config_pre_restore_checkbox.setChecked(options["pre_restore_backup"])
         self.config_max_restore_spinbox.setValue(options["max_restore_backups"])
-        # Enable max restore backups spinbox only if pre-restore backup is enabled
         self.config_max_restore_spinbox.setEnabled(options["pre_restore_backup"])
 
-        # Verification options (v1.1.0)
         self.config_verify_checkbox.setChecked(
             options.get("verify_after_backup", False)
         )
         self.config_hash_checkbox.setChecked(options.get("hash_verification", False))
 
-        # Size management options (v1.1.0)
         size_check_enabled = options.get("size_check_enabled", True)
         self.config_size_check_checkbox.setChecked(size_check_enabled)
         self.config_size_warning_spinbox.setValue(
@@ -1454,15 +1325,12 @@ class MainWindow(QMainWindow):
         self.config_size_critical_spinbox.setValue(
             options.get("size_critical_threshold_mb", 1024)
         )
-        # Enable threshold spinboxes only if size check is enabled
         self.config_size_warning_spinbox.setEnabled(size_check_enabled)
         self.config_size_alert_spinbox.setEnabled(size_check_enabled)
         self.config_size_critical_spinbox.setEnabled(size_check_enabled)
 
-        # Enable save button since config is loaded
         self.save_config_btn.setEnabled(True)
 
-        # Update backup tab checkboxes
         self.mirror_checkbox.setChecked(options["mirror"])
         self.archive_checkbox.setChecked(options["archive"])
 
@@ -1544,7 +1412,6 @@ class MainWindow(QMainWindow):
             return
 
         if dialog.action == "retry":
-            # Get retryable paths and trigger retry
             paths_to_retry = dialog.get_retryable_paths()
             self._append_log(
                 f"↻ Retrying {len(paths_to_retry)} failed item(s)...", "info"
@@ -1570,7 +1437,6 @@ class MainWindow(QMainWindow):
             return
 
         if dialog.action == "continue":
-            # User acknowledged warning, proceed with backup
             self._append_log(
                 f"⚠️ Size warning acknowledged: {report['total_size_mb']:.1f} MB total",
                 "warning",
@@ -1586,7 +1452,6 @@ class MainWindow(QMainWindow):
         Args:
             progress: Progress percentage (0-100)
         """
-        # Update status bar to show scanning progress
         self.status_bar.showMessage(f"Analyzing file sizes... {progress}%")
         if progress >= 100:
             self.status_bar.showMessage(
@@ -1619,22 +1484,18 @@ class MainWindow(QMainWindow):
 
     def _on_config_changed(self) -> None:
         """Handle configuration option changes to enable save button."""
-        # Enable save button when any configuration option changes
         self.save_config_btn.setEnabled(True)
 
     def _on_rotate_checkbox_changed(self, state: int) -> None:
         """Handle rotate archives checkbox state change."""
-        # Enable/disable max archives spinbox based on rotation checkbox
         self.config_max_archives_spinbox.setEnabled(bool(state))
 
     def _on_pre_restore_checkbox_changed(self, state: int) -> None:
         """Handle pre-restore backup checkbox state change."""
-        # Enable/disable max restore backups spinbox based on pre-restore checkbox
         self.config_max_restore_spinbox.setEnabled(bool(state))
 
     def _on_size_check_checkbox_changed(self, state: int) -> None:
         """Handle size check enabled checkbox state change."""
-        # Enable/disable threshold spinboxes based on size check checkbox
         enabled = bool(state)
         self.config_size_warning_spinbox.setEnabled(enabled)
         self.config_size_alert_spinbox.setEnabled(enabled)
@@ -1651,7 +1512,6 @@ class MainWindow(QMainWindow):
 
     def _on_save_config(self) -> None:
         """Handle save configuration button click."""
-        # Confirm save operation
         reply = QMessageBox.question(
             self,
             "Confirm Save",
@@ -1688,14 +1548,12 @@ class MainWindow(QMainWindow):
             self.viewmodel.command_update_option(
                 "max_restore_backups", self.config_max_restore_spinbox.value()
             )
-            # Verification options (v1.1.0)
             self.viewmodel.command_update_option(
                 "verify_after_backup", self.config_verify_checkbox.isChecked()
             )
             self.viewmodel.command_update_option(
                 "hash_verification", self.config_hash_checkbox.isChecked()
             )
-            # Size management options (v1.1.0)
             self.viewmodel.command_update_option(
                 "size_check_enabled", self.config_size_check_checkbox.isChecked()
             )
@@ -1709,7 +1567,6 @@ class MainWindow(QMainWindow):
                 "size_critical_threshold_mb", self.config_size_critical_spinbox.value()
             )
 
-            # Update paths
             self.viewmodel.command_update_path(
                 "mirror_dir", self.config_mirror_path_edit.text()
             )
@@ -1720,13 +1577,11 @@ class MainWindow(QMainWindow):
                 "restore_backup_dir", self.config_restore_path_edit.text()
             )
 
-            # Save to file
             if self.viewmodel.command_save_config():
                 self.status_bar.showMessage(
                     "✓ Configuration saved", STATUS_MESSAGE_TIMEOUT_MS
                 )
 
-                # Update backup tab checkboxes to reflect changes
                 self.mirror_checkbox.setChecked(self.config_mirror_checkbox.isChecked())
                 self.archive_checkbox.setChecked(
                     self.config_archive_checkbox.isChecked()
@@ -1740,7 +1595,6 @@ class MainWindow(QMainWindow):
 
     def _on_save_dotfile_config(self) -> None:
         """Handle save dotfile configuration button click from Backup tab."""
-        # Confirm save operation
         reply = QMessageBox.question(
             self,
             "Confirm Save",
@@ -1749,7 +1603,6 @@ class MainWindow(QMainWindow):
         )
 
         if reply == QMessageBox.StandardButton.Yes:
-            # Save to file
             if self.viewmodel.command_save_config():
                 self.status_bar.showMessage(
                     "✓ Dotfile configuration saved", STATUS_MESSAGE_TIMEOUT_MS
@@ -1840,7 +1693,6 @@ class MainWindow(QMainWindow):
         if not source_dir:
             return
 
-        # Confirm import with the user
         reply = QMessageBox.question(
             self,
             "Import Configuration",
@@ -1859,7 +1711,6 @@ class MainWindow(QMainWindow):
         if success:
             self.status_bar.showMessage(message, STATUS_MESSAGE_TIMEOUT_MS)
             self._append_log(f"✓ Config imported: {message}")
-            # Reload configuration to reflect the imported files
             self.viewmodel.command_load_config()
         else:
             QMessageBox.warning(self, "Import Failed", message)
@@ -1877,14 +1728,13 @@ class MainWindow(QMainWindow):
         Raises:
             ValueError: If unable to determine original index (data corruption)
         """
-        # Get the original index stored in the first column item
         item = self.dotfile_table.item(table_row, 0)
         if item:
             original_idx = item.data(Qt.ItemDataRole.UserRole)
             if isinstance(original_idx, int):
                 return original_idx
 
-        # Data missing or corrupt - this indicates a programming error
+        # DANGER: Only possible if table was populated without storing UserRole index
         raise ValueError(
             f"Unable to determine original dotfile index for table row {table_row}. "
             "Table data may be corrupt."
@@ -1892,7 +1742,6 @@ class MainWindow(QMainWindow):
 
     def _on_dotfile_selection_changed(self) -> None:
         """Handle dotfile table selection change."""
-        # Enable update, toggle, and remove buttons if a row is selected
         has_selection = len(self.dotfile_table.selectedItems()) > 0
         self.update_dotfile_btn.setEnabled(has_selection)
         self.toggle_enabled_btn.setEnabled(has_selection)
@@ -1900,18 +1749,15 @@ class MainWindow(QMainWindow):
 
     def _on_add_dotfile(self) -> None:
         """Handle add dotfile button click."""
-        # Create dialog for adding new dotfile
         dialog = AddDotfileDialog(self)
 
         if dialog.exec():
-            # Get values from dialog
             tags = dialog.tags_edit.text().strip()
             application = dialog.application_edit.text()
             description = dialog.description_edit.text()
             paths = dialog.get_paths()
             enabled = dialog.enabled_checkbox.isChecked()
 
-            # Validate inputs (tags are optional)
             if not all([application, description]) or not paths:
                 QMessageBox.warning(
                     self,
@@ -1920,7 +1766,7 @@ class MainWindow(QMainWindow):
                 )
                 return
 
-            # Add dotfile via ViewModel (tags passed as category for compatibility)
+            # tags passed as category for legacy format compatibility
             success = self.viewmodel.command_add_dotfile(
                 tags, application, description, paths, enabled
             )
@@ -1934,7 +1780,6 @@ class MainWindow(QMainWindow):
 
     def _on_update_dotfile(self) -> None:
         """Handle update dotfile button click."""
-        # Get selected row
         selected_rows = self.dotfile_table.selectionModel().selectedRows()
 
         if not selected_rows:
@@ -1943,25 +1788,21 @@ class MainWindow(QMainWindow):
         table_row = selected_rows[0].row()
         original_idx = self._get_original_dotfile_index(table_row)
 
-        # Get existing dotfile data
         dotfile = self.viewmodel.get_dotfile_list()[original_idx]
 
-        # Create dialog for updating dotfile with pre-populated data
-        # Cast TypedDict to plain dict for dialog compatibility
+        # dict(dotfile) converts TypedDict to plain dict for dialog compatibility
         dialog = AddDotfileDialog(
             self,
             dotfile_data=dict(dotfile),
         )
 
         if dialog.exec():
-            # Get updated values from dialog
             tags = dialog.tags_edit.text().strip()
             application = dialog.application_edit.text()
             description = dialog.description_edit.text()
             paths = dialog.get_paths()
             enabled = dialog.enabled_checkbox.isChecked()
 
-            # Validate inputs (tags are optional)
             if not all([application, description]) or not paths:
                 QMessageBox.warning(
                     self,
@@ -1970,7 +1811,7 @@ class MainWindow(QMainWindow):
                 )
                 return
 
-            # Update dotfile via ViewModel (tags passed as category for compatibility)
+            # tags passed as category for legacy format compatibility
             success = self.viewmodel.command_update_dotfile(
                 original_idx,
                 tags,
@@ -1991,7 +1832,6 @@ class MainWindow(QMainWindow):
 
     def _on_remove_dotfile(self) -> None:
         """Handle remove dotfile button click."""
-        # Get selected row
         selected_rows = self.dotfile_table.selectionModel().selectedRows()
 
         if not selected_rows:
@@ -2000,10 +1840,7 @@ class MainWindow(QMainWindow):
         table_row = selected_rows[0].row()
         original_idx = self._get_original_dotfile_index(table_row)
 
-        # Confirm removal
         dotfile = self.viewmodel.get_dotfile_list()[original_idx]
-
-        # Format paths display
         paths_display = "\n".join(dotfile.get("paths", []))
 
         reply = QMessageBox.question(
@@ -2017,7 +1854,6 @@ class MainWindow(QMainWindow):
         )
 
         if reply == QMessageBox.StandardButton.Yes:
-            # Remove dotfile via ViewModel
             success = self.viewmodel.command_remove_dotfile(original_idx)
 
             if success:
@@ -2035,7 +1871,6 @@ class MainWindow(QMainWindow):
         Toggles the exclusion status for the selected dotfile. If included,
         it becomes excluded; if excluded, it becomes included.
         """
-        # Get selected row
         selected_rows = self.dotfile_table.selectionModel().selectedRows()
 
         if not selected_rows:
@@ -2044,18 +1879,16 @@ class MainWindow(QMainWindow):
         table_row = selected_rows[0].row()
         original_idx = self._get_original_dotfile_index(table_row)
 
-        # Get current dotfile
         dotfile = self.viewmodel.get_dotfile_list()[original_idx]
         application = dotfile["application"]
 
         if not application:
             return
 
-        # Toggle exclusion status via ViewModel
-        # This will emit exclusions_changed signal which triggers table refresh
+        # SIDE-EFFECT: emits exclusions_changed -> _on_exclusions_changed -> _update_dotfile_table_fast
         self.viewmodel.command_toggle_exclusion(application)
 
-        # Determine new status for feedback (after toggle, if it was included it's now excluded)
+        # Query post-toggle state: is_now_excluded=True means it was previously included
         is_now_excluded = self.viewmodel.is_excluded(application)
         status_text = "excluded" if is_now_excluded else "included"
         self.status_bar.showMessage(
@@ -2065,14 +1898,11 @@ class MainWindow(QMainWindow):
 
     def _on_dotfiles_updated(self, dotfile_count: int) -> None:
         """Handle dotfiles updated signal."""
-        # Update the dotfile table
         self._update_dotfile_table()
 
-        # Toggle empty state vs content
         if self._backup_stacked_widget:
             self._backup_stacked_widget.setCurrentIndex(0 if dotfile_count == 0 else 1)
 
-        # Update status bar
         self.status_bar.showMessage(f"Configuration updated: {dotfile_count} dotfiles")
 
     def _on_exclusions_changed(self) -> None:
@@ -2101,7 +1931,6 @@ class MainWindow(QMainWindow):
             hide_missing = self._hide_missing_checkbox.isChecked()
 
         for row in range(self.dotfile_table.rowCount()):
-            # Text filter check
             text_matches = True
             if text:
                 app_item = self.dotfile_table.item(row, 2)
@@ -2114,7 +1943,6 @@ class MainWindow(QMainWindow):
                     text in app_text or text in tags_text or text in path_text
                 )
 
-            # Missing status filter check
             status_matches = True
             if hide_missing:
                 status_item = self.dotfile_table.item(row, 1)
@@ -2146,8 +1974,6 @@ class MainWindow(QMainWindow):
         self.operation_log.moveCursor(QTextCursor.MoveOperation.End)
         self.operation_log.insertHtml(html)
         self.operation_log.ensureCursorVisible()
-
-        # Track entry for filtering
         self._log_entries.append((message, level))
 
     def _on_log_filter_all(self) -> None:
@@ -2212,7 +2038,6 @@ class MainWindow(QMainWindow):
 
     def _on_verify_backup(self) -> None:
         """Handle verify backup button/menu action click."""
-        # Get verification report from viewmodel
         report = self.viewmodel.command_verify_backup()
 
         if report is None:
@@ -2224,13 +2049,11 @@ class MainWindow(QMainWindow):
             )
             return
 
-        # Append verification report to log
         self._append_log(report, "info")
         self.operation_log.verticalScrollBar().setValue(
             self.operation_log.verticalScrollBar().maximum()
         )
 
-        # Show status message
         self.status_bar.showMessage(
             "Verification complete - see log for details",
             STATUS_MESSAGE_TIMEOUT_MS,
@@ -2238,10 +2061,8 @@ class MainWindow(QMainWindow):
 
     def _on_save_log(self) -> None:
         """Handle save log button click."""
-        # Get current log content
         log_content = self.operation_log.toPlainText()
 
-        # Check if log is empty
         if not log_content.strip():
             QMessageBox.information(
                 self,
@@ -2250,7 +2071,6 @@ class MainWindow(QMainWindow):
             )
             return
 
-        # Open file save dialog
         file_path, _ = QFileDialog.getSaveFileName(
             self,
             "Save Log File",
@@ -2260,16 +2080,12 @@ class MainWindow(QMainWindow):
 
         if file_path:
             try:
-                # Write log content to file
                 Path(file_path).write_text(log_content, encoding="utf-8")
-
-                # Show success message in status bar (non-blocking)
                 self.status_bar.showMessage(
                     f"Log saved to {Path(file_path).name}",
                     STATUS_MESSAGE_TIMEOUT_MS,
                 )
             except (OSError, PermissionError) as e:
-                # Show error dialog if save fails
                 QMessageBox.critical(
                     self,
                     "Save Failed",
@@ -2278,7 +2094,6 @@ class MainWindow(QMainWindow):
 
     def closeEvent(self, event: QCloseEvent) -> None:
         """Handle window close event."""
-        # Save window geometry and state
         self.viewmodel.save_settings(
             geometry=self.saveGeometry(), window_state=self.saveState()
         )

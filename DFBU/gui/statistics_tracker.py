@@ -35,11 +35,6 @@ Functions:
 from dataclasses import dataclass, field
 
 
-# =============================================================================
-# BackupStatistics Dataclass
-# =============================================================================
-
-
 @dataclass
 class BackupStatistics:
     """
@@ -89,11 +84,6 @@ class BackupStatistics:
         self.failed_items = 0
         self.total_time = 0.0
         self.processing_times = []
-
-
-# =============================================================================
-# StatisticsTracker Class
-# =============================================================================
 
 
 class StatisticsTracker:
