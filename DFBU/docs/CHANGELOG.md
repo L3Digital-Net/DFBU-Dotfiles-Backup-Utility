@@ -14,6 +14,29 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - **PATCH**: Bug fixes and code refactoring
 - **Development Stages**: `.dev`, `.a` (alpha), `.b` (beta), `.rc` (release candidate)
 
+## [1.2.3] - 2026-02-21
+
+### Added
+
+- **Pre-Restore Safety**: `RestoreBackupManager` automatically backs up files that will
+  be overwritten before any restore operation, with configurable retention (default: 5
+  backups) and TOML manifests tracking what was saved
+- **Recovery Dialog**: `RecoveryDialog` surfaces per-file failure details after
+  backup/restore with retry/skip/abort options; differentiates retryable from permanent
+  failures
+- **Profile Management**: `ProfileDialog` lists, creates, and deletes named backup
+  configurations via `ProfileManager` with signal-based table refresh
+- **Size Warning Dialog**: `SizeWarningDialog` warns before large backup operations with
+  configurable threshold and proceed/cancel choice
+- **Backup History**: Persistent backup history tracking with TOML manifests per session
+
+### Changed
+
+- **Comment Quality Pass**: Rewrote all inline Python comments across the codebase for
+  LLM coding agent consumption — removed narration, section labels, and version
+  annotations; upgraded behavioral constraints to `CONSTRAINT:`, `SIDE-EFFECT:`, and
+  `DANGER:` prefixes; preserved cross-file contracts and non-obvious behavior notes
+
 ## [1.2.1] - 2026-02-06
 
 ### Added
