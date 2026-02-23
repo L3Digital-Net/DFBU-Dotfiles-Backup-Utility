@@ -20,7 +20,7 @@ started.
 1. Fork and clone the repository:
 
    ```bash
-   git clone https://github.com/L3DigitalNet/DFBU-DotFiles-Backup-Utility.git
+   git clone https://github.com/L3Digital-Net/DFBU-DotFiles-Backup-Utility.git
    cd DFBU-DotFiles-Backup-Utility
    ```
 

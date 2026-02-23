@@ -314,12 +314,12 @@ When reporting issues, include relevant log entries.
 1. Check this troubleshooting guide
 2. Review the [README](../README.md)
 3. Search
-   [existing issues](https://github.com/L3DigitalNet/DFBU-DotFiles-Backup-Utility/issues)
+   [existing issues](https://github.com/L3Digital-Net/DFBU-DotFiles-Backup-Utility/issues)
 
 ### How to report a bug
 
 1. Go to
-   [GitHub Issues](https://github.com/L3DigitalNet/DFBU-DotFiles-Backup-Utility/issues/new)
+   [GitHub Issues](https://github.com/L3Digital-Net/DFBU-DotFiles-Backup-Utility/issues/new)
 2. Include:
    - DFBU version (shown in Help > About)
    - Linux distribution and version

@@ -13,7 +13,7 @@ irreversible step** (merge, tag push).
 
 ## Context
 
-- Repository: `L3DigitalNet/dfbu-dotfiles-backup-utility`
+- Repository: `L3Digital-Net/dfbu-dotfiles-backup-utility`
 - Branch model: `testing` → PR/merge → `main` → version tag → GitHub Release
 - Release workflow: `.github/workflows/release.yml` (triggered by `v*` tags)
 - AppImage built in CI with embedded zsync update info
@@ -155,7 +155,7 @@ git push origin vX.Y.Z
 Tell the user:
 
 > The `vX.Y.Z` tag has been pushed. The **Release AppImage** workflow is now running at:
-> https://github.com/L3DigitalNet/dfbu-dotfiles-backup-utility/actions
+> https://github.com/L3Digital-Net/dfbu-dotfiles-backup-utility/actions
 >
 > It will:
 >
@@ -169,14 +169,14 @@ Ask the user to verify:
 
 - [ ] GitHub Actions workflow completed successfully
 - [ ] Release page shows at
-      https://github.com/L3DigitalNet/dfbu-dotfiles-backup-utility/releases
+      https://github.com/L3Digital-Net/dfbu-dotfiles-backup-utility/releases
 - [ ] `DFBU-x86_64.AppImage` and `.zsync` files are attached
 - [ ] Release notes look correct
 
 Offer to open the Actions page:
 
 ```
-https://github.com/L3DigitalNet/dfbu-dotfiles-backup-utility/actions/workflows/release.yml
+https://github.com/L3Digital-Net/dfbu-dotfiles-backup-utility/actions/workflows/release.yml
 ```
 
 ## Phase 8 — Sync testing branch

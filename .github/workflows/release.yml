@@ -60,7 +60,7 @@ jobs:
         run: |
           ARCH="$(uname -m)"
           APPIMAGE="dist/DFBU-${ARCH}.AppImage"
-          DOWNLOAD_URL="https://github.com/L3DigitalNet/DFBU-DotFiles-Backup-Utility/releases/latest/download/DFBU-${ARCH}.AppImage"
+          DOWNLOAD_URL="https://github.com/L3Digital-Net/DFBU-DotFiles-Backup-Utility/releases/latest/download/DFBU-${ARCH}.AppImage"
           zsyncmake -u "$DOWNLOAD_URL" -o "${APPIMAGE}.zsync" "$APPIMAGE"
 
       - name: Get version from tag
