@@ -32,12 +32,10 @@ class DFBUColors:
     SUCCESS_DARK: Final[str] = "#059669"
     SUCCESS_LIGHT: Final[str] = "#34D399"
 
-    # Semantic
     WARNING: Final[str] = "#F59E0B"
     ALERT: Final[str] = "#F97316"
     CRITICAL: Final[str] = "#EF4444"
 
-    # Neutral scale
     NEUTRAL_50: Final[str] = "#F8FAFC"
     NEUTRAL_100: Final[str] = "#F1F5F9"
     NEUTRAL_200: Final[str] = "#E2E8F0"

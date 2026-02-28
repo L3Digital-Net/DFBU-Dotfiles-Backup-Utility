@@ -41,24 +41,14 @@ from typing import Final
 import tomli_w
 
 
-# Setup logger for this module
 logger = logging.getLogger(__name__)
 
-
-# =============================================================================
-# Constants
-# =============================================================================
 
 DEFAULT_BACKUP_DIR: Final[Path] = (
     Path.home() / ".local" / "share" / "dfbu" / "restore-backups"
 )
 DEFAULT_MAX_BACKUPS: Final[int] = 5
 BACKUP_TIMESTAMP_FORMAT: Final[str] = "%Y-%m-%d_%H%M%S"
-
-
-# =============================================================================
-# RestoreBackupManager Class
-# =============================================================================
 
 
 class RestoreBackupManager:
@@ -155,7 +145,6 @@ class RestoreBackupManager:
         if not self._backup_base_dir.exists():
             return []
 
-        # Get all backup directories sorted oldest first
         backup_dirs = [d for d in self._backup_base_dir.iterdir() if d.is_dir()]
         backup_dirs.sort(key=lambda d: d.name)  # Oldest first
 
@@ -186,16 +175,13 @@ class RestoreBackupManager:
         Returns:
             Tuple of (success, error_message, backup_directory)
         """
-        # Early return if no files to backup
         if not files_to_overwrite:
             return True, "", None
 
-        # Filter to only existing files/directories
         existing_paths = [f for f in files_to_overwrite if f.exists()]
         if not existing_paths:
             return True, "", None
 
-        # Create timestamped backup directory
         timestamp = datetime.now(UTC).strftime(BACKUP_TIMESTAMP_FORMAT)
         backup_dir = self._backup_base_dir / timestamp
 
@@ -211,12 +197,10 @@ class RestoreBackupManager:
 
         logger.info(f"Created pre-restore backup directory: {backup_dir}")
 
-        # Copy each file/directory preserving structure relative to home
         backed_up_files: list[dict[str, str | int]] = []
 
         for src_path in existing_paths:
             try:
-                # Calculate relative path from home directory
                 try:
                     rel_path = src_path.relative_to(self._home_dir)
                 except ValueError:
@@ -226,11 +210,9 @@ class RestoreBackupManager:
                 dest_path = backup_dir / rel_path
 
                 if src_path.is_dir():
-                    # Copy directory recursively
                     shutil.copytree(src_path, dest_path)
                     logger.debug(f"Backed up directory: {src_path} -> {dest_path}")
                 else:
-                    # Create parent directories and copy file
                     dest_path.parent.mkdir(parents=True, exist_ok=True)
                     shutil.copy2(src_path, dest_path)
                     logger.debug(f"Backed up file: {src_path} -> {dest_path}")
@@ -249,7 +231,6 @@ class RestoreBackupManager:
                 logger.error(f"Failed to backup {src_path}: {e}")
                 # Continue with other files even if one fails
 
-        # Create manifest.toml documenting the backup
         manifest = {
             "restore_operation": {
                 "timestamp": datetime.now(UTC).isoformat(),

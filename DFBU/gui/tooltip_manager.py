@@ -19,7 +19,6 @@ class TooltipManager:
             apply_tooltips() will skip setting tooltips.
     """
 
-    # Tooltip definitions keyed by widget object name
     TOOLTIPS: dict[str, str] = {
         # Backup Tab - File Group
         "filterLineEdit": "Filter the file list by application name, tags, or path",

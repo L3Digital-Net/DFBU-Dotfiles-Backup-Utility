@@ -35,12 +35,10 @@ from pathlib import Path
 from typing import Final
 
 
-# Validation constants
-MAX_PATH_LENGTH: Final[int] = 4096  # Maximum path length (Linux: 4096)
+MAX_PATH_LENGTH: Final[int] = 4096  # Linux PATH_MAX
 MAX_STRING_LENGTH: Final[int] = 256  # Maximum string field length
 MIN_STRING_LENGTH: Final[int] = 1  # Minimum string field length
 
-# Regex patterns
 VALID_FILENAME_PATTERN: Final[str] = (
     r'^[^<>:"/\\|?*\x00-\x1f]+$'  # No illegal filename chars
 )
@@ -82,31 +80,26 @@ class InputValidator:
         Returns:
             ValidationResult with success status and error message
         """
-        # Check empty
         if not path_str or not path_str.strip():
             return ValidationResult(False, "Path cannot be empty")
 
-        # Check length
         if len(path_str) > MAX_PATH_LENGTH:
             return ValidationResult(
                 False, f"Path exceeds maximum length ({MAX_PATH_LENGTH} characters)"
             )
 
-        # Check for null bytes (security)
+        # CONSTRAINT: Null bytes are a path injection vector — reject before any filesystem call
         if "\x00" in path_str:
             return ValidationResult(False, "Path contains invalid null bytes")
 
-        # Try to create Path object
         try:
             path = Path(path_str).expanduser()
         except (ValueError, RuntimeError) as e:
             return ValidationResult(False, f"Invalid path format: {e}")
 
-        # Check existence if required
         if must_exist and not path.exists():
             return ValidationResult(False, f"Path does not exist: {path_str}")
 
-        # Sanitize path (expand user, resolve relative paths)
         try:
             sanitized = str(path.expanduser())
         except Exception as e:
@@ -135,16 +128,13 @@ class InputValidator:
         Returns:
             ValidationResult with success status and error message
         """
-        # Check empty
         if not value or not value.strip():
             if allow_empty:
                 return ValidationResult(True, "", "")
             return ValidationResult(False, f"{field_name} cannot be empty")
 
-        # Strip whitespace for validation
         value_stripped = value.strip()
 
-        # Check length
         if len(value_stripped) < min_length:
             return ValidationResult(
                 False, f"{field_name} must be at least {min_length} characters"
@@ -155,7 +145,7 @@ class InputValidator:
                 False, f"{field_name} exceeds maximum length ({max_length} characters)"
             )
 
-        # Check for control characters (security)
+        # CONSTRAINT: Control chars (ord < 32) are input sanitization bypass vector — reject
         if any(ord(c) < 32 for c in value_stripped):
             return ValidationResult(
                 False, f"{field_name} contains invalid control characters"
@@ -182,14 +172,12 @@ class InputValidator:
         Returns:
             ValidationResult with success status and error message
         """
-        # Convert string to int
         if isinstance(value, str):
             try:
                 value = int(value)
             except ValueError:
                 return ValidationResult(False, f"{field_name} must be a valid integer")
 
-        # Check range
         if min_value is not None and value < min_value:
             return ValidationResult(False, f"{field_name} must be at least {min_value}")
 
@@ -235,18 +223,14 @@ class InputValidator:
         Returns:
             Sanitized filename safe for filesystem use
         """
-        # Remove illegal characters for filenames
         sanitized = re.sub(r'[<>:"/\\|?*\x00-\x1f]', "_", filename)
-
-        # Remove leading/trailing whitespace and dots
         sanitized = sanitized.strip(". ")
 
-        # If empty after sanitization, use default
+        # CONSTRAINT: Empty after sanitization means all chars were illegal — use safe default
         if not sanitized:
             sanitized = "unnamed_file"
 
-        # Truncate to reasonable length
-        if len(sanitized) > 255:  # Max filename length on most filesystems
+        if len(sanitized) > 255:  # 255 = NAME_MAX on most Linux filesystems
             sanitized = sanitized[:255]
 
         return sanitized

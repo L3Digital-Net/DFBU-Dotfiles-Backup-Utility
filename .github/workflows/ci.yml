@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   lint-and-test:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, l3digital]
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4

@@ -103,8 +103,8 @@ Configuration files are stored in:
 
 Security updates are announced via:
 
-- [GitHub Security Advisories](https://github.com/L3DigitalNet/DFBU-Dotfiles-Backup-Utility/security/advisories)
-- [GitHub Releases](https://github.com/L3DigitalNet/DFBU-Dotfiles-Backup-Utility/releases)
+- [GitHub Security Advisories](https://github.com/L3Digital-Net/DFBU-Dotfiles-Backup-Utility/security/advisories)
+- [GitHub Releases](https://github.com/L3Digital-Net/DFBU-Dotfiles-Backup-Utility/releases)
   (security release notes)
 - Repository CHANGELOG.md (security section)
 
@@ -119,7 +119,7 @@ days **Low Severity**: Update at next convenient maintenance window
 
 ```bash
 # Download latest release
-wget https://github.com/L3DigitalNet/DFBU-Dotfiles-Backup-Utility/releases/latest/download/DFBU-x86_64.AppImage
+wget https://github.com/L3Digital-Net/DFBU-Dotfiles-Backup-Utility/releases/latest/download/DFBU-x86_64.AppImage
 chmod +x DFBU-x86_64.AppImage
 ```
 
@@ -160,9 +160,9 @@ Configuration files stored in YAML format without encryption:
 ## Security Contact
 
 **Security Issues**: dev@l3digital.net **General Issues**:
-[GitHub Issues](https://github.com/L3DigitalNet/DFBU-Dotfiles-Backup-Utility/issues)
+[GitHub Issues](https://github.com/L3Digital-Net/DFBU-Dotfiles-Backup-Utility/issues)
 **Discussions**:
-[GitHub Discussions](https://github.com/L3DigitalNet/DFBU-Dotfiles-Backup-Utility/discussions)
+[GitHub Discussions](https://github.com/L3Digital-Net/DFBU-Dotfiles-Backup-Utility/discussions)
 
 ## Acknowledgments
 

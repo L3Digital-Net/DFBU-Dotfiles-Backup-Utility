@@ -59,11 +59,6 @@ from core.common_types import (
 from gui.statistics_tracker import BackupStatistics
 
 
-# =============================================================================
-# File Operations Protocol
-# =============================================================================
-
-
 class FileOperationsProtocol(Protocol):
     """
     Protocol defining interface for file system operations.
@@ -251,11 +246,6 @@ class FileOperationsProtocol(Protocol):
         ...
 
 
-# =============================================================================
-# Configuration Manager Protocol
-# =============================================================================
-
-
 class ConfigManagerProtocol(Protocol):
     """
     Protocol defining interface for configuration management.
@@ -437,11 +427,6 @@ class ConfigManagerProtocol(Protocol):
         ...
 
 
-# =============================================================================
-# Statistics Tracker Protocol
-# =============================================================================
-
-
 class StatisticsTrackerProtocol(Protocol):
     """
     Protocol defining interface for backup/restore statistics tracking.
@@ -474,11 +459,6 @@ class StatisticsTrackerProtocol(Protocol):
     def reset_statistics(self) -> None:
         """Reset operation statistics for new run."""
         ...
-
-
-# =============================================================================
-# Backup Orchestrator Protocol
-# =============================================================================
 
 
 class BackupOrchestratorProtocol(Protocol):
@@ -521,11 +501,6 @@ class BackupOrchestratorProtocol(Protocol):
             Dict mapping dotfile index to (exists, is_dir, type_str) tuple
         """
         ...
-
-
-# =============================================================================
-# Restore Backup Manager Protocol
-# =============================================================================
 
 
 class RestoreBackupManagerProtocol(Protocol):
@@ -596,11 +571,6 @@ class RestoreBackupManagerProtocol(Protocol):
         ...
 
 
-# =============================================================================
-# Verification Manager Protocol
-# =============================================================================
-
-
 class VerificationManagerProtocol(Protocol):
     """
     Protocol defining interface for backup verification management.
@@ -667,11 +637,6 @@ class VerificationManagerProtocol(Protocol):
             Human-readable formatted string for log output
         """
         ...
-
-
-# =============================================================================
-# Error Handler Protocol
-# =============================================================================
 
 
 class ErrorHandlerProtocol(Protocol):
@@ -809,11 +774,6 @@ class ErrorHandlerProtocol(Protocol):
             List of path strings that might succeed on retry
         """
         ...
-
-
-# =============================================================================
-# Size Analyzer Protocol
-# =============================================================================
 
 
 class SizeAnalyzerProtocol(Protocol):

@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   build-appimage:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, l3digital]
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
@@ -29,15 +29,39 @@ jobs:
       - name: Install system libraries
         run: |
           sudo apt-get update
-          sudo apt-get install -y libegl1 libgl1 libfuse2
+          sudo apt-get install -y \
+            libegl1 \
+            libgl1 \
+            libfuse2 \
+            zsync \
+            xvfb \
+            libxkbcommon-x11-0 \
+            libxcb-icccm4 \
+            libxcb-image0 \
+            libxcb-keysyms1 \
+            libxcb-randr0 \
+            libxcb-render-util0 \
+            libxcb-xinerama0 \
+            libxcb-xfixes0 \
+            libxcb-shape0
 
       - name: Run tests
-        run: uv run pytest DFBU/tests/ -x -q
+        env:
+          QT_QPA_PLATFORM: offscreen
+          QT_DEBUG_PLUGINS: 0
+        run: uv run pytest DFBU/tests/ -m "not gui" -x -q
 
       - name: Build AppImage
         run: |
           chmod +x packaging/build-appimage.sh
           packaging/build-appimage.sh
+
+      - name: Generate zsync file
+        run: |
+          ARCH="$(uname -m)"
+          APPIMAGE="dist/DFBU-${ARCH}.AppImage"
+          DOWNLOAD_URL="https://github.com/L3Digital-Net/DFBU-DotFiles-Backup-Utility/releases/latest/download/DFBU-${ARCH}.AppImage"
+          zsyncmake -u "$DOWNLOAD_URL" -o "${APPIMAGE}.zsync" "$APPIMAGE"
 
       - name: Get version from tag
         id: version

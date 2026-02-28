@@ -44,7 +44,6 @@ import time
 from pathlib import Path
 from typing import Any, Final
 
-# Local imports
 from core.common_types import (
     LegacyDotFileDict,
     OperationResultDict,
@@ -90,7 +89,6 @@ class BackupWorker(QThread):
         _process_directory: Process directory backup recursively
     """
 
-    # Signal definitions
     progress_updated = Signal(int)  # progress percentage
     item_processed = Signal(str, str)  # source_path, dest_path
     item_skipped = Signal(str, str)  # path, reason
@@ -161,11 +159,9 @@ class BackupWorker(QThread):
         start_time = time.perf_counter()
 
         try:
-            # Check source file exists
             if not src_path.exists():
                 self.item_skipped.emit(str(src_path), "File not found")
                 self.model.record_item_skipped()
-                # Track in operation result (v0.9.0)
                 if self.operation_result:
                     result = error_handler.create_path_result(
                         str(src_path),
@@ -177,13 +173,11 @@ class BackupWorker(QThread):
                     self.operation_result["skipped"].append(result)
                 return False
 
-            # Check readability
             if not self.model.check_readable(src_path):
                 self.item_skipped.emit(
                     str(src_path), "Permission denied (no read access)"
                 )
                 self.model.record_item_skipped()
-                # Track in operation result (v0.9.0)
                 if self.operation_result:
                     result = error_handler.create_path_result(
                         str(src_path),
@@ -202,7 +196,7 @@ class BackupWorker(QThread):
                 self.model.record_item_skipped()
                 # Track skipped files for verification (they should still verify OK)
                 self.model.register_backed_up_file(src_path, dest_path)
-                # Track in operation result (v0.9.0) - unchanged files are "completed"
+                # unchanged files are "completed" in operation result, not "skipped"
                 if self.operation_result:
                     result = error_handler.create_path_result(
                         str(src_path), str(dest_path), "success"
@@ -210,7 +204,6 @@ class BackupWorker(QThread):
                     self.operation_result["completed"].append(result)
                 return True
 
-            # Copy file with skip_identical optimization
             success: bool = self.model.copy_file(
                 src_path, dest_path, create_parent=True, skip_identical=skip_identical
             )
@@ -221,7 +214,6 @@ class BackupWorker(QThread):
                 self.item_processed.emit(str(src_path), str(dest_path))
                 # Track successfully backed up file for verification
                 self.model.register_backed_up_file(src_path, dest_path)
-                # Track in operation result (v0.9.0)
                 if self.operation_result:
                     result = error_handler.create_path_result(
                         str(src_path), str(dest_path), "success"
@@ -232,7 +224,6 @@ class BackupWorker(QThread):
                 self.error_occurred.emit(
                     str(src_path), "Failed to copy file (unknown error)"
                 )
-                # Track in operation result (v0.9.0)
                 if self.operation_result:
                     result = error_handler.create_path_result(
                         str(src_path),
@@ -248,7 +239,6 @@ class BackupWorker(QThread):
         except PermissionError as e:
             self.item_skipped.emit(str(src_path), f"Permission denied: {e}")
             self.model.record_item_skipped()
-            # Track in operation result (v0.9.0)
             if self.operation_result:
                 result = error_handler.handle_exception(
                     e, str(src_path), str(dest_path)
@@ -258,7 +248,6 @@ class BackupWorker(QThread):
         except FileNotFoundError as e:
             self.item_skipped.emit(str(src_path), f"File not found: {e}")
             self.model.record_item_skipped()
-            # Track in operation result (v0.9.0)
             if self.operation_result:
                 result = error_handler.handle_exception(
                     e, str(src_path), str(dest_path)
@@ -269,7 +258,6 @@ class BackupWorker(QThread):
             # Disk full, read-only filesystem, etc.
             self.error_occurred.emit(str(src_path), f"Filesystem error: {e}")
             self.model.record_item_failed()
-            # Track in operation result (v0.9.0)
             if self.operation_result:
                 result = error_handler.handle_exception(
                     e, str(src_path), str(dest_path)
@@ -277,12 +265,10 @@ class BackupWorker(QThread):
                 self.operation_result["failed"].append(result)
             return False
         except Exception as e:
-            # Catch-all for unexpected errors
             self.error_occurred.emit(
                 str(src_path), f"Unexpected error: {type(e).__name__}: {e}"
             )
             self.model.record_item_failed()
-            # Track in operation result (v0.9.0)
             if self.operation_result:
                 result = error_handler.handle_exception(
                     e, str(src_path), str(dest_path)
@@ -314,11 +300,9 @@ class BackupWorker(QThread):
         error_handler = self.model.get_error_handler()
 
         try:
-            # Check directory exists
             if not src_path.exists():
                 self.item_skipped.emit(str(src_path), "Directory not found")
                 self.model.record_item_skipped()
-                # Track in operation result (v0.9.0)
                 if self.operation_result:
                     result = error_handler.create_path_result(
                         str(src_path),
@@ -330,11 +314,9 @@ class BackupWorker(QThread):
                     self.operation_result["skipped"].append(result)
                 return 0
 
-            # Check it's actually a directory
             if not src_path.is_dir():
                 self.item_skipped.emit(str(src_path), "Not a directory")
                 self.model.record_item_skipped()
-                # Track in operation result (v0.9.0)
                 if self.operation_result:
                     result = error_handler.create_path_result(
                         str(src_path),
@@ -346,13 +328,11 @@ class BackupWorker(QThread):
                     self.operation_result["skipped"].append(result)
                 return 0
 
-            # Check readability
             if not self.model.check_readable(src_path):
                 self.item_skipped.emit(
                     str(src_path), "Permission denied (no read access)"
                 )
                 self.model.record_item_skipped()
-                # Track in operation result (v0.9.0)
                 if self.operation_result:
                     result = error_handler.create_path_result(
                         str(src_path),
@@ -365,12 +345,10 @@ class BackupWorker(QThread):
                     self.operation_result["skipped"].append(result)
                 return 0
 
-            # Copy directory with skip_identical optimization
             results = self.model.copy_directory(
                 src_path, dest_path, skip_identical=skip_identical
             )
 
-            # Process results
             success_count = 0
             skipped_count = 0
             for src_file, dest_file, success, skipped in results:
@@ -382,7 +360,7 @@ class BackupWorker(QThread):
                         # Track skipped files for verification
                         if dest_file is not None:
                             self.model.register_backed_up_file(src_file, dest_file)
-                        # Track in operation result (v0.9.0) - unchanged files are "completed"
+                        # unchanged files are "completed" in operation result, not "skipped"
                         if self.operation_result:
                             result = error_handler.create_path_result(
                                 str(src_file), dest_str, "success"
@@ -394,7 +372,6 @@ class BackupWorker(QThread):
                         # Track successfully backed up files for verification
                         if dest_file is not None:
                             self.model.register_backed_up_file(src_file, dest_file)
-                        # Track in operation result (v0.9.0)
                         if self.operation_result:
                             result = error_handler.create_path_result(
                                 str(src_file), dest_str, "success"
@@ -404,7 +381,6 @@ class BackupWorker(QThread):
                     self.item_skipped.emit(
                         str(src_file), "Permission denied or read error"
                     )
-                    # Track in operation result (v0.9.0)
                     if self.operation_result:
                         result = error_handler.create_path_result(
                             str(src_file),
@@ -417,7 +393,6 @@ class BackupWorker(QThread):
                         self.operation_result["skipped"].append(result)
                 else:
                     self.error_occurred.emit(str(src_file), "Failed to copy file")
-                    # Track in operation result (v0.9.0)
                     if self.operation_result:
                         result = error_handler.create_path_result(
                             str(src_file),
@@ -433,7 +408,6 @@ class BackupWorker(QThread):
         except PermissionError as e:
             self.item_skipped.emit(str(src_path), f"Permission denied: {e}")
             self.model.record_item_skipped()
-            # Track in operation result (v0.9.0)
             if self.operation_result:
                 result = error_handler.handle_exception(
                     e, str(src_path), str(dest_path)
@@ -443,7 +417,6 @@ class BackupWorker(QThread):
         except FileNotFoundError as e:
             self.item_skipped.emit(str(src_path), f"Directory not found: {e}")
             self.model.record_item_skipped()
-            # Track in operation result (v0.9.0)
             if self.operation_result:
                 result = error_handler.handle_exception(
                     e, str(src_path), str(dest_path)
@@ -454,7 +427,6 @@ class BackupWorker(QThread):
             # Disk full, read-only filesystem, etc.
             self.error_occurred.emit(str(src_path), f"Filesystem error: {e}")
             self.model.record_item_failed()
-            # Track in operation result (v0.9.0)
             if self.operation_result:
                 result = error_handler.handle_exception(
                     e, str(src_path), str(dest_path)
@@ -462,12 +434,10 @@ class BackupWorker(QThread):
                 self.operation_result["failed"].append(result)
             return 0
         except Exception as e:
-            # Catch-all for unexpected errors
             self.error_occurred.emit(
                 str(src_path), f"Unexpected error: {type(e).__name__}: {e}"
             )
             self.model.record_item_failed()
-            # Track in operation result (v0.9.0)
             if self.operation_result:
                 result = error_handler.handle_exception(
                     e, str(src_path), str(dest_path)
@@ -481,52 +451,39 @@ class BackupWorker(QThread):
         if not self.model:
             return
 
-        # Validate which dotfiles exist on the filesystem before attempting backup
         # Returns dict mapping index -> (exists, is_dir, type_str) tuple
         validation_results = self.model.validate_dotfile_paths()
 
-        # Count total items that actually exist (exist flag is first tuple element)
-        # This gives us the denominator for progress calculation
         total_items = len([v for v in validation_results.values() if v[0]])
 
-        # Nothing to back up - emit error and exit early
         if total_items == 0:
             self.error_occurred.emit("Mirror Backup", "No items found to backup")
             return
 
-        # Track number of successfully processed items for progress updates
         processed_count = 0
 
-        # Iterate through all configured dotfiles by index
         for i in range(self.model.get_dotfile_count()):
             dotfile = self.model.get_dotfile_by_index(i)
             if not dotfile:
                 continue
 
-            # Skip disabled dotfiles - user may have temporarily disabled certain entries
             if not dotfile.get("enabled", True):
                 continue
 
-            # Process each path in the dotfile's paths list
             # Note: GUI supports multiple paths per dotfile entry (unlike CLI)
             for path_str in dotfile["paths"]:
                 # Skip empty path strings (validation should prevent this, but be safe)
                 if not path_str:
                     continue
 
-                # Expand tilde (~) and environment variables in path string
                 src_path = self.model.expand_path(path_str)
 
-                # Check if source path exists on filesystem
                 # Non-existent paths are skipped silently (already reported in validation)
                 if not src_path.exists():
                     continue
 
-                # Determine if source is directory or file for proper handling
                 is_dir = src_path.is_dir()
 
-                # Assemble destination path using configured directory structure
-                # Includes hostname and date subdirectories based on options
                 dest_path = self.model.assemble_dest_path(
                     self.model.mirror_base_dir,
                     src_path,
@@ -540,7 +497,6 @@ class BackupWorker(QThread):
                 skip_identical = not self.force_full_backup
 
                 if is_dir:
-                    # Process directory recursively - returns count of successfully copied files
                     file_count = self._process_directory(
                         src_path, dest_path, skip_identical=skip_identical
                     )
@@ -550,11 +506,8 @@ class BackupWorker(QThread):
                 elif self._process_file(
                     src_path, dest_path, skip_identical=skip_identical
                 ):
-                    # Process single file - increment on success
                     processed_count += 1
 
-                # Update progress bar with percentage complete
-                # Zero division protection (total_items guaranteed > 0 from earlier check)
                 if total_items > 0:
                     progress = int((processed_count / total_items) * 100)
                     self.progress_updated.emit(progress)
@@ -565,60 +518,46 @@ class BackupWorker(QThread):
         if not self.model:
             return
 
-        # Build list of items to include in archive
         # Tuple format: (path, exists, is_dir) for model.create_archive()
         items_to_archive: list[tuple[Path, bool, bool]] = []
 
-        # Iterate through all configured dotfiles
         for i in range(self.model.get_dotfile_count()):
             dotfile = self.model.get_dotfile_by_index(i)
             if not dotfile:
                 continue
 
-            # Skip disabled dotfiles - respect user's enable/disable settings
             if not dotfile.get("enabled", True):
                 continue
 
-            # Process each path in the dotfile's paths list
             # Note: Archives can contain multiple paths per dotfile entry
             for path_str in dotfile["paths"]:
-                # Skip empty path strings
                 if not path_str:
                     continue
 
-                # Expand tilde (~) and environment variables in path
                 src_path = self.model.expand_path(path_str)
 
-                # Only include paths that actually exist on the filesystem
                 # Non-existent paths are silently skipped from archive
                 if src_path.exists():
-                    # Determine type for tarfile processing
                     is_dir = src_path.is_dir()
-                    # Add to archive list with metadata (path, exists=True, is_dir)
                     items_to_archive.append((src_path, True, is_dir))
 
-        # Nothing to archive - emit error and exit early
         if not items_to_archive:
             self.error_occurred.emit("Archive Backup", "No items found to archive")
             return
 
-        # Create compressed TAR.GZ archive with timestamp
         # Returns Path to created archive or None on failure
         archive_path = self.model.create_archive(items_to_archive)
 
         if archive_path:
-            # Archive created successfully - emit success signal
             self.item_processed.emit("Archive created", str(archive_path))
 
             # Rotate (delete) old archives if rotation is enabled
             # Maintains max_archives limit by deleting oldest archives first
             if self.model.options["rotate_archives"]:
                 deleted = self.model.rotate_archives()
-                # Emit signal for each deleted archive for UI feedback
                 for deleted_path in deleted:
                     self.item_processed.emit("Archive deleted", str(deleted_path))
         else:
-            # Archive creation failed - emit error signal
             self.error_occurred.emit("Archive Backup", "Failed to create archive")
 
     def run(self) -> None:
@@ -627,42 +566,31 @@ class BackupWorker(QThread):
         if not self.model:
             return
 
-        # Start timing for performance metrics
         start_time = time.perf_counter()
 
-        # Reset statistics from any previous backup operation
-        # Ensures clean slate for current backup run
         self.model.reset_statistics()
-
-        # Clear backup tracking for fresh verification tracking
         self.model.clear_backup_tracking()
 
-        # Initialize structured operation result for error tracking (v0.9.0)
         error_handler = self.model.get_error_handler()
         operation_type = "mirror_backup" if self.mirror_mode else "archive_backup"
         self.operation_result = error_handler.create_operation_result(operation_type)
 
-        # Process mirror backup if enabled in configuration
-        # Mirror backup = uncompressed file copies maintaining directory structure
+        # mirror_backup = uncompressed file copies maintaining directory structure
         if self.mirror_mode:
             self._process_mirror_backup()
 
-        # Process archive backup if enabled in configuration
-        # Archive backup = compressed TAR.GZ with timestamped filename
+        # archive_backup = compressed TAR.GZ with timestamped filename
         if self.archive_mode:
             self._process_archive_backup()
 
-        # Calculate and record total elapsed time for statistics
         end_time = time.perf_counter()
         self.model.statistics.total_time = end_time - start_time
 
-        # Finalize operation result with status determination (v0.9.0)
         if self.operation_result:
             self.operation_result = error_handler.finalize_result(self.operation_result)
             self.backup_finished_with_result.emit(self.operation_result)
 
-        # Emit completion signal to notify ViewModel/View of finished operation
-        # ViewModel will disconnect signals and display statistics summary
+        # ViewModel disconnects signals and displays statistics summary on this signal
         self.backup_finished.emit()
 
 
@@ -684,7 +612,6 @@ class RestoreWorker(QThread):
         set_source_directory: Set source directory for restore
     """
 
-    # Signal definitions
     progress_updated = Signal(int)  # progress percentage
     item_processed = Signal(str, str)  # source_path, dest_path
     restore_finished = Signal()
@@ -722,17 +649,13 @@ class RestoreWorker(QThread):
         if not self.model or not self.source_directory:
             return
 
-        # Start timing for performance metrics
         start_time = time.perf_counter()
 
-        # Reset statistics from any previous restore operation
         self.model.reset_statistics()
 
-        # Initialize structured operation result for error tracking (v0.9.0)
         error_handler = self.model.get_error_handler()
         self.operation_result = error_handler.create_operation_result("restore")
 
-        # Track restored files for operation result
         restored_files: list[tuple[str, str]] = []
 
         def track_item(src: str, dest: str) -> None:
@@ -740,37 +663,31 @@ class RestoreWorker(QThread):
             self.item_processed.emit(src, dest)
             restored_files.append((src, dest))
 
-        # Execute restore via BackupOrchestrator (includes pre-restore backup if enabled)
-        # Callbacks emit signals for progress and item processing
+        # execute_restore includes pre-restore backup if enabled in config
         processed, total = self.model.execute_restore(
             src_dir=self.source_directory,
             progress_callback=lambda pct: self.progress_updated.emit(pct),
             item_processed_callback=track_item,
         )
 
-        # Track results in operation result (v0.9.0)
         if self.operation_result:
-            # Add completed items
             for src, dest in restored_files:
                 result = error_handler.create_path_result(src, dest, "success")
                 self.operation_result["completed"].append(result)
 
-            # Calculate failed count (total - processed = failed/skipped)
+            # total - processed = failed/skipped count
             failed_count = total - processed
             if failed_count > 0 and total > 0:
-                # Add a summary warning for failed items
                 self.operation_result["warnings"].append(
                     f"{failed_count} files could not be restored"
                 )
 
-        # Handle error cases
         if total == 0:
             self.error_occurred.emit("Restore", "No files found in source directory")
             if self.operation_result:
                 self.operation_result["warnings"].append(
                     "No files found in source directory"
                 )
-            # Still finalize and emit result
             if self.operation_result:
                 self.operation_result = error_handler.finalize_result(
                     self.operation_result
@@ -781,7 +698,6 @@ class RestoreWorker(QThread):
         if processed == 0 and total > 0:
             self.error_occurred.emit("Restore", "Restore operation failed")
             if self.operation_result:
-                # Mark as completely failed
                 result = error_handler.create_path_result(
                     str(self.source_directory),
                     None,
@@ -790,7 +706,6 @@ class RestoreWorker(QThread):
                     error_message="Restore operation failed",
                 )
                 self.operation_result["failed"].append(result)
-            # Finalize and emit result
             if self.operation_result:
                 self.operation_result = error_handler.finalize_result(
                     self.operation_result
@@ -798,16 +713,13 @@ class RestoreWorker(QThread):
                 self.restore_finished_with_result.emit(self.operation_result)
             return
 
-        # Calculate and record total elapsed time for statistics
         end_time = time.perf_counter()
         self.model.statistics.total_time = end_time - start_time
 
-        # Finalize operation result with status determination (v0.9.0)
         if self.operation_result:
             self.operation_result = error_handler.finalize_result(self.operation_result)
             self.restore_finished_with_result.emit(self.operation_result)
 
-        # Emit completion signal to notify ViewModel/View of finished operation
         self.restore_finished.emit()
 
 
@@ -829,7 +741,6 @@ class SizeScanWorker(QThread):
         set_model: Set the model reference
     """
 
-    # Signal definitions
     progress_updated = Signal(int)  # progress percentage
     scan_finished = Signal(object)  # SizeReportDict
     error_occurred = Signal(str, str)  # context, error_message
@@ -854,15 +765,12 @@ class SizeScanWorker(QThread):
             return
 
         try:
-            # Emit initial progress
             self.progress_updated.emit(0)
 
-            # Run size analysis with progress callback
             report = self.model.analyze_backup_size(
                 progress_callback=lambda pct: self.progress_updated.emit(pct)
             )
 
-            # Emit completion with report
             self.progress_updated.emit(100)
             self.scan_finished.emit(report)
 
@@ -883,7 +791,6 @@ class PreviewWorker(QThread):
         model: Reference to DFBUModel for data access
     """
 
-    # Signal definitions
     progress_updated = Signal(int)  # progress percentage
     preview_finished = Signal(object)  # BackupPreviewDict
     error_occurred = Signal(str, str)  # context, error_message
@@ -908,15 +815,12 @@ class PreviewWorker(QThread):
             return
 
         try:
-            # Emit initial progress
             self.progress_updated.emit(0)
 
-            # Generate preview with progress callback
             preview = self.model.generate_backup_preview(
                 progress_callback=lambda pct: self.progress_updated.emit(pct)
             )
 
-            # Emit completion with preview result
             self.progress_updated.emit(100)
             self.preview_finished.emit(preview)
 
@@ -971,7 +875,6 @@ class DFBUViewModel(QObject):
         _on_worker_error: Handle worker errors
     """
 
-    # Signal definitions
     progress_updated = Signal(int)
     item_processed = Signal(str, str)
     item_skipped = Signal(str, str)
@@ -1027,16 +930,13 @@ class DFBUViewModel(QObject):
         if self.config_load_worker is not None:
             return False
 
-        # Create and configure worker
         self.config_load_worker = ConfigLoadWorker()
         self.config_load_worker.set_config_manager(self.model.get_config_manager())
 
-        # Connect worker signals
         self.config_load_worker.progress_updated.connect(self._on_config_progress)
         self.config_load_worker.load_finished.connect(self._on_config_load_finished)
         self.config_load_worker.error_occurred.connect(self._on_worker_error)
 
-        # Start worker thread
         self.config_load_worker.start()
         return True
 
@@ -1053,16 +953,13 @@ class DFBUViewModel(QObject):
         if self.config_save_worker is not None:
             return False
 
-        # Create and configure worker
         self.config_save_worker = ConfigSaveWorker()
         self.config_save_worker.set_config_manager(self.model.get_config_manager())
 
-        # Connect worker signals
         self.config_save_worker.progress_updated.connect(self._on_config_progress)
         self.config_save_worker.save_finished.connect(self._on_config_save_finished)
         self.config_save_worker.error_occurred.connect(self._on_worker_error)
 
-        # Start worker thread
         self.config_save_worker.start()
         return True
 
@@ -1077,7 +974,6 @@ class DFBUViewModel(QObject):
         Returns:
             True if option updated successfully
         """
-        # Map of valid keys to their expected types
         valid_options: dict[str, type] = {
             "mirror": bool,
             "archive": bool,
@@ -1093,15 +989,12 @@ class DFBUViewModel(QObject):
             "hash_verification": bool,
         }
 
-        # Validate key exists
         if key not in valid_options:
             return False
 
-        # Validate type matches expected type
         if not isinstance(value, valid_options[key]):
             return False
 
-        # Type is already narrowed by function signature (bool | int | str)
         return self.model.update_option(key, value)
 
     def command_update_path(self, path_type: str, value: str) -> bool:
@@ -1130,19 +1023,15 @@ class DFBUViewModel(QObject):
         Returns:
             True if backup/scan started successfully
         """
-        # Validate configuration loaded
         if self.model.get_dotfile_count() == 0:
             self.error_occurred.emit("Backup", "No configuration loaded")
             return False
 
-        # Store for use after size scan completes
+        # Stored for use after size scan completes
         self._pending_backup_force_full = force_full_backup
 
-        # Check if size checking is enabled
         if self.model.is_size_check_enabled():
-            # Start size scan first
             return self._start_size_scan()
-        # Skip size check, start backup directly
         return self._start_backup_directly(force_full_backup)
 
     def _start_size_scan(self) -> bool:
@@ -1156,16 +1045,13 @@ class DFBUViewModel(QObject):
         if self.size_scan_worker is not None and self.size_scan_worker.isRunning():
             return False
 
-        # Create and configure worker
         self.size_scan_worker = SizeScanWorker()
         self.size_scan_worker.set_model(self.model)
 
-        # Connect worker signals
         self.size_scan_worker.progress_updated.connect(self._on_size_scan_progress)
         self.size_scan_worker.scan_finished.connect(self._on_size_scan_finished)
         self.size_scan_worker.error_occurred.connect(self._on_size_scan_error)
 
-        # Start worker thread
         self.size_scan_worker.start()
         return True
 
@@ -1179,7 +1065,7 @@ class DFBUViewModel(QObject):
         Returns:
             True if backup started successfully
         """
-        # Create and configure worker
+
         self.backup_worker = BackupWorker()
         self.backup_worker.set_model(self.model)
         self.backup_worker.set_modes(
@@ -1187,7 +1073,6 @@ class DFBUViewModel(QObject):
         )
         self.backup_worker.set_force_full_backup(force_full_backup)
 
-        # Connect worker signals
         self.backup_worker.progress_updated.connect(self._on_worker_progress)
         self.backup_worker.item_processed.connect(self._on_item_processed)
         self.backup_worker.item_skipped.connect(self._on_item_skipped)
@@ -1197,7 +1082,6 @@ class DFBUViewModel(QObject):
         )
         self.backup_worker.error_occurred.connect(self._on_worker_error)
 
-        # Start worker thread
         self.backup_worker.start()
         return True
 
@@ -1229,13 +1113,11 @@ class DFBUViewModel(QObject):
             context: Error context
             error_message: Error message
         """
-        # Clean up the worker
         if self.size_scan_worker is not None:
             self.size_scan_worker.wait()
             self.size_scan_worker.deleteLater()
             self.size_scan_worker = None
 
-        # Forward error to standard handler
         self.error_occurred.emit(context, error_message)
 
     def _on_size_scan_finished(self, report: SizeReportDict) -> None:
@@ -1248,18 +1130,14 @@ class DFBUViewModel(QObject):
         Args:
             report: Size analysis report
         """
-        # Clean up the worker to free resources and allow subsequent scans
         if self.size_scan_worker is not None:
-            self.size_scan_worker.wait()  # Ensure thread has fully stopped
-            self.size_scan_worker.deleteLater()  # Schedule Qt object cleanup
+            self.size_scan_worker.wait()
+            self.size_scan_worker.deleteLater()
             self.size_scan_worker = None
 
-        # Check if any thresholds exceeded
         if report["has_warning"] or report["has_alert"] or report["has_critical"]:
-            # Emit signal for View to show warning dialog
             self.size_warning_requested.emit(report)
         else:
-            # No warnings, proceed directly to backup
             self._start_backup_directly(self._pending_backup_force_full)
 
     def command_start_restore(self) -> bool:
@@ -1269,23 +1147,19 @@ class DFBUViewModel(QObject):
         Returns:
             True if restore started successfully
         """
-        # Validate source directory set
         if not self.restore_source_directory:
             self.error_occurred.emit("Restore", "No source directory set")
             return False
 
-        # Create and configure worker
         self.restore_worker = RestoreWorker()
         self.restore_worker.set_model(self.model)
         self.restore_worker.set_source_directory(self.restore_source_directory)
 
-        # Connect worker signals
         self.restore_worker.progress_updated.connect(self._on_worker_progress)
         self.restore_worker.item_processed.connect(self._on_item_processed)
         self.restore_worker.restore_finished.connect(self._on_restore_finished)
         self.restore_worker.error_occurred.connect(self._on_worker_error)
 
-        # Start worker thread
         self.restore_worker.start()
         return True
 
@@ -1320,25 +1194,22 @@ class DFBUViewModel(QObject):
         if not path.exists() or not path.is_dir():
             return None
 
-        # Try to detect hostname directory
         hostname = ""
         scan_root = path
         subdirs = [d for d in path.iterdir() if d.is_dir()]
 
-        # If there's a single subdirectory, it's likely the hostname folder
+        # Single subdir is likely the hostname folder
         if len(subdirs) == 1:
             hostname = subdirs[0].name
             scan_root = subdirs[0]
         elif len(subdirs) > 1:
-            # Multiple subdirs -- could be date-based or multiple hostnames
-            # Use the directory as-is
+            # Multiple subdirs: date-based or multiple hostnames — use as-is
             hostname = path.name
 
         entries: list[dict[str, Any]] = []
         total_size = 0
         total_files = 0
 
-        # Walk the scan root and group by top-level application directories
         for app_dir in sorted(scan_root.iterdir()):
             if not app_dir.is_dir():
                 continue
@@ -1403,7 +1274,6 @@ class DFBUViewModel(QObject):
         )
 
         if success:
-            # Emit signal to update UI
             dotfile_count = self.model.get_dotfile_count()
             self.dotfiles_updated.emit(dotfile_count)
 
@@ -1437,7 +1307,6 @@ class DFBUViewModel(QObject):
         )
 
         if success:
-            # Emit signal to update UI
             dotfile_count = self.model.get_dotfile_count()
             self.dotfiles_updated.emit(dotfile_count)
 
@@ -1456,7 +1325,6 @@ class DFBUViewModel(QObject):
         success: bool = self.model.remove_dotfile(index)
 
         if success:
-            # Emit signal to update UI
             dotfile_count = self.model.get_dotfile_count()
             self.dotfiles_updated.emit(dotfile_count)
 
@@ -1498,10 +1366,6 @@ class DFBUViewModel(QObject):
             return None
         return self.model.verify_last_backup()
 
-    # =========================================================================
-    # Config Editor Commands
-    # =========================================================================
-
     def command_validate_config(self) -> tuple[bool, str]:
         """
         Validate the dotfiles.yaml and settings.yaml configuration files.
@@ -1512,10 +1376,8 @@ class DFBUViewModel(QObject):
         config_dir = self.model.config_path
         errors: list[str] = []
 
-        # Create loader once and reuse for both validations
         loader = YAMLConfigLoader(config_dir)
 
-        # Validate dotfiles.yaml
         dotfiles_path = config_dir / "dotfiles.yaml"
         if dotfiles_path.exists():
             try:
@@ -1525,7 +1387,6 @@ class DFBUViewModel(QObject):
         else:
             errors.append("dotfiles.yaml: File not found")
 
-        # Validate settings.yaml
         settings_path = config_dir / "settings.yaml"
         if settings_path.exists():
             try:
@@ -1608,7 +1469,6 @@ class DFBUViewModel(QObject):
         if not source_dir.is_dir():
             return False, f"Source is not a directory: {source_dir}"
 
-        # At minimum, dotfiles.yaml or settings.yaml must be present
         importable_files = [
             "dotfiles.yaml",
             "settings.yaml",
@@ -1623,12 +1483,10 @@ class DFBUViewModel(QObject):
                 "Expected: dotfiles.yaml, settings.yaml, session.yaml, or .dfbuignore"
             )
 
-        # Validate YAML files before importing
         yaml_files = [f for f in available if f.endswith(".yaml")]
         validation_errors: list[str] = []
         for filename in yaml_files:
             try:
-                # Use a temporary YAML loader to validate the file
                 temp_yaml = YAML()
                 temp_yaml.preserve_quotes = True
                 temp_yaml.allow_duplicate_keys = True
@@ -1644,7 +1502,6 @@ class DFBUViewModel(QObject):
                 validation_errors
             )
 
-        # Create backups of current config files before overwriting
         config_dir = self.model.config_path
         backup_errors: list[str] = []
         for filename in available:
@@ -1662,7 +1519,6 @@ class DFBUViewModel(QObject):
                 + "\nImport aborted to protect existing configuration."
             )
 
-        # Copy files from source to config directory
         imported: list[str] = []
         copy_errors: list[str] = []
         for filename in available:
@@ -1684,10 +1540,6 @@ class DFBUViewModel(QObject):
     def get_config_dir(self) -> Path:
         """Return the path to the configuration directory."""
         return self.model.config_path
-
-    # =========================================================================
-    # Profile Commands (v1.1.0)
-    # =========================================================================
 
     def command_create_profile(
         self,
@@ -1744,7 +1596,7 @@ class DFBUViewModel(QObject):
         if success:
             profile_name = name if name else ""
             self.profile_switched.emit(profile_name)
-            self.exclusions_changed.emit()  # Profile switch changes exclusions
+            self.exclusions_changed.emit()  # SIDE-EFFECT: profile switch also changes active exclusions
         return success
 
     def get_profile_names(self) -> list[str]:
@@ -1755,10 +1607,6 @@ class DFBUViewModel(QObject):
         """Get name of currently active profile."""
         return self.model.get_active_profile_name()
 
-    # =========================================================================
-    # Preview Commands (v1.1.0)
-    # =========================================================================
-
     def command_generate_preview(self) -> bool:
         """
         Command to generate backup preview asynchronously.
@@ -1768,7 +1616,6 @@ class DFBUViewModel(QObject):
         Returns:
             True if preview generation started successfully
         """
-        # Don't start if already running
         if self._preview_worker is not None and self._preview_worker.isRunning():
             return False
 
@@ -1874,18 +1721,15 @@ class DFBUViewModel(QObject):
         if size_bytes == 0:
             return "0 B"
 
-        # Define size units
         units = ["B", "KB", "MB", "GB", "TB"]
         unit_index = 0
         size = float(size_bytes)
 
-        # Convert to appropriate unit
         while size >= 1024.0 and unit_index < len(units) - 1:
             size /= 1024.0
             unit_index += 1
 
-        # Format with appropriate precision
-        if unit_index == 0:  # Bytes
+        if unit_index == 0:  # Bytes — no decimal needed
             return f"{int(size)} {units[unit_index]}"
         return f"{size:.1f} {units[unit_index]}"
 
@@ -1898,26 +1742,21 @@ class DFBUViewModel(QObject):
         """
         stats = self.model.statistics
 
-        # Build message using list and join for better performance
         message_parts = [
             "Backup Operation Completed!\n",
             "=" * 50,
         ]
 
-        # Calculate total items
         total_items = stats.processed_items + stats.skipped_items + stats.failed_items
 
-        # Summary line with totals
         message_parts.append(
             f"\n📊 Summary: {stats.processed_items} copied, "
             f"{stats.skipped_items} skipped, "
             f"{stats.failed_items} failed (Total: {total_items})"
         )
 
-        # Detailed breakdown with clear explanations
         message_parts.append("\n📋 Details:")
 
-        # Files copied
         if stats.processed_items > 0:
             message_parts.append(
                 f"  ✓ Files copied: {stats.processed_items} "
@@ -1926,23 +1765,19 @@ class DFBUViewModel(QObject):
         else:
             message_parts.append("  ✓ Files copied: 0 (all files already up to date)")
 
-        # Files skipped
         if stats.skipped_items > 0:
             message_parts.append(
                 f"  ⊘ Files skipped: {stats.skipped_items} "
                 f"(unchanged since last backup)"
             )
 
-        # Files failed
         if stats.failed_items > 0:
             message_parts.append(
                 f"  ✗ Files failed: {stats.failed_items} (check log for details)"
             )
 
-        # Timing information
         message_parts.append(f"\n⏱️  Total time: {stats.total_time:.2f} seconds")
 
-        # Add detailed timing statistics if available
         if stats.processing_times and stats.processed_items > 0:
             message_parts.extend(
                 [
@@ -1962,7 +1797,7 @@ class DFBUViewModel(QObject):
         Returns:
             Options dictionary with proper typing
         """
-        # Return copy to prevent external modification (TypedDict is dict-like, not a class)
+        # CONSTRAINT: copy prevents external mutation (TypedDict is backed by a plain dict)
         return dict(self.model.options)  # type: ignore[return-value]
 
     def set_mirror_mode(self, enabled: bool) -> None:
@@ -1998,7 +1833,6 @@ class DFBUViewModel(QObject):
             "window_state": self.settings.value("windowState"),
         }
 
-        # Validate and apply restore source if exists
         if restore_source_str:
             validation_result = InputValidator.validate_path(
                 restore_source_str, must_exist=True
@@ -2007,7 +1841,7 @@ class DFBUViewModel(QObject):
                 restore_path = Path(restore_source_str)
                 if restore_path.exists():
                     self.restore_source_directory = restore_path
-            # Silently ignore invalid paths
+            # Invalid paths silently ignored — no error state for last-session paths
 
         return settings_dict
 
@@ -2074,7 +1908,6 @@ class DFBUViewModel(QObject):
 
     def _on_backup_finished(self) -> None:
         """Handle backup completion and cleanup worker."""
-        # Record backup to history (v1.1.0)
         stats = self.model.statistics
         success = stats.failed_items == 0
         backup_type = "mirror" if self.model.options.get("mirror", True) else "archive"
@@ -2089,7 +1922,6 @@ class DFBUViewModel(QObject):
         summary = self.get_statistics_summary()
         self.operation_finished.emit(summary)
 
-        # Disconnect signals and cleanup worker to prevent memory leaks
         if self.backup_worker:
             self.backup_worker.progress_updated.disconnect(self._on_worker_progress)
             self.backup_worker.item_processed.disconnect(self._on_item_processed)
@@ -2099,7 +1931,6 @@ class DFBUViewModel(QObject):
                 self._on_backup_finished_with_result
             )
             self.backup_worker.error_occurred.disconnect(self._on_worker_error)
-            # Properly cleanup Qt object to free resources
             self.backup_worker.deleteLater()
             self.backup_worker = None
 
@@ -2111,7 +1942,6 @@ class DFBUViewModel(QObject):
         Args:
             result: Structured operation result
         """
-        # Only show recovery dialog if there are failures that could be retried
         if result["status"] != "success" and result["can_retry"]:
             self.recovery_dialog_requested.emit(result)
 
@@ -2120,13 +1950,11 @@ class DFBUViewModel(QObject):
         summary = self.get_statistics_summary()
         self.operation_finished.emit(summary)
 
-        # Disconnect signals and cleanup worker to prevent memory leaks
         if self.restore_worker:
             self.restore_worker.progress_updated.disconnect(self._on_worker_progress)
             self.restore_worker.item_processed.disconnect(self._on_item_processed)
             self.restore_worker.restore_finished.disconnect(self._on_restore_finished)
             self.restore_worker.error_occurred.disconnect(self._on_worker_error)
-            # Properly cleanup Qt object to free resources
             self.restore_worker.deleteLater()
             self.restore_worker = None
 
@@ -2164,10 +1992,8 @@ class DFBUViewModel(QObject):
             self.config_loaded.emit(dotfile_count)
             self.dotfiles_updated.emit(dotfile_count)
         else:
-            # Emit specific error message from model
             self.error_occurred.emit("Configuration", error_message)
 
-        # Disconnect signals and cleanup worker
         if self.config_load_worker:
             self.config_load_worker.progress_updated.disconnect(
                 self._on_config_progress
@@ -2190,7 +2016,6 @@ class DFBUViewModel(QObject):
         if not success:
             self.error_occurred.emit("Configuration Save", error_message)
 
-        # Disconnect signals and cleanup worker
         if self.config_save_worker:
             self.config_save_worker.progress_updated.disconnect(
                 self._on_config_progress

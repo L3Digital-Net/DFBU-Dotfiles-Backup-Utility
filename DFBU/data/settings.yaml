@@ -1,5 +1,5 @@
 paths:
-  mirror_dir: ~/GitHub/dotfiles
+  mirror_dir: ~/projects/dotfiles
   archive_dir: ~/pCloudDrive/Backups/Dotfiles
   restore_backup_dir: ~/.local/share/dfbu/restore-backups
 options:

@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "contextstream": {
+      "args": [],
+      "command": "/usr/local/bin/contextstream-mcp",
+      "env": {
+        "CONTEXTSTREAM_API_KEY": "cbiq_rTD3O8gasw2k_YkTrC7UrQ2ePXYTmmE5O-Zt6Vw1mzM",
+        "CONTEXTSTREAM_API_URL": "https://api.contextstream.io",
+        "CONTEXTSTREAM_CONTEXT_PACK": "true"
+      }
+    }
+  }
+}

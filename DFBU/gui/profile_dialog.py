@@ -27,7 +27,6 @@ from PySide6.QtWidgets import (
 from gui.viewmodel import DFBUViewModel
 
 
-# Path to UI file relative to this module
 UI_FILE: Final[Path] = Path(__file__).parent / "designer" / "profile_dialog.ui"
 
 
@@ -50,16 +49,9 @@ class ProfileDialog(QDialog):
         super().__init__(parent)
         self._viewmodel = viewmodel
 
-        # Load UI from designer file
         self._load_ui()
-
-        # Connect signals
         self._connect_signals()
-
-        # Connect ViewModel signals for profile updates
         self._viewmodel.profiles_changed.connect(self._refresh_profile_list)
-
-        # Populate profile list
         self._refresh_profile_list()
 
     def _load_ui(self) -> None:
@@ -75,12 +67,10 @@ class ProfileDialog(QDialog):
         if loaded is None:  # QUiLoader may return None on error
             raise RuntimeError(f"Failed to load UI file: {UI_FILE}")
 
-        # Set window properties from loaded UI
         self.setWindowTitle(loaded.windowTitle())
         self.setMinimumSize(loaded.minimumSize())
         self.resize(loaded.size())
 
-        # Find widgets by object name
         self.profile_list: QListWidget = loaded.findChild(QListWidget, "profileList")  # type: ignore[assignment]
         self.btn_new: QPushButton = loaded.findChild(QPushButton, "btnNewProfile")  # type: ignore[assignment]
         self.btn_edit: QPushButton = loaded.findChild(QPushButton, "btnEditProfile")  # type: ignore[assignment]
@@ -89,7 +79,6 @@ class ProfileDialog(QDialog):
             QDialogButtonBox, "buttonBox"
         )  # type: ignore[assignment]
 
-        # Validate all required widgets were found
         if not all(
             [
                 self.profile_list,
@@ -133,7 +122,7 @@ class ProfileDialog(QDialog):
         Note: Profile creation UI is deferred to future implementation.
         The button is present but functionality is not yet available.
         """
-        # Profile editor dialog will be implemented in a future task
+        # TODO: profile editor dialog not yet implemented
 
     def _on_edit_profile(self) -> None:
         """Handle edit profile button click.
@@ -141,7 +130,7 @@ class ProfileDialog(QDialog):
         Note: Profile editing UI is deferred to future implementation.
         The button is present but functionality is not yet available.
         """
-        # Profile editor dialog will be implemented in a future task
+        # TODO: profile editor dialog not yet implemented
 
     def _on_delete_profile(self) -> None:
         """Handle delete profile button click."""
