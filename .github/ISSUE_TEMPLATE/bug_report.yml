@@ -1,0 +1,90 @@
+name: Bug Report
+description: Report a bug or unexpected behavior in DFBU
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting a bug. Please provide detailed information to help us diagnose and fix the issue.
+
+  - type: dropdown
+    id: version
+    attributes:
+      label: DFBU Version
+      description: Which version of DFBU are you using?
+      options:
+        - 1.2.2 (latest)
+        - 1.2.1
+        - 1.2.0
+        - 1.1.x
+        - 1.0.x
+        - Development version (from source)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: installation
+    attributes:
+      label: Installation Method
+      description: How did you install DFBU?
+      options:
+        - AppImage
+        - Running from source
+        - Other (specify in description)
+    validations:
+      required: true
+
+  - type: input
+    id: distro
+    attributes:
+      label: Linux Distribution
+      description: Which Linux distribution and version are you using?
+      placeholder: "e.g., Fedora 39, Ubuntu 22.04, Arch Linux"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: Clear and concise description of the bug
+      placeholder: What happened? What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Detailed steps to reproduce the behavior
+      placeholder: |
+        1. Configure backup with...
+        2. Select options...
+        3. Click '...'
+        4. Observe error...
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant Logs
+      description: Include relevant log output from DFBU (check verbose logging if available)
+      render: shell
+      placeholder: Paste log output here
+
+  - type: textarea
+    id: config
+    attributes:
+      label: Configuration Files
+      description: If relevant, include sanitized excerpts from settings.yaml or dotfiles.yaml
+      render: yaml
+      placeholder: Paste relevant config here (remove sensitive paths if needed)
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Any other information that might help (screenshots, environment details, workarounds attempted)
+      placeholder: Add any other context about the problem here

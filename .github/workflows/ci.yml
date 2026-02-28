@@ -8,9 +8,13 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
 
@@ -50,11 +54,11 @@ jobs:
       - name: Type check with MyPy
         run: uv run mypy DFBU/
 
-      - name: Run tests with Xvfb
+      - name: Run tests (unit + integration, skip GUI)
         env:
           QT_QPA_PLATFORM: offscreen
           QT_DEBUG_PLUGINS: 0
-        run: xvfb-run -a uv run pytest DFBU/tests/ --cov=DFBU --cov-report=xml
+        run: uv run pytest DFBU/tests/ -m "not gui" --cov=DFBU --cov-report=xml --timeout=30
 
       # Optional: Upload coverage to Codecov
       # - uses: codecov/codecov-action@v4

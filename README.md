@@ -1,16 +1,19 @@
 # DFBU — DotFiles Backup Utility
 
-DFBU is a Linux desktop application (PySide6/Qt) for backing up and restoring your dotfiles (e.g. `~/.bashrc`, `~/.config/`, `~/.local/share/`).
+DFBU is a Linux desktop application (PySide6/Qt) for backing up and restoring your
+dotfiles (e.g. `~/.bashrc`, `~/.config/`, `~/.local/share/`).
 
 **Platform:** Linux • **License:** MIT
 
 ## Highlights
 
-- **Mirror + Archive backups**: readable folder mirrors and/or compressed `.tar.gz` archives
+- **Mirror + Archive backups**: readable folder mirrors and/or compressed `.tar.gz`
+  archives
 - **Safe restores**: optional pre-restore safety backups (undo-friendly)
 - **Verification**: optional post-backup verification + hash verification
 - **Profiles**: save and switch between backup selections/options
-- **Quality-of-life**: verbose logs, per-file skip logging, hide missing sources, built-in help
+- **Quality-of-life**: verbose logs, per-file skip logging, hide missing sources,
+  built-in help
 
 ## Install (Recommended: AppImage)
 
@@ -19,6 +22,7 @@ DFBU is a Linux desktop application (PySide6/Qt) for backing up and restoring yo
 3. Run it: `./DFBU-x86_64.AppImage`
 
 Notes:
+
 - Some distros require `libfuse2` for AppImages.
 - If you see OpenGL/EGL-related errors, install `libegl1` and `libgl1`.
 

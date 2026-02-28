@@ -2,7 +2,9 @@
 
 ## Overview
 
-This directory contains the comprehensive test suite for the DFBU (DotFiles Backup Utility) application. The test suite follows MVVM architecture principles and adheres to the testing standards outlined in `.github/prompts/test.prompt.md`.
+This directory contains the comprehensive test suite for the DFBU (DotFiles Backup
+Utility) application. The test suite follows MVVM architecture principles and adheres to
+the testing standards outlined in `.github/prompts/test.prompt.md`.
 
 ## Test Coverage
 
@@ -16,7 +18,8 @@ This directory contains the comprehensive test suite for the DFBU (DotFiles Back
 
 ## Test Organization
 
-All test files are organized in the `DFBU/tests/` directory, following the project structure:
+All test files are organized in the `DFBU/tests/` directory, following the project
+structure:
 
 ```
 DFBU/tests/
@@ -243,7 +246,9 @@ def test_main_window_initialization(qapp, viewmodel_with_config):
     assert hasattr(window, "tab_widget")
 ```
 
-**Note**: Per test.prompt.md guidelines, View layer tests are optional. Focus is on Model and ViewModel testing. Complex UI interaction tests may be skipped when mocking becomes overly intricate.
+**Note**: Per test.prompt.md guidelines, View layer tests are optional. Focus is on
+Model and ViewModel testing. Complex UI interaction tests may be skipped when mocking
+becomes overly intricate.
 
 ## Mocking Strategy
 
@@ -323,7 +328,10 @@ Two View layer tests are intentionally skipped:
 1. `test_browse_path_selects_file` - Complex QMessageBox interaction
 2. `test_browse_path_falls_back_to_directory` - Complex QMessageBox interaction
 
-**Reason**: These tests require intricate mocking of Qt dialog lifecycle. Per test.prompt.md guidelines, View tests are optional when mocking complexity outweighs testing value. The functionality is verified through manual testing and integration tests.
+**Reason**: These tests require intricate mocking of Qt dialog lifecycle. Per
+test.prompt.md guidelines, View tests are optional when mocking complexity outweighs
+testing value. The functionality is verified through manual testing and integration
+tests.
 
 ## Continuous Integration
 
@@ -439,7 +447,8 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "gui"))
 **What this means**:
 
 - Current evidence shows this can reproduce in a minimal standalone PySide6 app.
-- Treat these failures as Qt Pilot harness instability unless reproduced by pytest-qt or manual testing.
+- Treat these failures as Qt Pilot harness instability unless reproduced by pytest-qt or
+  manual testing.
 
 **Recommended approach**:
 
@@ -483,6 +492,5 @@ For full details and investigation artifacts, see:
 
 ---
 
-**Last Updated**: February 6, 2026
-**Maintainer**: Chris Purcell <chris@l3digital.net>
+**Last Updated**: February 6, 2026 **Maintainer**: Chris Purcell <chris@l3digital.net>
 **License**: MIT

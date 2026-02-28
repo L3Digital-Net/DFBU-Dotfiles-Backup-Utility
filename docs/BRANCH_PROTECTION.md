@@ -19,9 +19,11 @@ git checkout testing
 
 ## Overview
 
-This repository implements branch protection to prevent accidental modifications to the `main` branch. The protection applies primarily to AI coding agents via a Python script.
+This repository implements branch protection to prevent accidental modifications to the
+`main` branch. The protection applies primarily to AI coding agents via a Python script.
 
-For setting up branch protection on new repositories, see `.github/prompts/create-branch-protections.prompt.md`.
+For setting up branch protection on new repositories, see
+`.github/prompts/create-branch-protections.prompt.md`.
 
 ## Protection Layers
 
@@ -63,7 +65,8 @@ Three Git hooks can optionally be installed to protect the main branch:
 
 ### 3. AI Agent Protection - Primary Mechanism (`.agents/branch_protection.py`)
 
-Python script that AI agents must run before making any file modifications. **This is the active protection in this repository.**
+Python script that AI agents must run before making any file modifications. **This is
+the active protection in this repository.**
 
 **Features:**
 
@@ -179,20 +182,15 @@ git checkout testing     # Switch back immediately
 
 ### Prohibited AI Actions on Main
 
-❌ Creating files
-❌ Editing files
-❌ Deleting files
-❌ Running modification commands
-❌ Installing dependencies
-❌ Running build scripts that modify files
-❌ Any operation that changes repository state
+❌ Creating files ❌ Editing files ❌ Deleting files ❌ Running modification commands ❌
+Installing dependencies ❌ Running build scripts that modify files ❌ Any operation that
+changes repository state
 
 ### Allowed AI Actions on Main
 
-✅ Reading files for analysis
-✅ Running read-only commands (status, log, diff)
-✅ Assisting with merge (when explicitly authorized)
-✅ Providing information about main branch
+✅ Reading files for analysis ✅ Running read-only commands (status, log, diff) ✅
+Assisting with merge (when explicitly authorized) ✅ Providing information about main
+branch
 
 ## Testing the Protection
 
@@ -296,7 +294,8 @@ git commit --no-verify
 mv .git/hooks/pre-commit .git/hooks/pre-commit.disabled
 ```
 
-**⚠️ WARNING**: Only bypass protections if you understand the consequences and have explicit authorization.
+**⚠️ WARNING**: Only bypass protections if you understand the consequences and have
+explicit authorization.
 
 ## Customization
 
@@ -333,4 +332,5 @@ This multi-layered protection system ensures:
 4. **AI agents can't modify main** (Python script + memory rules)
 5. **AI agents assist safely with merges** (Authorization protocol)
 
-All modifications must happen on `testing` branch, with main reserved exclusively for receiving tested, approved merges.
+All modifications must happen on `testing` branch, with main reserved exclusively for
+receiving tested, approved merges.

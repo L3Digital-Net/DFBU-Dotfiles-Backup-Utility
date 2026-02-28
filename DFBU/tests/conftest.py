@@ -29,6 +29,7 @@ Requirements:
 from __future__ import annotations
 
 import sys
+from collections.abc import Generator
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -46,7 +47,7 @@ if TYPE_CHECKING:
 
 
 @pytest.fixture(scope="session")
-def qapp() -> QApplication:
+def qapp() -> Generator[QApplication]:
     """
     Create QApplication instance for Qt tests (session scope).
 
@@ -68,7 +69,10 @@ def qapp() -> QApplication:
     app: QApplication | None = QApplication.instance()  # type: ignore[assignment]
     if app is None:
         app = QApplication([])
-    return app
+    yield app
+    # Cleanup: process events and allow threads to finish
+    app.processEvents()
+    app.quit()
 
 
 @pytest.fixture

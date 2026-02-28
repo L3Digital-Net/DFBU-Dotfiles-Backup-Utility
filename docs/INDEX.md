@@ -2,7 +2,8 @@
 
 # DFBU Documentation Index
 
-This index provides a roadmap to all documentation in the DFBU project. Documents are organized by audience and purpose.
+This index provides a roadmap to all documentation in the DFBU project. Documents are
+organized by audience and purpose.
 
 ---
 
@@ -116,7 +117,8 @@ To reduce duplication, these are the authoritative documents for key topics:
 | Testing           | [tests/README.md](../DFBU/tests/README.md)      | CLAUDE.md, CONTRIBUTING.md            |
 | Code Standards    | [CONTRIBUTING.md](../CONTRIBUTING.md)           | AI agent docs                         |
 
-When updating these topics, update the canonical source first, then verify summaries in other documents remain accurate.
+When updating these topics, update the canonical source first, then verify summaries in
+other documents remain accurate.
 
 ---
 

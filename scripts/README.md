@@ -8,7 +8,9 @@ This directory contains setup and utility scripts for the DFBU project.
 
 **Purpose**: Development environment setup script for Linux systems
 
-**Description**: Automated setup script that configures the development environment for DFBU. Checks for required dependencies, installs UV package manager if needed, creates a virtual environment, and installs all project dependencies.
+**Description**: Automated setup script that configures the development environment for
+DFBU. Checks for required dependencies, installs UV package manager if needed, creates a
+virtual environment, and installs all project dependencies.
 
 **Requirements**:
 
@@ -36,8 +38,7 @@ cd scripts
 ./setup.sh
 ```
 
-**Post-Setup**:
-After successful setup, activate the virtual environment:
+**Post-Setup**: After successful setup, activate the virtual environment:
 
 ```bash
 source .venv/bin/activate
@@ -53,7 +54,9 @@ source .venv/bin/activate
 
 **Purpose**: Configure branch protection rules for GitHub repository
 
-**Description**: Shell script that sets up branch protection for the `main` and `testing` branches to prevent accidental direct commits. Implements the branch protection workflow described in `BRANCH_PROTECTION.md`.
+**Description**: Shell script that sets up branch protection for the `main` and
+`testing` branches to prevent accidental direct commits. Implements the branch
+protection workflow described in `BRANCH_PROTECTION.md`.
 
 **Requirements**:
 
@@ -90,7 +93,9 @@ cd scripts
 
 **Purpose**: Verify test environment configuration and dependencies
 
-**Description**: Python script that validates the testing infrastructure is properly configured. Checks for required testing packages, verifies pytest configuration, and ensures test discovery is working correctly.
+**Description**: Python script that validates the testing infrastructure is properly
+configured. Checks for required testing packages, verifies pytest configuration, and
+ensures test discovery is working correctly.
 
 **Requirements**:
 
@@ -194,5 +199,4 @@ rm -rf .venv
 
 ---
 
-**Last Updated**: November 5, 2025
-**Maintainer**: Chris Purcell <chris@l3digital.net>
+**Last Updated**: November 5, 2025 **Maintainer**: Chris Purcell <chris@l3digital.net>
